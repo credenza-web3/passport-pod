@@ -501,6 +501,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F2D3236B119AA25703549C50 /* Pods-credenzapassport_Example.debug.xcconfig */;
 			buildSettings = {
+				ARCHS = (
+					armv7,
+					x86_64,
+					arm64,
+					"$(ARCHS_STANDARD)",
+				);
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = credenzapassport_Example.entitlements;
 				DEVELOPMENT_TEAM = 88745BZEMU;
@@ -519,6 +525,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A3ACAC4FDD886FD4B990C3B7 /* Pods-credenzapassport_Example.release.xcconfig */;
 			buildSettings = {
+				ARCHS = (
+					armv7,
+					x86_64,
+					arm64,
+					"$(ARCHS_STANDARD)",
+				);
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = credenzapassport_Example.entitlements;
 				DEVELOPMENT_TEAM = 88745BZEMU;
