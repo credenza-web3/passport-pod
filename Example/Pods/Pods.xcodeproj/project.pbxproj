@@ -527,7 +527,7 @@
 		0B605F21F0FF03FDE2A09F7660181EC9 /* field.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = field.h; path = secp256k1/Classes/secp256k1/src/field.h; sourceTree = "<group>"; };
 		0C777593245FFD9CE02E5561586CF371 /* EthereumValueConvertible.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = EthereumValueConvertible.swift; path = "MagicSDK-Web3/Classes/Core/Json/EthereumValueConvertible.swift"; sourceTree = "<group>"; };
 		0D326EC149F9ACC573D88320B25F7A83 /* scratch_impl.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = scratch_impl.h; path = secp256k1/Classes/secp256k1/src/scratch_impl.h; sourceTree = "<group>"; };
-		0D5E19DFC745E758B50BB4A6001372FF /* MagicSDK-Web3 */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "MagicSDK-Web3"; path = MagicSDK_Web3.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0D5E19DFC745E758B50BB4A6001372FF /* MagicSDK_Web3.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MagicSDK_Web3.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0D6500F39714F4AEA1C9485B54BFD161 /* CTR.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CTR.swift; path = Sources/CryptoSwift/BlockMode/CTR.swift; sourceTree = "<group>"; };
 		0FB14F580E4992B035D17A1DDA8F0960 /* EventCenter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = EventCenter.swift; path = Sources/MagicSDK/Modules/Event/EventCenter.swift; sourceTree = "<group>"; };
 		10454653DD3B5D5CD36EAECEC6661A8C /* Catchable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Catchable.swift; path = Sources/Catchable.swift; sourceTree = "<group>"; };
@@ -676,7 +676,7 @@
 		6A6924D49AED71D6AC0D4E141C56A7E6 /* YTPlayerView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = YTPlayerView.swift; path = "youtube-ios-player-helper-swift/Classes/YTPlayerView.swift"; sourceTree = "<group>"; };
 		6A7E4070D617BE855FC7F994CF18065D /* Checksum.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Checksum.swift; path = Sources/CryptoSwift/Checksum.swift; sourceTree = "<group>"; };
 		6C8E6AB6D9C404A1137161C169A08DE6 /* credenzapassport */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = credenzapassport; path = credenzapassport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		6CD50FC8162387236C4D88729C6BA0DE /* MagicExt-OAuth */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "MagicExt-OAuth"; path = MagicExt_OAuth.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6CD50FC8162387236C4D88729C6BA0DE /* MagicExt_OAuth.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MagicExt_OAuth.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6CED9995E52B586A13A482E246E9474F /* BigInt.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BigInt.swift; path = Sources/BigInt.swift; sourceTree = "<group>"; };
 		6DD533AB093DA86AE0BFD084704A9389 /* Thenable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Thenable.swift; path = Sources/Thenable.swift; sourceTree = "<group>"; };
 		6E013FAD7E7E9ADD97DA32F2E5C69BFF /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
@@ -1379,9 +1379,9 @@
 				91BB24BA472AF523E913108C9AA301F2 /* BigInt.framework */,
 				6C8E6AB6D9C404A1137161C169A08DE6 /* credenzapassport */,
 				F81274EDB681F11E7CB05F7DCA2BB33C /* CryptoSwift */,
-				6CD50FC8162387236C4D88729C6BA0DE /* MagicExt-OAuth */,
+				6CD50FC8162387236C4D88729C6BA0DE /* MagicExt_OAuth.framework */,
 				06BDF8B8934FBA798A454AD8F8DA6281 /* MagicSDK.framework */,
-				0D5E19DFC745E758B50BB4A6001372FF /* MagicSDK-Web3 */,
+				0D5E19DFC745E758B50BB4A6001372FF /* MagicSDK_Web3.framework */,
 				5731FD74D2C5609383792889F0189BF8 /* NFCReaderWriter */,
 				BF24AD5044EDAFA097173CE43B7C3E0F /* Pods-credenzapassport_Example */,
 				69D41DAC3A59D629B399D86816F7334F /* Pods-credenzapassport_Tests */,
@@ -2088,7 +2088,7 @@
 			);
 			name = "MagicSDK-Web3";
 			productName = MagicSDK_Web3;
-			productReference = 0D5E19DFC745E758B50BB4A6001372FF /* MagicSDK-Web3 */;
+			productReference = 0D5E19DFC745E758B50BB4A6001372FF /* MagicSDK_Web3.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		F33DF515B0A10683D4C4583FAD68EE8E /* MagicSDK */ = {
@@ -2127,7 +2127,7 @@
 			);
 			name = "MagicExt-OAuth";
 			productName = MagicExt_OAuth;
-			productReference = 6CD50FC8162387236C4D88729C6BA0DE /* MagicExt-OAuth */;
+			productReference = 6CD50FC8162387236C4D88729C6BA0DE /* MagicExt_OAuth.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -2874,6 +2874,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_PREFIX_HEADER = "Target Support Files/MagicSDK/MagicSDK-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/MagicSDK/MagicSDK-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -3004,6 +3005,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_PREFIX_HEADER = "Target Support Files/MagicExt-OAuth/MagicExt-OAuth-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/MagicExt-OAuth/MagicExt-OAuth-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -3131,6 +3133,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_PREFIX_HEADER = "Target Support Files/MagicExt-OAuth/MagicExt-OAuth-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/MagicExt-OAuth/MagicExt-OAuth-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -3534,6 +3537,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_PREFIX_HEADER = "Target Support Files/MagicSDK-Web3/MagicSDK-Web3-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/MagicSDK-Web3/MagicSDK-Web3-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -3566,6 +3570,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_PREFIX_HEADER = "Target Support Files/MagicSDK/MagicSDK-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/MagicSDK/MagicSDK-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -3632,6 +3637,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_PREFIX_HEADER = "Target Support Files/MagicSDK-Web3/MagicSDK-Web3-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/MagicSDK-Web3/MagicSDK-Web3-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
