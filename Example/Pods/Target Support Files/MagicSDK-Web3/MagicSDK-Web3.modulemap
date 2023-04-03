@@ -1,0 +1,6 @@
+framework module MagicSDK_Web3 {
+  umbrella header "MagicSDK-Web3-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -1,0 +1,12 @@
+use_frameworks!
+
+platform :ios, '15.0'
+
+target 'credenzapassport_Example' do
+  pod 'credenzapassport', :path => '../credenzapassport'
+  target 'credenzapassport_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
