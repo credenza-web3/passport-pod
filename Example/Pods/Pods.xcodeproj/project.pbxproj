@@ -126,7 +126,7 @@
 		60A5C4DBFC5113D534006BE6D95B4EF6 /* EthereumSyncStatusObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C0200E25A8CE8DCCCE9DC6D69625426 /* EthereumSyncStatusObject.swift */; };
 		60DC18DC77C5EFC6EE84901F710AA1AA /* scalar.h in Headers */ = {isa = PBXBuildFile; fileRef = F87A3F7145BFCF737C33C4FE0D2411D4 /* scalar.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		61349ED6A3CC4B76CAF4B46BA5C9BEFA /* UnsignedInteger+Shifting.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7E42546CAAF34397B2F7FF57418782 /* UnsignedInteger+Shifting.swift */; };
-		6141E57F26E63BBC359275993D7854D8 /* youtube-ios-player-helper-swift-youtube-ios-player-helper-swift in Resources */ = {isa = PBXBuildFile; fileRef = CE9794097617C061A1F5788DF89644AE /* youtube-ios-player-helper-swift-youtube-ios-player-helper-swift */; };
+		6141E57F26E63BBC359275993D7854D8 /* youtube-ios-player-helper-swift.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CE9794097617C061A1F5788DF89644AE /* youtube-ios-player-helper-swift.bundle */; };
 		62B30148720B708C6643AA8948D296B9 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D86B18FD4C789CB417F9BAF6187194A0 /* Utils.swift */; };
 		63039001F791D1930B98D010A6B1010A /* Pods-credenzapassport_Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1E4437255C14CF4918E17B6EAD7D74FF /* Pods-credenzapassport_Example-dummy.m */; };
 		66CB79EFE169667FBAA0A573AFB0BAEE /* num_gmp.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E53B0A63E47E2D7627FB2EC4E3E61C /* num_gmp.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -507,14 +507,14 @@
 /* Begin PBXFileReference section */
 		0005F4E1DFB9D459F0B72361A19BEF3C /* EthereumQuantity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = EthereumQuantity.swift; path = "MagicSDK-Web3/Classes/Core/Json/EthereumQuantity.swift"; sourceTree = "<group>"; };
 		0027EF4FD9694947154A22E5D0FF3591 /* OIDType.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OIDType.swift; path = "Sources/MagicExt-OAuth/Types/OIDType.swift"; sourceTree = "<group>"; };
-		002B1E88BA14EBF633CD66EBFBA107E9 /* PromiseKit */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = PromiseKit; path = PromiseKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		002B1E88BA14EBF633CD66EBFBA107E9 /* PromiseKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PromiseKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		00B18D4EF9CB6D428651294E67D81D4F /* NFCReader.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = NFCReader.h; path = Sources/NFCReaderWriter/NFCReader.h; sourceTree = "<group>"; };
 		015FD81F37F675B5DE0DE0B3C71A236A /* lax_der_privatekey_parsing.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = lax_der_privatekey_parsing.c; path = secp256k1/Classes/secp256k1/contrib/lax_der_privatekey_parsing.c; sourceTree = "<group>"; };
 		02801715EDB8CEE577A39B7F58D77685 /* DigestType.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DigestType.swift; path = Sources/CryptoSwift/DigestType.swift; sourceTree = "<group>"; };
 		04DA9D8CFA9E3B3C4AA281309162D3BB /* MagicExt-OAuth.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "MagicExt-OAuth.debug.xcconfig"; sourceTree = "<group>"; };
 		0504617398336832A254B9CF3A27EF6B /* PKCS7Padding.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PKCS7Padding.swift; path = Sources/CryptoSwift/PKCS/PKCS7Padding.swift; sourceTree = "<group>"; };
 		0692D9FA63773BD010C62C9995CF52C4 /* Rabbit+Foundation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Rabbit+Foundation.swift"; path = "Sources/CryptoSwift/Foundation/Rabbit+Foundation.swift"; sourceTree = "<group>"; };
-		06BDF8B8934FBA798A454AD8F8DA6281 /* MagicSDK */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = MagicSDK; path = MagicSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		06BDF8B8934FBA798A454AD8F8DA6281 /* MagicSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MagicSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		07B537A8CC490B379F8AE9793A5CA25D /* Shifts.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Shifts.swift; path = Sources/Shifts.swift; sourceTree = "<group>"; };
 		08AC7DFFAC3FF5C59236C35D963B834F /* Pods-credenzapassport_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-credenzapassport_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		08B96B8E3ADE3A9EACED1F053CA39CF4 /* field_impl.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = field_impl.h; path = secp256k1/Classes/secp256k1/src/field_impl.h; sourceTree = "<group>"; };
@@ -605,7 +605,7 @@
 		3EF96EDF87032C260EC165C50C550ED1 /* eckey.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = eckey.h; path = secp256k1/Classes/secp256k1/src/eckey.h; sourceTree = "<group>"; };
 		3F13225B25368E5FB307DA7FDD036E61 /* CryptoSwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = CryptoSwift.debug.xcconfig; sourceTree = "<group>"; };
 		40719B3F8A1C5DBBD06E86903EE7704F /* SolidityType.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SolidityType.swift; path = "MagicSDK-Web3/Classes/ContractABI/ABI/SolidityType.swift"; sourceTree = "<group>"; };
-		40CCE1281164DE769303759678296832 /* secp256k1.swift */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = secp256k1.swift; path = secp256k1.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		40CCE1281164DE769303759678296832 /* secp256k1.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = secp256k1.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		41925E8DE759C901E6334FD7A660D074 /* secp256k1.swift-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "secp256k1.swift-prefix.pch"; sourceTree = "<group>"; };
 		41D16B48C97F7DDCF2C9E752F45D3744 /* Pods-credenzapassport_Example-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-credenzapassport_Example-acknowledgements.plist"; sourceTree = "<group>"; };
 		42FD431BB8462A6A40BF787E7E4FC187 /* secp256k1_ecdh.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = secp256k1_ecdh.h; path = secp256k1/Classes/secp256k1/include/secp256k1_ecdh.h; sourceTree = "<group>"; };
@@ -725,7 +725,7 @@
 		912E5A09EAC62B9FA05F98A1FD6C9C7A /* MagicSDK-Web3-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "MagicSDK-Web3-Info.plist"; sourceTree = "<group>"; };
 		9141ED78D9836B2B7404B8956CC34583 /* BlockMode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BlockMode.swift; path = Sources/CryptoSwift/BlockMode/BlockMode.swift; sourceTree = "<group>"; };
 		91B3739117F9E337D597E4E5CCE498B0 /* AnyPromise.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = AnyPromise.m; path = Sources/AnyPromise.m; sourceTree = "<group>"; };
-		91BB24BA472AF523E913108C9AA301F2 /* BigInt */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = BigInt; path = BigInt.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		91BB24BA472AF523E913108C9AA301F2 /* BigInt.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BigInt.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		91E4EDC0AD4464A09F03CF0318ACD481 /* Bit.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Bit.swift; path = Sources/CryptoSwift/Bit.swift; sourceTree = "<group>"; };
 		93EFD11CCC5EE980F384B17C0B2079C8 /* EthereumContract.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = EthereumContract.swift; path = "MagicSDK-Web3/Classes/ContractABI/Contract/EthereumContract.swift"; sourceTree = "<group>"; };
 		9466BE2C9500CAC16FAE82A711B6044A /* PBKDF2.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PBKDF2.swift; path = Sources/CryptoSwift/PKCS/PBKDF2.swift; sourceTree = "<group>"; };
@@ -817,12 +817,12 @@
 		CB4E770083B9D194B701CA1BE3BC54BA /* ChaCha20+Foundation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "ChaCha20+Foundation.swift"; path = "Sources/CryptoSwift/Foundation/ChaCha20+Foundation.swift"; sourceTree = "<group>"; };
 		CD4E927BD601A3309C8E9485715EA297 /* Data+BytesConvertible.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Data+BytesConvertible.swift"; path = "MagicSDK-Web3/Classes/Core/Toolbox/Data+BytesConvertible.swift"; sourceTree = "<group>"; };
 		CE1A2AC778CB877F15E4F5CE0CCC1649 /* secp256k1_ec_mult_static_context.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = secp256k1_ec_mult_static_context.h; path = secp256k1/Classes/secp256k1_ec_mult_static_context.h; sourceTree = "<group>"; };
-		CE9794097617C061A1F5788DF89644AE /* youtube-ios-player-helper-swift-youtube-ios-player-helper-swift */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = "youtube-ios-player-helper-swift-youtube-ios-player-helper-swift"; path = "youtube-ios-player-helper-swift.bundle"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CE9794097617C061A1F5788DF89644AE /* youtube-ios-player-helper-swift.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "youtube-ios-player-helper-swift.bundle"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEBDC53F366F1485DF10E1215AB346D6 /* Bytes+TrimLeadingZeros.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Bytes+TrimLeadingZeros.swift"; path = "MagicSDK-Web3/Classes/Core/Toolbox/Bytes+TrimLeadingZeros.swift"; sourceTree = "<group>"; };
 		D05F1DE5169D0BA71ED3D88850D163D4 /* Web3+HTTPInitializer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Web3+HTTPInitializer.swift"; path = "MagicSDK-Web3/Classes/FoundationHTTP/Web3+HTTPInitializer.swift"; sourceTree = "<group>"; };
 		D0AA366CFE79CF30B98B23124C82BC60 /* scratch.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = scratch.h; path = secp256k1/Classes/secp256k1/src/scratch.h; sourceTree = "<group>"; };
 		D1AA7DF2A74228A2DC921A1D9525CF1D /* BigUInt+BytesConvertible.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "BigUInt+BytesConvertible.swift"; path = "MagicSDK-Web3/Classes/Core/Toolbox/BigUInt+BytesConvertible.swift"; sourceTree = "<group>"; };
-		D1B9006797130CCA0509E62885056FF4 /* youtube-ios-player-helper-swift */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "youtube-ios-player-helper-swift"; path = youtube_ios_player_helper_swift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D1B9006797130CCA0509E62885056FF4 /* youtube_ios_player_helper_swift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = youtube_ios_player_helper_swift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1D36E0B78BA80927AD60CB5213EFC6A /* AEAD.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AEAD.swift; path = Sources/CryptoSwift/AEAD/AEAD.swift; sourceTree = "<group>"; };
 		D25FC1F886D5A7AAA23010D16361F816 /* Cryptor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Cryptor.swift; path = Sources/CryptoSwift/Cryptor.swift; sourceTree = "<group>"; };
 		D2CB8F44CE9C97771D638AEE50CBB37A /* AES.Cryptors.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AES.Cryptors.swift; path = Sources/CryptoSwift/AES.Cryptors.swift; sourceTree = "<group>"; };
@@ -1376,19 +1376,19 @@
 		9C4EB607074B63550C13E058E219459E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				91BB24BA472AF523E913108C9AA301F2 /* BigInt */,
+				91BB24BA472AF523E913108C9AA301F2 /* BigInt.framework */,
 				6C8E6AB6D9C404A1137161C169A08DE6 /* credenzapassport */,
 				F81274EDB681F11E7CB05F7DCA2BB33C /* CryptoSwift */,
 				6CD50FC8162387236C4D88729C6BA0DE /* MagicExt-OAuth */,
-				06BDF8B8934FBA798A454AD8F8DA6281 /* MagicSDK */,
+				06BDF8B8934FBA798A454AD8F8DA6281 /* MagicSDK.framework */,
 				0D5E19DFC745E758B50BB4A6001372FF /* MagicSDK-Web3 */,
 				5731FD74D2C5609383792889F0189BF8 /* NFCReaderWriter */,
 				BF24AD5044EDAFA097173CE43B7C3E0F /* Pods-credenzapassport_Example */,
 				69D41DAC3A59D629B399D86816F7334F /* Pods-credenzapassport_Tests */,
-				002B1E88BA14EBF633CD66EBFBA107E9 /* PromiseKit */,
-				40CCE1281164DE769303759678296832 /* secp256k1.swift */,
-				D1B9006797130CCA0509E62885056FF4 /* youtube-ios-player-helper-swift */,
-				CE9794097617C061A1F5788DF89644AE /* youtube-ios-player-helper-swift-youtube-ios-player-helper-swift */,
+				002B1E88BA14EBF633CD66EBFBA107E9 /* PromiseKit.framework */,
+				40CCE1281164DE769303759678296832 /* secp256k1.framework */,
+				D1B9006797130CCA0509E62885056FF4 /* youtube_ios_player_helper_swift.framework */,
+				CE9794097617C061A1F5788DF89644AE /* youtube-ios-player-helper-swift.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1908,7 +1908,7 @@
 			);
 			name = BigInt;
 			productName = BigInt;
-			productReference = 91BB24BA472AF523E913108C9AA301F2 /* BigInt */;
+			productReference = 91BB24BA472AF523E913108C9AA301F2 /* BigInt.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		2213CA2A540DD9598AA3D51E6591493B /* youtube-ios-player-helper-swift */ = {
@@ -1927,7 +1927,7 @@
 			);
 			name = "youtube-ios-player-helper-swift";
 			productName = youtube_ios_player_helper_swift;
-			productReference = D1B9006797130CCA0509E62885056FF4 /* youtube-ios-player-helper-swift */;
+			productReference = D1B9006797130CCA0509E62885056FF4 /* youtube_ios_player_helper_swift.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		3153D1329350B702E037E34741271C1C /* NFCReaderWriter */ = {
@@ -1963,7 +1963,7 @@
 			);
 			name = secp256k1.swift;
 			productName = secp256k1;
-			productReference = 40CCE1281164DE769303759678296832 /* secp256k1.swift */;
+			productReference = 40CCE1281164DE769303759678296832 /* secp256k1.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		77ED297F2F4FCA19034B2BEEBABE669B /* youtube-ios-player-helper-swift-youtube-ios-player-helper-swift */ = {
@@ -1980,7 +1980,7 @@
 			);
 			name = "youtube-ios-player-helper-swift-youtube-ios-player-helper-swift";
 			productName = "youtube-ios-player-helper-swift";
-			productReference = CE9794097617C061A1F5788DF89644AE /* youtube-ios-player-helper-swift-youtube-ios-player-helper-swift */;
+			productReference = CE9794097617C061A1F5788DF89644AE /* youtube-ios-player-helper-swift.bundle */;
 			productType = "com.apple.product-type.bundle";
 		};
 		7C579CE66A1E7A9AA33CA5F97F9C22C5 /* PromiseKit */ = {
@@ -1998,7 +1998,7 @@
 			);
 			name = PromiseKit;
 			productName = PromiseKit;
-			productReference = 002B1E88BA14EBF633CD66EBFBA107E9 /* PromiseKit */;
+			productReference = 002B1E88BA14EBF633CD66EBFBA107E9 /* PromiseKit.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		99313990C1D76A6D1D017868B6975CC8 /* CryptoSwift */ = {
@@ -2108,7 +2108,7 @@
 			);
 			name = MagicSDK;
 			productName = MagicSDK;
-			productReference = 06BDF8B8934FBA798A454AD8F8DA6281 /* MagicSDK */;
+			productReference = 06BDF8B8934FBA798A454AD8F8DA6281 /* MagicSDK.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		F54FAADE217D925C05700D6681367649 /* MagicExt-OAuth */ = {
@@ -2174,7 +2174,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6141E57F26E63BBC359275993D7854D8 /* youtube-ios-player-helper-swift-youtube-ios-player-helper-swift in Resources */,
+				6141E57F26E63BBC359275993D7854D8 /* youtube-ios-player-helper-swift.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2754,7 +2754,7 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/youtube-ios-player-helper-swift";
 				IBSC_MODULE = youtube_ios_player_helper_swift;
 				INFOPLIST_FILE = "Target Support Files/youtube-ios-player-helper-swift/ResourceBundle-youtube-ios-player-helper-swift-youtube-ios-player-helper-swift-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				PRODUCT_NAME = "youtube-ios-player-helper-swift";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -2844,7 +2844,7 @@
 				GCC_PREFIX_HEADER = "Target Support Files/BigInt/BigInt-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/BigInt/BigInt-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/BigInt/BigInt.modulemap";
 				PRODUCT_MODULE_NAME = BigInt;
@@ -2864,7 +2864,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 58534F4B1F8A826727075477BBBDB715 /* MagicSDK.debug.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -2880,6 +2880,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/MagicSDK/MagicSDK.modulemap";
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_MODULE_NAME = MagicSDK;
 				PRODUCT_NAME = MagicSDK;
 				SDKROOT = iphoneos;
@@ -2942,7 +2943,7 @@
 				GCC_PREFIX_HEADER = "Target Support Files/secp256k1.swift/secp256k1.swift-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/secp256k1.swift/secp256k1.swift-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/secp256k1.swift/secp256k1.swift.modulemap";
 				PRODUCT_MODULE_NAME = secp256k1;
@@ -2974,7 +2975,7 @@
 				GCC_PREFIX_HEADER = "Target Support Files/youtube-ios-player-helper-swift/youtube-ios-player-helper-swift-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/youtube-ios-player-helper-swift/youtube-ios-player-helper-swift-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/youtube-ios-player-helper-swift/youtube-ios-player-helper-swift.modulemap";
 				PRODUCT_MODULE_NAME = youtube_ios_player_helper_swift;
@@ -3070,7 +3071,7 @@
 				GCC_PREFIX_HEADER = "Target Support Files/PromiseKit/PromiseKit-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/PromiseKit/PromiseKit-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/PromiseKit/PromiseKit.modulemap";
 				PRODUCT_MODULE_NAME = PromiseKit;
@@ -3101,7 +3102,7 @@
 				GCC_PREFIX_HEADER = "Target Support Files/secp256k1.swift/secp256k1.swift-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/secp256k1.swift/secp256k1.swift-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/secp256k1.swift/secp256k1.swift.modulemap";
 				PRODUCT_MODULE_NAME = secp256k1;
@@ -3164,7 +3165,7 @@
 				GCC_PREFIX_HEADER = "Target Support Files/youtube-ios-player-helper-swift/youtube-ios-player-helper-swift-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/youtube-ios-player-helper-swift/youtube-ios-player-helper-swift-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/youtube-ios-player-helper-swift/youtube-ios-player-helper-swift.modulemap";
 				PRODUCT_MODULE_NAME = youtube_ios_player_helper_swift;
@@ -3416,7 +3417,7 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/youtube-ios-player-helper-swift";
 				IBSC_MODULE = youtube_ios_player_helper_swift;
 				INFOPLIST_FILE = "Target Support Files/youtube-ios-player-helper-swift/ResourceBundle-youtube-ios-player-helper-swift-youtube-ios-player-helper-swift-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				PRODUCT_NAME = "youtube-ios-player-helper-swift";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -3441,7 +3442,7 @@
 				GCC_PREFIX_HEADER = "Target Support Files/PromiseKit/PromiseKit-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/PromiseKit/PromiseKit-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/PromiseKit/PromiseKit.modulemap";
 				PRODUCT_MODULE_NAME = PromiseKit;
@@ -3555,7 +3556,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 30EE4E5F41BD2C57626497D555A72421 /* MagicSDK.release.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -3571,6 +3572,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/MagicSDK/MagicSDK.modulemap";
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_MODULE_NAME = MagicSDK;
 				PRODUCT_NAME = MagicSDK;
 				SDKROOT = iphoneos;
@@ -3665,7 +3667,7 @@
 				GCC_PREFIX_HEADER = "Target Support Files/BigInt/BigInt-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/BigInt/BigInt-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/BigInt/BigInt.modulemap";
 				PRODUCT_MODULE_NAME = BigInt;
