@@ -7,9 +7,9 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = 'credenzapassport'
+  s.name             = 'CredenzaPassport'
   s.version          = '0.1.0'
-  s.summary          = 'A very short detail description of credenzapassport.'
+  s.summary          = 'The PassportUtility class is used to handle NFC tag reading and writing for a passport-enabled tag.'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -17,9 +17,9 @@ Pod::Spec.new do |s|
 #   * Write the description between the DESC delimiters below.
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
- # s.description      = <<-DESC
-#TODO: Add long description of the pod here.
- #                      DESC
+  s.description      = <<-DESC
+  'It includes various methods for initializing credentials, reading NFC tags, interacting with smart contracts, and performing authentication.'
+                       DESC
 
   s.homepage         = 'https://github.com/credenza-web3/'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
@@ -30,7 +30,7 @@ Pod::Spec.new do |s|
 
   s.ios.deployment_target = '15.0'
 
-  s.source_files = 'credenzapassport/Classes/**/*'
+  s.source_files = 'CredenzaPassport/Classes/**/*'
   
   # s.resource_bundles = {
   #   'credenzapassport' => ['credenzapassport/Assets/*.png']
