@@ -7,7 +7,7 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = 'CredenzaPassport'
+  s.name             = 'credenzapassport'
   s.version          = '0.1.1'
   s.summary          = 'The PassportUtility class is used to handle NFC tag reading and writing for a passport-enabled tag.'
 
@@ -30,7 +30,7 @@ Pod::Spec.new do |s|
 
   s.ios.deployment_target = '15.0'
 
-  s.source_files = 'CredenzaPassport/Classes/**/*'
+  s.source_files = 'credenzapassport/Classes/**/*'
   
   # s.resource_bundles = {
   #   'credenzapassport' => ['credenzapassport/Assets/*.png']
