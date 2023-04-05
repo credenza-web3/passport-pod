@@ -11,7 +11,6 @@ import MagicSDK_Web3
 import Foundation
 
 public protocol PassportDelegate {
-    // Define expected delegate functions
     func loginComplete(address: String)
     func nfcScanComplete(address: String)
 }
@@ -23,19 +22,25 @@ It includes various methods for initializing credentials, reading NFC tags, inte
 open class PassportUtility: NSObject, NFCReaderDelegate {
     
     // MARK: Local Variables
+    
     /// The authentication token to be used for API calls.
     fileprivate var authenticationTokenC = ""
+    
     /// The address of the NFT smart contract.
     fileprivate var nftContractAddressC = ""
+    
     /// The address of the stored value smart contract.
     fileprivate var storedValueContractAddressC = ""
+    
     /// The address of the connected smart contract.
     fileprivate var connectedContractAddressC = ""
     
     /// An instance of the NFCReaderWriter class.
     public let readerWriter = NFCReaderWriter.sharedInstance()
+    
     /// An instance of the Magic class.
     let magic = Magic.shared
+    
     /// The PassportDelegate object used for delegation.
     fileprivate var delegation: PassportDelegate
     
@@ -49,12 +54,14 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     
     // MARK: - Helper methods
     
-    /// Initializes the credentials needed for API calls and smart contract interaction.
-    /// - Parameters:
-    ///   - authenticationToken: The authentication token to be used for API calls.
-    ///   - nftContractAddress: The address of the NFT smart contract.
-    ///   - storedValueContractAddress: The address of the stored value smart contract.
-    ///   - connectedContractAddress: The address of the connected smart contract.
+    /**
+     Initializes the credentials needed for API calls and smart contract interaction.
+     - Parameters:
+        - authenticationToken: The authentication token to be used for API calls.
+        - nftContractAddress: The address of the NFT smart contract.
+        - storedValueContractAddress: The address of the stored value smart contract.
+        - connectedContractAddress: The address of the connected smart contract.
+     */
     public func initializeCredentials(authenticationToken: String, nftContractAddress: String, storedValueContractAddress: String, connectedContractAddress: String) {
         self.authenticationTokenC = "https://deep-index.moralis.io/api/v2/\(authenticationToken)/logs?chain=rinkeby" // moralisURL
         self.nftContractAddressC = nftContractAddress
@@ -375,6 +382,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             return await withCheckedContinuation { continuation in
                 contract["confirmMembership"]?(add1,add2).call() { response, error in
                     if let response = response {
+                        
                         // Return response as a boolean
                         continuation.resume(returning: (response[""] as? Bool) ?? Bool())
                     } else {
@@ -396,6 +404,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     - Returns: A `BigUInt` representing the user's loyalty points.
     */
     public func loyaltyCheck(_ contractAddress: String, _ userAddress: String) async -> BigUInt {
+        
         // Get the ABI of the loyalty contract
         let contractABI = await getContractABI("LoyaltyContract");
         
@@ -612,10 +621,13 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     }
     
     //TODO: convert NONEs to THROWS
-    /// Returns the ABI (Application Binary Interface) of a smart contract.
-    ///
-    /// - Parameter contractName: The name of the smart contract.
-    /// - Returns: The ABI data of the smart contract.
+    
+    /**
+     Returns the ABI (Application Binary Interface) of a smart contract.
+    - Parameters:
+        - contractName: The name of the smart contract.
+     - Returns: The ABI data of the smart contract.
+    */
     func getContractABI(_ contractName: String) async -> Data {
         //TODO: cache the contract ABIs
         guard let thisurl = URL(string: "https://unpkg.com/@credenza-web3/contracts/artifacts/"+contractName+".json")
@@ -636,20 +648,25 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
                 
                 if let data = string.data(using: String.Encoding.utf8) {
                     do {
+                        
                         // Parse the JSON response into a dictionary.
                         dictonary = try JSONSerialization.jsonObject(with: data, options: []) as? [String:AnyObject] as NSDictionary?
                         
                         if let myDictionary = dictonary {
+                            
                             // Get the ABI data from the dictionary and convert it to UTF-8 encoded data.
                             guard let data = try? JSONSerialization.data(withJSONObject: myDictionary["abi"] as Any, options: []) else {
+                                
                                 // Return empty data if the ABI data cannot be retrieved.
                                 return Data(count: 0)
                             }
                             guard let Jase = String(data: data, encoding: String.Encoding.utf8) else {
+                                
                                 // Return empty data if the ABI data cannot be converted to a string.
                                 return Data(count: 0)
                             }
                             guard let contractABI = Jase.data(using: .utf8) else {
+                                
                                 // Return empty data if the ABI data cannot be converted to UTF-8 encoded data.
                                 return Data(count: 0)}
                             
@@ -663,16 +680,18 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         } catch let err {
             debugPrint(err)
         }
+        
         // Return empty data if an error occurs during the API request.
         return Data(count: 0)
     }
     
     // MARK: - Utilities
     
-    /// Returns a string containing information about the records in the given array of NFCNDEFMessage objects.
-    ///
-    /// - Parameter messages: An array of NFCNDEFMessage objects.
-    /// - Returns: A string containing information about the records in the given array of NFCNDEFMessage objects.
+    /**
+     Returns a string containing information about the records in the given array of NFCNDEFMessage objects.
+     - Parameter messages: An array of NFCNDEFMessage objects.
+     - Returns: A string containing information about the records in the given array of NFCNDEFMessage objects.
+     */
     public func contentsForMessages(_ messages: [NFCNDEFMessage]) -> String {
         var recordInfos = ""
         
@@ -694,9 +713,11 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         return recordInfos
     }
     
-    /// Given an NFC tag, this function returns information about it in a dictionary format.
-    /// - Parameter tag: an __NFCTag instance that represents the NFC tag.
-    /// - Returns: a dictionary with information about the tag.
+    /**
+     Given an NFC tag, this function returns information about it in a dictionary format.
+     - Parameter tag: an __NFCTag instance that represents the NFC tag.
+     - Returns: a dictionary with information about the tag.
+     */
     public func getTagInfos(_ tag: __NFCTag) -> [String: Any] {
         var infos: [String: Any] = [:]
         
@@ -753,8 +774,10 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         return infos
     }
     
-    /// This function is called when the NFC reader becomes active.
-    /// - Parameter session: an instance of NFCReader that represents the session.
+    /**
+     This function is called when the NFC reader becomes active.
+     - Parameter session: an instance of NFCReader that represents the session.
+     */
     public func readerDidBecomeActive(_ session: NFCReader) {
         print("Reader did become")
     }
@@ -769,9 +792,11 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         print("ERROR:\(error)")
         readerWriter.end()
     }
+    
     /// --------------------------------
     // MARK: - 3. NFC Tag Reader(iOS 13)
     /// --------------------------------
+   
     public func reader(_ session: NFCReader, didDetect tag: __NFCTag, didDetectNDEF message: NFCNDEFMessage) {
         //let thisTagId = readerWriter.tagIdentifier(with: tag)
         //let content = contentsForMessages([message])
