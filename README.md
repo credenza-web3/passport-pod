@@ -22,7 +22,7 @@ pod 'credenzapassport'
 
 ## Author
 
-sandyUPGRADED, sandy@macrodemic.com
+Credenza Dev Team, developer@credenza.com
 
 ## License
 
