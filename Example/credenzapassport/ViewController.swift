@@ -9,6 +9,7 @@
 import UIKit
 import credenzapassport
 import WebKit
+import NFCReaderWriter
 
 /*import NFCReaderWriter
 import MagicSDK
@@ -17,11 +18,11 @@ import Foundation
 
 class ViewController: UIViewController, PassportDelegate {
   
-    var pUtility:PassportUtility?
+    var pUtility: PassportUtility?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        pUtility=PassportUtility(delegate: self)
+        pUtility = PassportUtility(delegate: self)
         // Do any additional setup after loading the view.
         //handleSignIn()
         //authN()
@@ -34,6 +35,11 @@ class ViewController: UIViewController, PassportDelegate {
     
     @IBOutlet weak var emailID: UITextField!
 
+    @IBAction func scanQRCode(_ sender: UIButton) {
+        debugPrint("Opening scanner...")
+        pUtility?.scanQR(self)
+    }
+    
     @IBAction func login(_ sender: Any) {
         //print(emailID.text)
         //print("bobo")
@@ -77,7 +83,6 @@ class ViewController: UIViewController, PassportDelegate {
         }
     }
     
-
     func loginComplete(address: String) {
         print (address)
     }
@@ -87,6 +92,9 @@ class ViewController: UIViewController, PassportDelegate {
 
     }
     
+    func qrScannerSuccess(result: String) {
+        print(result)
+    }
   
 }
 

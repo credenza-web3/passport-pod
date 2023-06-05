@@ -8,47 +8,55 @@
 import MagicSDK_Web3
 import WebKit
 
+
 /// An instance of the Magic SDK
 public class Magic: NSObject {
+    // MARK: - Log Message Warning
+    public let MA_EXTENSION_ONLY_MSG = "This extension only works with Magic Auth API Keys"
     
-    // MARK: - Module
+    // MARK: - Modules
     public let user: UserModule
     public let auth: AuthModule
+    public let wallet: WalletModule
     
     // MARK: - Property
-    private let overlay: WebViewController
-    public var rpcProvider: RpcProvider
-    
+   public var rpcProvider: RpcProvider
+
     /// Shared instance of `Magic`
     public static var shared: Magic!
-    
+
     // MARK: - Initialization
-    
+
     /// Initialize an instance of `Magic`
     ///
     /// - Parameters:
     ///   - apiKey: Your client ID. From https://dashboard.Magic.com
-    ///   - ethNetwork: Network setting
-    public convenience init(apiKey: String, network: EthNetwork, locale: String = Locale.current.identifier) {
-        self.init(urlBuilder: URLBuilder(apiKey: apiKey, network: EthNetworkConfiguration(network: network), locale: locale))
+    ///   - ethNetwork: Etherum Network setting (ie. mainnet or goerli)
+    ///   - customNode: A custom RPC node 
+    public convenience init(apiKey: String, ethNetwork: EthNetwork, locale: String = Locale.current.identifier) {
+        self.init(urlBuilder: URLBuilder(apiKey: apiKey, network: ethNetwork, locale: locale))
     }
-    
+
     public convenience init(apiKey: String, customNode: CustomNodeConfiguration, locale: String = Locale.current.identifier) {
         self.init(urlBuilder: URLBuilder(apiKey: apiKey, customNode: customNode, locale: locale))
     }
-    
+
     public convenience init(apiKey: String, locale: String = Locale.current.identifier) {
-        self.init(urlBuilder: URLBuilder(apiKey: apiKey, network: EthNetworkConfiguration(network: apiKey.contains("live") ? EthNetwork.mainnet: EthNetwork.rinkeby), locale: locale))
+        self.init(urlBuilder: URLBuilder(apiKey: apiKey, network: EthNetwork.mainnet, locale: locale))
     }
-    
+
+    /// Core constructor
     private init(urlBuilder: URLBuilder) {
-        self.overlay = WebViewController(url: urlBuilder)
-        self.rpcProvider = RpcProvider(overlay: self.overlay, urlBuilder: urlBuilder)
-        self.user = UserModule(rpcProvider: self.rpcProvider)
-        self.auth = AuthModule(rpcProvider: self.rpcProvider)
-        super.init()
+         self.rpcProvider = RpcProvider(urlBuilder: urlBuilder)
+        
+         self.user = UserModule(rpcProvider: self.rpcProvider)
+         self.auth = AuthModule(rpcProvider: self.rpcProvider)
+         self.wallet = WalletModule(rpcProvider: self.rpcProvider)
+        
+         super.init()
     }
 }
+
 
 // Handles Specific RpcError
 extension Web3Response {

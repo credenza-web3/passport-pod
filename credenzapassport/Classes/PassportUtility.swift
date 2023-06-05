@@ -9,10 +9,13 @@ import NFCReaderWriter
 import MagicSDK
 import MagicSDK_Web3
 import Foundation
+import QRCodeSwiftScanner
+import UIKit
 
 public protocol PassportDelegate {
     func loginComplete(address: String)
     func nfcScanComplete(address: String)
+    func qrScannerSuccess(result: String)
 }
 
 /**
@@ -22,9 +25,6 @@ It includes various methods for initializing credentials, reading NFC tags, inte
 open class PassportUtility: NSObject, NFCReaderDelegate {
     
     // MARK: Local Variables
-    
-    /// The authentication token to be used for API calls.
-    fileprivate var authenticationTokenC = ""
     
     /// The address of the NFT smart contract.
     fileprivate var nftContractAddressC = ""
@@ -53,6 +53,11 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     }
     
     // MARK: - Helper methods
+    public func scanQR(_ viewController: UIViewController) {
+        let scanner = QRCodeScannerController()
+        scanner.delegate = self
+        viewController.present(scanner, animated: true, completion: nil)
+    }
     
     /**
      Initializes the credentials needed for API calls and smart contract interaction.
@@ -63,7 +68,6 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         - connectedContractAddress: The address of the connected smart contract.
      */
     public func initializeCredentials(authenticationToken: String, nftContractAddress: String, storedValueContractAddress: String, connectedContractAddress: String) {
-        self.authenticationTokenC = "https://deep-index.moralis.io/api/v2/\(authenticationToken)/logs?chain=rinkeby" // moralisURL
         self.nftContractAddressC = nftContractAddress
         self.storedValueContractAddressC = storedValueContractAddress
         self.connectedContractAddressC = connectedContractAddress
@@ -81,29 +85,9 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      Retrieves a version number from a specific smart contract.
      - Returns: An asynchronous task that returns the version number as a String.
      */
-    public func getVersion() async {
-        let versionNumber = await checkVersion("0x61ff3d77ab2befece7b1c8e0764ac973ad85a9ef", "LoyaltyContract")
+    public func getVersion(_ contractAddress: String, _ contractType: String) async {
+        let versionNumber = await checkVersion(contractAddress, contractType)
         print (versionNumber)
-    }
-    
-    ///Performs a GET request using the provided authentication token.
-    public func authN() {
-        do {
-            guard let url = NSURL(string: authenticationTokenC) else { return }
-            let request = NSMutableURLRequest(url: url as URL,
-                                              cachePolicy: .useProtocolCachePolicy,
-                                              timeoutInterval: 10.0)
-            request.httpMethod = "GET"
-            //request.httpBody = postData as Datad
-            let session = URLSession.shared
-            let dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
-                if (error != nil) {
-                    print(error as Any)
-                } else {
-                }
-            })
-            dataTask.resume()
-        }
     }
     
     /**
@@ -186,57 +170,6 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             print(error.localizedDescription)
         }
         return BigUInt()
-        
-    }
-    
-    /**
-     This function checks the ownership of an NFT (Non-Fungible Token) for the given Ethereum address. It constructs a contract instance, calls the 'balanceOfBatch' function to get the NFT balance, and then prints the response message or error message accordingly.
-     - Parameter address: The Ethereum address for which to check the NFT ownership.
-     */
-    public func checkNFTOwnership(_ address: String) {
-        do {
-            let web3 = Web3.init(provider: Magic.shared.rpcProvider)
-            /// Construct contract instance
-            guard let contractABI = """
-                        [{
-                              "inputs": [
-                                  {
-                                    "internalType": "address[]",
-                                    "name": "accounts",
-                                    "type": "address[]"
-                                  },
-                                  {
-                                    "internalType": "uint256[]",
-                                    "name": "ids",
-                                    "type": "uint256[]"
-                                  }
-                                ],
-                              "name": "balanceOfBatch",
-                              "outputs": [
-                                {
-                                  "internalType": "uint256[]",
-                                  "name": "",
-                                  "type": "uint256[]"
-                                }
-                              ],
-                              "stateMutability": "view",
-                              "type": "function"
-                            }]
-                    """.data(using: .utf8) else { return }
-            let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: nftContractAddressC))
-            
-            /// contract call
-            contract["balanceOfBatch"]?(["0xfb28530d9d065ec81e826fa61baa51748c1ee775"],[2]).call() { response, error in
-                if let response = response, let message = response[""] as? String {
-                    print(message.description)
-                } else {
-                    print(error?.localizedDescription ?? "Failed to get response")
-                }
-            }
-        } catch {
-            /// Error handling
-            print(error.localizedDescription)
-        }
         
     }
     
@@ -368,7 +301,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     */
     public func checkMembership(_ contractAddress: String, _ ownerAddress: String, _ userAddress: String) async -> Bool {
         
-        let contractABI = await getContractABI("MetadataMembershipContract");
+        let contractABI = await getContractABI("MembershipContract");
         
         do {
             let web3 = Web3.init(provider: Magic.shared.rpcProvider)
@@ -394,6 +327,35 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             print(error.localizedDescription)
         }
         return false
+    }
+    
+    public func getMembershipMetadata(_ contractAddress: String, _ ownerAddress: String, _ userAddress: String) async -> String {
+        
+        let contractABI = await getContractABI("MetadataMembershipContract");
+        
+        do {
+            let web3 = Web3.init(provider: Magic.shared.rpcProvider)
+            let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
+            
+            // Convert owner and user addresses to EthereumAddress objects
+            guard let add1 = try? EthereumAddress(hex: ownerAddress,eip55: false) else { return "" }
+            guard let add2 = try? EthereumAddress(hex: userAddress,eip55: false) else { return "" }
+            
+            // Make call to confirmMembership function of the contract
+            return await withCheckedContinuation { continuation in
+                contract["getMembershipMetadata"]?(add1,add2).call() { response, error in
+                    if let response = response {
+                        // Return response as a boolean
+                        continuation.resume(returning: (response[""] as? String) ?? "")
+                    } else {
+                        print(error?.localizedDescription ?? "Failed to get response")
+                    }
+                }
+            }
+        } catch {
+            print(error.localizedDescription)
+        }
+        return ""
     }
     
     /**
@@ -472,6 +434,117 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         }
         return
         
+    }
+    
+    public func convertPointsToCoins(_ contractAddress: String, _ recipientAddress: String, _ points: UInt) async {
+        
+        let contractABI = await getContractABI("LoyaltyContract");
+        
+        do {
+            let web3 = Web3.init(provider: Magic.shared.rpcProvider)
+            let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
+            guard let add2 = try? EthereumAddress(hex: recipientAddress,eip55: false) else { return }
+            let key = (Bundle.main.infoDictionary?["KRYPTKEY"] as? String) ?? ""
+            let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: key)
+            
+            web3.eth.getTransactionCount(address: myPrivateKey.address, block: .latest)
+                .done{ nonce in
+                    let transaction = contract["convertPointsToCoins"]?(add2, points).createTransaction(nonce: nonce, from: myPrivateKey.address, value: 0, gas: 150000, gasPrice: EthereumQuantity(quantity: 21.gwei))
+                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: 80001) else { return }
+                    let result = web3.eth.sendRawTransaction(transaction: signedTx)
+                    debugPrint(result)
+                }.done { txHash in
+                    print(txHash)
+                }.catch { error in
+                    print(error)
+                }
+        } catch {
+            print(error.localizedDescription)
+        }
+        return
+        
+    }
+    
+    public func loyaltyForfeit(_ contractAddress: String, _ recipientAddress: String, _ points: UInt) async {
+        
+        let contractABI = await getContractABI("LoyaltyContract");
+        
+        do {
+            let web3 = Web3.init(provider: Magic.shared.rpcProvider)
+            let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
+            guard let add2 = try? EthereumAddress(hex: recipientAddress,eip55: false) else { return }
+            let key = (Bundle.main.infoDictionary?["KRYPTKEY"] as? String) ?? ""
+            let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: key)
+            
+            web3.eth.getTransactionCount(address: myPrivateKey.address, block: .latest)
+                .done{ nonce in
+                    let transaction = contract["forfeitPoints"]?(add2, points).createTransaction(nonce: nonce, from: myPrivateKey.address, value: 0, gas: 150000, gasPrice: EthereumQuantity(quantity: 21.gwei))
+                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: 80001) else { return }
+                    let result = web3.eth.sendRawTransaction(transaction: signedTx)
+                    debugPrint(result)
+                }.done { txHash in
+                    print(txHash)
+                }.catch { error in
+                    print(error)
+                }
+        } catch {
+            print(error.localizedDescription)
+        }
+        return
+        
+    }
+    
+    public func loyaltyRedeem(_ contractAddress: String, _ recipientAddress: String, _ points: UInt, _ eventId: UInt) async {
+        
+        let contractABI = await getContractABI("LoyaltyContract");
+        
+        do {
+            let web3 = Web3.init(provider: Magic.shared.rpcProvider)
+            let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
+            guard let add2 = try? EthereumAddress(hex: recipientAddress,eip55: false) else { return }
+            let key = (Bundle.main.infoDictionary?["KRYPTKEY"] as? String) ?? ""
+            let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: key)
+            
+            web3.eth.getTransactionCount(address: myPrivateKey.address, block: .latest)
+                .done{ nonce in
+                    let transaction = contract["redeemPoints"]?(add2, points).createTransaction(nonce: nonce, from: myPrivateKey.address, value: 0, gas: 150000, gasPrice: EthereumQuantity(quantity: 21.gwei))
+                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: 80001) else { return }
+                    let result = web3.eth.sendRawTransaction(transaction: signedTx)
+                    debugPrint(result)
+                }.done { txHash in
+                    print(txHash)
+                }.catch { error in
+                    print(error)
+                }
+        } catch {
+            print(error.localizedDescription)
+        }
+        return
+        
+    }
+    
+    public func loyaltyLifetimeCheck(_ contractAddress: String, _ userAddress: String) async -> BigUInt {
+
+        let contractABI = await getContractABI("LoyaltyContract");
+        
+        do {
+            let web3 = Web3.init(provider: Magic.shared.rpcProvider)
+            let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
+            guard let add2 = try? EthereumAddress(hex: userAddress,eip55: false) else { return BigUInt() }
+            
+            return await withCheckedContinuation { continuation in
+                contract["checkLifetimePoints"]?(add2).call() { response, error in
+                    if let response = response {
+                        continuation.resume(returning: (response[""] as? BigUInt) ?? BigUInt())
+                    } else {
+                        print(error?.localizedDescription ?? "Failed to get response")
+                    }
+                }
+            }
+        } catch {
+            print(error.localizedDescription)
+        }
+        return BigUInt()
     }
     
     /**
@@ -862,6 +935,23 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
                 }
             }
         }
+    }
+    
+}
+
+// MARK: - Delegate for QR scanner
+extension PassportUtility: QRScannerCodeDelegate {
+    
+    public func qrScanner(_ controller: UIViewController, scanDidComplete result: String) {
+        self.delegation.qrScannerSuccess(result: result)
+    }
+    
+    public func qrScannerDidFail(_ controller: UIViewController, error: QRCodeError) {
+        debugPrint(error.localizedDescription)
+    }
+    
+    public func qrScannerDidCancel(_ controller: UIViewController) {
+        debugPrint("QRCodeScannerSwift did cancel")
     }
     
 }

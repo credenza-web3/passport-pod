@@ -216,11 +216,12 @@
 				TargetAttributes = {
 					607FACCF1AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
-						DevelopmentTeam = 88745BZEMU;
+						DevelopmentTeam = D354V7H7UG;
 						LastSwiftMigration = 0900;
 					};
 					607FACE41AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
+						DevelopmentTeam = D354V7H7UG;
 						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 607FACCF1AFB9204008FA782;
@@ -282,9 +283,9 @@
 				"${BUILT_PRODUCTS_DIR}/MagicSDK-Web3/MagicSDK_Web3.framework",
 				"${BUILT_PRODUCTS_DIR}/NFCReaderWriter/NFCReaderWriter.framework",
 				"${BUILT_PRODUCTS_DIR}/PromiseKit/PromiseKit.framework",
+				"${BUILT_PRODUCTS_DIR}/QRCodeSwiftScanner/QRCodeSwiftScanner.framework",
 				"${BUILT_PRODUCTS_DIR}/credenzapassport/credenzapassport.framework",
 				"${BUILT_PRODUCTS_DIR}/secp256k1.swift/secp256k1.framework",
-				"${BUILT_PRODUCTS_DIR}/youtube-ios-player-helper-swift/youtube_ios_player_helper_swift.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
@@ -295,9 +296,9 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MagicSDK_Web3.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NFCReaderWriter.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PromiseKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/QRCodeSwiftScanner.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/credenzapassport.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/secp256k1.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/youtube_ios_player_helper_swift.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -503,7 +504,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = credenzapassport_Example.entitlements;
-				DEVELOPMENT_TEAM = 88745BZEMU;
+				DEVELOPMENT_TEAM = D354V7H7UG;
 				INFOPLIST_FILE = credenzapassport/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
@@ -539,7 +540,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = D354V7H7UG;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
 					"$(inherited)",

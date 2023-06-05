@@ -183,9 +183,9 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/MagicSDK-Web3/MagicSDK_Web3.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/NFCReaderWriter/NFCReaderWriter.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PromiseKit/PromiseKit.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/QRCodeSwiftScanner/QRCodeSwiftScanner.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/credenzapassport/credenzapassport.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/secp256k1.swift/secp256k1.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/youtube-ios-player-helper-swift/youtube_ios_player_helper_swift.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/BigInt/BigInt.framework"
@@ -195,9 +195,9 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/MagicSDK-Web3/MagicSDK_Web3.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/NFCReaderWriter/NFCReaderWriter.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PromiseKit/PromiseKit.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/QRCodeSwiftScanner/QRCodeSwiftScanner.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/credenzapassport/credenzapassport.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/secp256k1.swift/secp256k1.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/youtube-ios-player-helper-swift/youtube_ios_player_helper_swift.framework"
 fi
 if [ "${COCOAPODS_PARALLEL_CODE_SIGN}" == "true" ]; then
   wait

@@ -50,46 +50,6 @@ open class PassportUtility:NSObject,NFCReaderDelegate {
         let collectionPrice: Double
     }
 
-    
-    public func authN(){
-        
-        var postData : Data;
-        let headers = [
-          "accept": "application/json",
-          "content-type": "application/json",
-          "X-API-Key": "4ouieBFuLE1J5icxWwsYiOY1VzPNxwQiQX4FfjWm9sTtjlFFm9sFbefxB83iNf2C"
-        ]
-        let parameters = ["timeout": 15, "address":"0x56bafed9ba9f918594505d93f283b26700ae1d9f"] as [String : Any]
-
-        
-        do {
-            try postData = JSONSerialization.data(withJSONObject: parameters, options: []);
-            let request = NSMutableURLRequest(url: NSURL(string:"https://deep-index.moralis.io/api/v2/0x56bafed9ba9f918594505d93f283b26700ae1d9f/logs?chain=rinkeby")! as URL,
-                                                cachePolicy: .useProtocolCachePolicy,
-                                                timeoutInterval: 10.0)
-            request.httpMethod = "GET"
-            request.allHTTPHeaderFields = headers
-            //request.httpBody = postData as Datad
-
-            let session = URLSession.shared
-            let dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
-              if (error != nil) {
-                print(error as Any)
-              } else {
-                let httpResponse = response as? HTTPURLResponse
-                let new1 = String(decoding: data!, as: UTF8.self)
-                //print(new1)
-              }
-            })
-            dataTask.resume()
-
-        } catch {
-            print(error)
-        }
-
-        
-    }
-
     //MARK: - Email Login with PromiEvents
     public func handleSignIn(_ emailAddress: String) {
         let magic = Magic.shared
@@ -134,55 +94,7 @@ open class PassportUtility:NSObject,NFCReaderDelegate {
             print("Error loading accounts and balance: \(error)")
         }
     }
-    
-    public func checkNFTOwnership(_ address:String) {
-
-            do {
-                var web3 = Web3.init(provider: Magic.shared.rpcProvider)
-
-                /// Construct contract instance
-                let contractABI = """
-                        [{
-                              "inputs": [
-                                  {
-                                    "internalType": "address[]",
-                                    "name": "accounts",
-                                    "type": "address[]"
-                                  },
-                                  {
-                                    "internalType": "uint256[]",
-                                    "name": "ids",
-                                    "type": "uint256[]"
-                                  }
-                                ],
-                              "name": "balanceOfBatch",
-                              "outputs": [
-                                {
-                                  "internalType": "uint256[]",
-                                  "name": "",
-                                  "type": "uint256[]"
-                                }
-                              ],
-                              "stateMutability": "view",
-                              "type": "function"
-                            }]
-                    """.data(using: .utf8)!
-                let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: "0x4d20968f609bf10e06495529590623d5d858c5c7"))
-
-                /// contract call
-                contract["balanceOfBatch"]?(["0xfb28530d9d065ec81e826fa61baa51748c1ee775"],[2]).call() { response, error in
-                    if let response = response, let message = response[""] as? String {
-                        print(message.description)
-                    } else {
-                        print(error?.localizedDescription ?? "Failed to get response")
-                    }
-                }
-            } catch {
-                /// Error handling
-                print(error.localizedDescription)
-            }
-        }
-    
+        
     public func checkMembershipOwnership (_ contractAddress:String, _ contractType:String, _ contractABI:Data) async {
         
         //callAPI("https://unpkg.com/@credenza-web3/contracts/artifacts/LoyaltyContract.json");
