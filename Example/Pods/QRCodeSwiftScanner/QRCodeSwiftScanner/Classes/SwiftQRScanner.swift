@@ -3,7 +3,7 @@
 import UIKit
 import CoreGraphics
 import AVFoundation
-
+import PhotosUI
 
 /**
  QRCodeScannerController is ViewController which calls up method which presents view with AVCaptureSession and previewLayer
@@ -26,6 +26,7 @@ public class QRCodeScannerController: UIViewController,
     private let delayCount: Int = 15
     private let roundButtonHeight: CGFloat = 50.0
     private let roundButtonWidth: CGFloat = 50.0
+    private var isAlreadyPresenting = false
     var photoPicker: NSObject?
     
     //Initialise CaptureDevice
@@ -108,7 +109,21 @@ public class QRCodeScannerController: UIViewController,
     
     override public func viewDidLoad() {
         super.viewDidLoad()
+
+        requestCameraPermission { granted in
+            if granted {
+                // Camera and photo library permission granted
+                DispatchQueue.main.async {
+                    self.setupNavigationBar()
+                    self.prepareQRScannerView()
+                    self.startScanningQRCode()
+                }
+            }
+        }
         
+    }
+
+    func setupNavigationBar() {
         let navigationBar = UINavigationBar(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 44))
         navigationBar.shadowImage = UIImage()
         view.addSubview(navigationBar)
@@ -124,12 +139,6 @@ public class QRCodeScannerController: UIViewController,
         title.leftBarButtonItem = cancelBarButton
         navigationBar.setItems([title], animated: false)
         self.presentationController?.delegate = self
-        
-        //Currently only "Portraint" mode is supported
-        UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
-        _delayCount = 0
-        prepareQRScannerView()
-        startScanningQRCode()
     }
     
     override public func viewWillAppear(_ animated: Bool) {
@@ -137,10 +146,28 @@ public class QRCodeScannerController: UIViewController,
         addButtons()
     }
     
+    func requestCameraPermission(completion: @escaping (Bool) -> Void) {
+        
+        AVCaptureDevice.requestAccess(for: .video) { [weak self] (granted) in
+            guard let `self` = self else {
+                return
+            }
+            if !granted {
+                completion(granted)
+                self.delegate?.qrScannerDidFail(self, error: .cameraPermissionDenied)
+            } else {
+                completion(granted)
+            }
+        }
+    }
+    
     /** This calls up methods which makes code ready for scan codes.
      - parameter view: UIView in which you want to add scanner.
      */
     private func prepareQRScannerView() {
+        //Currently only "Portraint" mode is supported
+        UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
+        _delayCount = 0
         setupCaptureSession(devicePosition) //Default device capture position is rear
         addViedoPreviewLayer()
         addRoundCornerFrame()
@@ -188,6 +215,15 @@ public class QRCodeScannerController: UIViewController,
     
     
     @objc private func showImagePicker() {
+        if isAlreadyPresenting { return }
+        isAlreadyPresenting = true
+        
+        PHPhotoLibrary.requestAuthorization { status in
+            if status != .authorized {
+                self.delegate?.qrScannerDidFail(self, error: .photoLibraryPermissionDenied)
+            }
+        }
+        
         if #available(iOS 14, *) {
             if let picker = photoPicker as? PHPhotoPicker {
                 picker.present()
@@ -196,6 +232,9 @@ public class QRCodeScannerController: UIViewController,
             if let picker = photoPicker as? PhotoPicker {
                 picker.present(from: self.view)
             }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            self.isAlreadyPresenting = false
         }
         
     }

@@ -16,6 +16,8 @@ public protocol PassportDelegate {
     func loginComplete(address: String)
     func nfcScanComplete(address: String)
     func qrScannerSuccess(result: String)
+    func qrScannerDidFail(error: Error)
+    func qrScannerDidCancel()
 }
 
 /**
@@ -53,6 +55,12 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     }
     
     // MARK: - Helper methods
+
+    /**
+     Scans a QR code using the device's camera and presents the scanner view controller.
+     - Parameters:
+        - viewController: The view controller from which to present the scanner.
+     */
     public func scanQR(_ viewController: UIViewController) {
         let scanner = QRCodeScannerController()
         scanner.delegate = self
@@ -436,6 +444,13 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         
     }
     
+    /**
+     Many loyalty programs want to reward users by converting points to stored value. This transaction redeems points and increases stored value balances for recipient.
+    - Parameters:
+        - contractAddress: The address of the loyalty contract.
+        - recipientAddress: The address of the user's account to add points to.
+        - points: The number of points to add to the user's account.
+    */
     public func convertPointsToCoins(_ contractAddress: String, _ recipientAddress: String, _ points: UInt) async {
         
         let contractABI = await getContractABI("LoyaltyContract");
@@ -465,6 +480,13 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         
     }
     
+    /**
+     Separated from redemption, this is called if points expire or other activities cause a balance to be reduced by amount without any benefit going to the member recipient.
+    - Parameters:
+        - contractAddress: The address of the loyalty contract.
+        - recipientAddress: The address of the user's account to add points to.
+        - points: The number of points to add to the user's account.
+    */
     public func loyaltyForfeit(_ contractAddress: String, _ recipientAddress: String, _ points: UInt) async {
         
         let contractABI = await getContractABI("LoyaltyContract");
@@ -494,6 +516,13 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         
     }
     
+    /**
+     If points are to be converted into stored value or rewards, this can be called to reduce the current points balance for the recipient by pointsAmt, associated with a redemption event eventId.
+    - Parameters:
+        - contractAddress: The address of the loyalty contract.
+        - recipientAddress: The address of the user's account to add points to.
+        - points: The number of points to add to the user's account.
+    */
     public func loyaltyRedeem(_ contractAddress: String, _ recipientAddress: String, _ points: UInt, _ eventId: UInt) async {
         
         let contractABI = await getContractABI("LoyaltyContract");
@@ -523,6 +552,13 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         
     }
     
+    /**
+     Returns the balance of current points owned by recipient, which does NOT take all redemptions and forfeitures into account. This amount can only grow.
+    - Parameters:
+        - contractAddress: The address of the loyalty contract.
+        - recipientAddress: The address of the user's account to add points to.
+        - points: The number of points to add to the user's account.
+    */
     public func loyaltyLifetimeCheck(_ contractAddress: String, _ userAddress: String) async -> BigUInt {
 
         let contractABI = await getContractABI("LoyaltyContract");
@@ -941,17 +977,19 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
 
 // MARK: - Delegate for QR scanner
 extension PassportUtility: QRScannerCodeDelegate {
-    
+    /// It gets call when scanner did complete scanning QRCode.
     public func qrScanner(_ controller: UIViewController, scanDidComplete result: String) {
         self.delegation.qrScannerSuccess(result: result)
     }
     
+    /// It gets call when scanner did fail while scanning QRCode.
     public func qrScannerDidFail(_ controller: UIViewController, error: QRCodeError) {
-        debugPrint(error.localizedDescription)
+        self.delegation.qrScannerDidFail(error: error)
     }
     
+    /// It gets call when scanner did cancel before scanning QRCode.
     public func qrScannerDidCancel(_ controller: UIViewController) {
-        debugPrint("QRCodeScannerSwift did cancel")
+        self.delegation.qrScannerDidCancel()
     }
     
 }

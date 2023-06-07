@@ -84,17 +84,26 @@ class ViewController: UIViewController, PassportDelegate {
     }
     
     func loginComplete(address: String) {
-        print (address)
+        print(address)
     }
     
     func nfcScanComplete(address: String) {
-        print (address)
+        print(address)
 
     }
     
     func qrScannerSuccess(result: String) {
         print(result)
     }
+    
+    func qrScannerDidFail(error: Error) {
+        print(error.localizedDescription)
+    }
+    
+    func qrScannerDidCancel() {
+        print("QRCodeScanner did cancel")
+    }
+
   
 }
 

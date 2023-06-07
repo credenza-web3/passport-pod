@@ -6,6 +6,8 @@ public enum QRCodeError: Error {
     case inputFailed
     case outoutFailed
     case emptyResult
+    case cameraPermissionDenied
+    case photoLibraryPermissionDenied
 }
 
 extension QRCodeError: CustomStringConvertible {
@@ -17,6 +19,10 @@ extension QRCodeError: CustomStringConvertible {
             return "Failed to add output."
         case .emptyResult:
             return "Empty string found."
+        case .cameraPermissionDenied:
+            return "Camera Permission Denied"
+        case .photoLibraryPermissionDenied:
+            return "Photo Library Permission Denied"
         }
     }
 }
@@ -39,6 +45,14 @@ extension QRCodeError: LocalizedError {
                 "Empty string found.",
                 comment: "Empty string found."
             )
+        case .cameraPermissionDenied:
+            return NSLocalizedString(
+                "PermissionDenied",
+                comment: "Camera Permission Denied")
+        case .photoLibraryPermissionDenied:
+            return NSLocalizedString(
+                "PermissionDenied",
+                comment: "Photo Library Permission Denied")
         }
     }
 }

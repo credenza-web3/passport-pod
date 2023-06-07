@@ -1,6 +1,6 @@
 PODS:
   - BigInt (5.2.0)
-  - credenzapassport (1.0.1):
+  - credenzapassport (1.1.1):
     - MagicExt-OAuth
     - MagicSDK
     - MagicSDK-Web3
@@ -30,7 +30,7 @@ PODS:
     - PromiseKit/CorePromise (~> 6.0)
   - NFCReaderWriter (1.1.4)
   - PromiseKit/CorePromise (6.18.1)
-  - QRCodeSwiftScanner (0.1.0)
+  - QRCodeSwiftScanner (0.1.2)
   - secp256k1.swift (0.1.4)
 
 DEPENDENCIES:
@@ -54,14 +54,14 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   BigInt: f668a80089607f521586bbe29513d708491ef2f7
-  credenzapassport: cfb50e874de970eb6439743e2b9764e0c4f281e8
+  credenzapassport: 319de950ad8c39b93ec47dac709c6850729fa89d
   CryptoSwift: 01b0f0cba1d5c212e5a335ff6c054fb75a204f00
   MagicExt-OAuth: 5fb6da13cdb8b364ef1cbe6687e7d21c100507b1
   MagicSDK: 9994929943a8cd3f51ab25db9d7d1d562bc841a4
   MagicSDK-Web3: 53384d35658f56e909ec84b8644dfa0c637db9b6
   NFCReaderWriter: b21965d1b3b8c53f7648f58f597b77a13f6ecdc5
   PromiseKit: 49d70c53d5d20e346beaea4b276b5dd2ab446bb4
-  QRCodeSwiftScanner: 790383bf8e35fa40fe6421b5660093d695644c11
+  QRCodeSwiftScanner: db82a51c3cd794753a310990b97fb739fec6659a
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
 
 PODFILE CHECKSUM: 57c1a001c10f19289464351f50573ffcd57b722d
