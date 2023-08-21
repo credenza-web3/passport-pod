@@ -37,7 +37,7 @@ open class PassportUtility:NSObject,NFCReaderDelegate {
     // iOS 13 NFC Tag Reader: Tag Info and NFCNDEFMessage
     public func readNFC()  {
         //checkMembershipOwnership("a","b")
-         callChain("LoyaltyContract");
+         callChain("LedgerContract");
 
         readerWriter.newWriterSession(with: self, isLegacy: false, invalidateAfterFirstRead: true, alertMessage: "Scan Your Passport-Enabled Tag")
         readerWriter.begin()
@@ -97,7 +97,7 @@ open class PassportUtility:NSObject,NFCReaderDelegate {
         
     public func checkMembershipOwnership (_ contractAddress:String, _ contractType:String, _ contractABI:Data) async {
         
-        //callAPI("https://unpkg.com/@credenza-web3/contracts/artifacts/LoyaltyContract.json");
+        //callAPI("https://unpkg.com/@credenza-web3/contracts/artifacts/LedgerContract.json");
         do {
             var web3 = Web3.init(provider: Magic.shared.rpcProvider)
             

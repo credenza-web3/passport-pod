@@ -14,11 +14,6 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>MagicExt-OAuth.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>MagicSDK-Web3.xcscheme</key>
 		<dict>
 			<key>isShown</key>

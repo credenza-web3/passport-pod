@@ -60,7 +60,7 @@ class ViewController: UIViewController, PassportDelegate {
             print(c)
             
             let d = await pUtility!
-                .checkVersion("0x61ff3d77ab2befece7b1c8e0764ac973ad85a9ef","LoyaltyContract");
+                .checkVersion("0x61ff3d77ab2befece7b1c8e0764ac973ad85a9ef","LedgerContract");
             print(d)
             
             

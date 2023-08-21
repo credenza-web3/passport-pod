@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'credenzapassport'
-  s.version          = '1.1.2'
+  s.version          = '1.1.3'
   s.summary          = 'The PassportUtility class is used to handle NFC tag reading and writing for a passport-enabled tag.'
 
 # This description is used to generate tags and improve search results.
@@ -41,9 +41,9 @@ Pod::Spec.new do |s|
   # s.dependency 'AFNetworking', '~> 2.3'
   s.pod_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
   s.dependency 'NFCReaderWriter'
-  s.dependency 'MagicSDK'
+  s.dependency 'MagicSDK', '8.0.0'
   s.dependency 'QRCodeSwiftScanner'
-  s.dependency 'MagicExt-OAuth'
+#  s.dependency 'MagicExt-OAuth', '~> 2.0.0'
   s.dependency 'MagicSDK-Web3'
   s.swift_version = "5.0.0"
 end

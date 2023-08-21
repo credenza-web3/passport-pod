@@ -376,7 +376,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     public func loyaltyCheck(_ contractAddress: String, _ userAddress: String) async -> BigUInt {
         
         // Get the ABI of the loyalty contract
-        let contractABI = await getContractABI("LoyaltyContract");
+        let contractABI = await getContractABI("LedgerContract");
         
         do {
             // Create a Web3 object using the Magic RPC provider
@@ -417,7 +417,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     */
     public func loyaltyAdd(_ contractAddress: String, _ userAddress: String, _ points: UInt) async {
         
-        let contractABI = await getContractABI("LoyaltyContract");
+        let contractABI = await getContractABI("LedgerContract");
         
         do {
             let web3 = Web3.init(provider: Magic.shared.rpcProvider)
@@ -453,7 +453,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     */
     public func convertPointsToCoins(_ contractAddress: String, _ recipientAddress: String, _ points: UInt) async {
         
-        let contractABI = await getContractABI("LoyaltyContract");
+        let contractABI = await getContractABI("LedgerContract");
         
         do {
             let web3 = Web3.init(provider: Magic.shared.rpcProvider)
@@ -489,7 +489,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     */
     public func loyaltyForfeit(_ contractAddress: String, _ recipientAddress: String, _ points: UInt) async {
         
-        let contractABI = await getContractABI("LoyaltyContract");
+        let contractABI = await getContractABI("LedgerContract");
         
         do {
             let web3 = Web3.init(provider: Magic.shared.rpcProvider)
@@ -525,7 +525,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     */
     public func loyaltyRedeem(_ contractAddress: String, _ recipientAddress: String, _ points: UInt, _ eventId: UInt) async {
         
-        let contractABI = await getContractABI("LoyaltyContract");
+        let contractABI = await getContractABI("LedgerContract");
         
         do {
             let web3 = Web3.init(provider: Magic.shared.rpcProvider)
@@ -561,7 +561,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     */
     public func loyaltyLifetimeCheck(_ contractAddress: String, _ userAddress: String) async -> BigUInt {
 
-        let contractABI = await getContractABI("LoyaltyContract");
+        let contractABI = await getContractABI("LedgerContract");
         
         do {
             let web3 = Web3.init(provider: Magic.shared.rpcProvider)

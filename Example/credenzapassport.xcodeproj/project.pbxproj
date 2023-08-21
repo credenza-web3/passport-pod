@@ -46,7 +46,7 @@
 		9A05D40E8998DE561DD79983 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		A3ACAC4FDD886FD4B990C3B7 /* Pods-credenzapassport_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-credenzapassport_Example.release.xcconfig"; path = "Target Support Files/Pods-credenzapassport_Example/Pods-credenzapassport_Example.release.xcconfig"; sourceTree = "<group>"; };
 		A67771A5740A9F43E132ED85 /* Pods-credenzapassport_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-credenzapassport_Tests.release.xcconfig"; path = "Target Support Files/Pods-credenzapassport_Tests/Pods-credenzapassport_Tests.release.xcconfig"; sourceTree = "<group>"; };
-		AA7A00EE2D213299D07405D4 /* credenzapassport.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = credenzapassport.podspec; path = ../credenzapassport.podspec; sourceTree = "<group>"; };
+		AA7A00EE2D213299D07405D4 /* credenzapassport.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = credenzapassport.podspec; path = ../credenzapassport.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		E2E425FADF6D7204301A7697 /* Pods_credenzapassport_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_credenzapassport_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F2D3236B119AA25703549C50 /* Pods-credenzapassport_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-credenzapassport_Example.debug.xcconfig"; path = "Target Support Files/Pods-credenzapassport_Example/Pods-credenzapassport_Example.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -276,7 +276,6 @@
 				"${PODS_ROOT}/Target Support Files/Pods-credenzapassport_Example/Pods-credenzapassport_Example-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/BigInt/BigInt.framework",
 				"${BUILT_PRODUCTS_DIR}/CryptoSwift/CryptoSwift.framework",
-				"${BUILT_PRODUCTS_DIR}/MagicExt-OAuth/MagicExt_OAuth.framework",
 				"${BUILT_PRODUCTS_DIR}/MagicSDK/MagicSDK.framework",
 				"${BUILT_PRODUCTS_DIR}/MagicSDK-Web3/MagicSDK_Web3.framework",
 				"${BUILT_PRODUCTS_DIR}/NFCReaderWriter/NFCReaderWriter.framework",
@@ -289,7 +288,6 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BigInt.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CryptoSwift.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MagicExt_OAuth.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MagicSDK.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MagicSDK_Web3.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NFCReaderWriter.framework",

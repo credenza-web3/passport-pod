@@ -41,7 +41,7 @@ install_framework()
 
   if [ -L "${source}" ]; then
     echo "Symlinked..."
-    source="$(readlink "${source}")"
+    source="$(readlink -f "${source}")"
   fi
 
   if [ -d "${source}/${BCSYMBOLMAP_DIR}" ]; then
@@ -178,7 +178,6 @@ code_sign_if_enabled() {
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/BigInt/BigInt.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CryptoSwift/CryptoSwift.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/MagicExt-OAuth/MagicExt_OAuth.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/MagicSDK/MagicSDK.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/MagicSDK-Web3/MagicSDK_Web3.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/NFCReaderWriter/NFCReaderWriter.framework"
@@ -190,7 +189,6 @@ fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/BigInt/BigInt.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CryptoSwift/CryptoSwift.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/MagicExt-OAuth/MagicExt_OAuth.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/MagicSDK/MagicSDK.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/MagicSDK-Web3/MagicSDK_Web3.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/NFCReaderWriter/NFCReaderWriter.framework"
