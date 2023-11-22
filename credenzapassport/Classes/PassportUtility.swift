@@ -10,6 +10,7 @@ import MagicSDK
 import MagicSDK_Web3
 import Foundation
 import QRCodeSwiftScanner
+import PassKit
 import UIKit
 
 public protocol PassportDelegate {
@@ -21,13 +22,21 @@ public protocol PassportDelegate {
 }
 
 /**
-The PassportUtility class is used to handle NFC tag reading and writing for a passport-enabled tag.
-It includes various methods for initializing credentials, reading NFC tags, interacting with smart contracts, and performing authentication.
-*/
+ The PassportUtility class is used to handle NFC tag reading and writing for a passport-enabled tag.
+ It includes various methods for initializing credentials, reading NFC tags, interacting with smart contracts, and performing authentication.
+ */
 open class PassportUtility: NSObject, NFCReaderDelegate {
     
     // MARK: Local Variables
     
+    fileprivate var address: String = ""
+    fileprivate var token: String = ""
+    fileprivate var signature: String = ""
+    fileprivate var loginCode: String = ""
+    fileprivate var accessToken: String = ""
+    fileprivate var userId: String = ""
+    fileprivate var updatedAt: String = ""
+    fileprivate var activePassScanCompletion: ((String) -> Void)?
     /// The address of the NFT smart contract.
     fileprivate var nftContractAddressC = ""
     
@@ -46,6 +55,15 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     /// The PassportDelegate object used for delegation.
     fileprivate var delegation: PassportDelegate
     
+    fileprivate var shouldMakeStringCheck = false
+    
+    
+    private enum Errors: Error {
+        case notLoggedIn
+        case tokenUnavailable
+        case qrCodeGenerationError
+        case networkRequestFailed
+    }
     /**
      Initializes a new instance of the PassportUtility class.
      - Parameter delegate: The PassportDelegate object used for delegation.
@@ -55,11 +73,11 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     }
     
     // MARK: - Helper methods
-
+    
     /**
      Scans a QR code using the device's camera and presents the scanner view controller.
      - Parameters:
-        - viewController: The view controller from which to present the scanner.
+     - viewController: The view controller from which to present the scanner.
      */
     public func scanQR(_ viewController: UIViewController) {
         let scanner = QRCodeScannerController()
@@ -70,10 +88,10 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     /**
      Initializes the credentials needed for API calls and smart contract interaction.
      - Parameters:
-        - authenticationToken: The authentication token to be used for API calls.
-        - nftContractAddress: The address of the NFT smart contract.
-        - storedValueContractAddress: The address of the stored value smart contract.
-        - connectedContractAddress: The address of the connected smart contract.
+     - authenticationToken: The authentication token to be used for API calls.
+     - nftContractAddress: The address of the NFT smart contract.
+     - storedValueContractAddress: The address of the stored value smart contract.
+     - connectedContractAddress: The address of the connected smart contract.
      */
     public func initializeCredentials(authenticationToken: String, nftContractAddress: String, storedValueContractAddress: String, connectedContractAddress: String) {
         self.nftContractAddressC = nftContractAddress
@@ -99,9 +117,9 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     }
     
     /**
-     Handles sign-in for a given email address using Magic.link SDK.
+     Handles sign-in for a given email address                   using Magic.link SDK.
      - Parameters:
-        - emailAddress: An email address for which to perform sign-in.
+     - emailAddress: An email address for which to perform sign-in.
      - Note: Stores the login token in UserDefaults after successful authentication.
      */
     public func handleSignIn(_ emailAddress: String) {
@@ -115,6 +133,10 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         }.done { token -> Void in
             let defaults = UserDefaults.standard
             defaults.set(token, forKey: "Token")
+            print("Token",token)
+            self.token = token
+            print("provider",Magic.shared.user.provider.urlBuilder.apiKey)
+            
             self.getAccount();
         }.catch { error in
             print("Error", error)
@@ -125,7 +147,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     /**
      Gets the user's Ethereum public address using the Magic.link SDK and passes it to the `delegation` instance.
      - Note: Calls `loginComplete(address:)` of the `delegation` instance to pass the Ethereum public address to it.
-    */
+     */
     public func getAccount() {
         
         let web3 = Web3.init(provider: Magic.shared.rpcProvider)
@@ -136,7 +158,10 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         }.done { accounts -> Void in
             if let account = accounts.first {
                 // Set to UILa
+                let address = account.hex(eip55: false)
+                self.address = address
                 self.delegation.loginComplete(address: account.hex(eip55: false))
+                //                self.getloginCode()
             } else {
                 print("No Account Found")
             }
@@ -148,10 +173,10 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     /**
      Checks the balance of NFT (Non-Fungible Token) of a user for a given contract address.
      - Parameters:
-        - contractAddress: An Ethereum contract address for which to check NFT balance.
-        - userAddress: An Ethereum public address of the user whose NFT balance to check.
+     - contractAddress: An Ethereum contract address for which to check NFT balance.
+     - userAddress: An Ethereum public address of the user whose NFT balance to check.
      - Returns: The balance of NFT.
-    */
+     */
     public func nftCheck(_ contractAddress: String, _ userAddress: String) async -> BigUInt {
         
         let contractABI = await getContractABI("OzzieContract");
@@ -187,10 +212,10 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      constructs a contract instance, calls the 'getVersion' function to get the contract version,
      and then returns the version string or "NONE" if there was an error.
      - Parameters:
-       - contractAddress: The contract address for which to check the version.
-       - contractType: The type of the contract for which to check the version.
+     - contractAddress: The contract address for which to check the version.
+     - contractType: The type of the contract for which to check the version.
      - Returns: A string containing the contract version or "NONE" if there was an error.
-    */
+     */
     public func checkVersion(_ contractAddress: String, _ contractType: String) async -> String {
         
         let contractABI = await getContractABI(contractType);
@@ -217,15 +242,15 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     }
     
     /**
-    This asynchronous function adds a membership to the given contract address for the given user Ethereum address and metadata.
-    It gets the contract ABI (Application Binary Interface) using the 'getContractABI' function,
-    constructs a contract instance, and then creates a transaction to call the 'addMembership' function
-    with the given user address and metadata. It signs the transaction with the private key and then sends
-    the transaction to the network to be mined.
+     This asynchronous function adds a membership to the given contract address for the given user Ethereum address and metadata.
+     It gets the contract ABI (Application Binary Interface) using the 'getContractABI' function,
+     constructs a contract instance, and then creates a transaction to call the 'addMembership' function
+     with the given user address and metadata. It signs the transaction with the private key and then sends
+     the transaction to the network to be mined.
      - Parameters:
-        - contractAddress: The contract address to which to add the membership.
-        - userAddress: The Ethereum address of the user to add as a member.
-        - metadata: The metadata to associate with the membership.
+     - contractAddress: The contract address to which to add the membership.
+     - userAddress: The Ethereum address of the user to add as a member.
+     - metadata: The metadata to associate with the membership.
      */
     public func addMembership(_ contractAddress: String, _ userAddress: String, _ metadata: String) async {
         
@@ -259,8 +284,8 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     /**
      Removes membership of a user from a contract on the Ethereum blockchain.
      - Parameters:
-        - contractAddress: The Ethereum address of the contract.
-        - userAddress: The Ethereum address of the user whose membership needs to be removed.
+     - contractAddress: The Ethereum address of the contract.
+     - userAddress: The Ethereum address of the user whose membership needs to be removed.
      - Returns: Void.
      */
     public func removeMembership(_ contractAddress: String, _ userAddress: String) async {
@@ -300,13 +325,13 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     }
     
     /**
-    Checks if a user is a confirmed member of a contract on the Ethereum blockchain.
-    - Parameters:
-        - contractAddress: The Ethereum address of the contract.
-        - ownerAddress: The Ethereum address of the owner of the contract.
-        - userAddress: The Ethereum address of the user to be checked.
-    - Returns: A boolean value indicating whether the user is a confirmed member of the contract.
-    */
+     Checks if a user is a confirmed member of a contract on the Ethereum blockchain.
+     - Parameters:
+     - contractAddress: The Ethereum address of the contract.
+     - ownerAddress: The Ethereum address of the owner of the contract.
+     - userAddress: The Ethereum address of the user to be checked.
+     - Returns: A boolean value indicating whether the user is a confirmed member of the contract.
+     */
     public func checkMembership(_ contractAddress: String, _ ownerAddress: String, _ userAddress: String) async -> Bool {
         
         let contractABI = await getContractABI("MembershipContract");
@@ -367,12 +392,12 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     }
     
     /**
-    Calculates the loyalty points of a given user for the specified loyalty contract.
-    - Parameters:
-        - contractAddress: The Ethereum address of the loyalty contract.
-        - userAddress: The Ethereum address of the user to check loyalty points for.
-    - Returns: A `BigUInt` representing the user's loyalty points.
-    */
+     Calculates the loyalty points of a given user for the specified loyalty contract.
+     - Parameters:
+     - contractAddress: The Ethereum address of the loyalty contract.
+     - userAddress: The Ethereum address of the user to check loyalty points for.
+     - Returns: A `BigUInt` representing the user's loyalty points.
+     */
     public func loyaltyCheck(_ contractAddress: String, _ userAddress: String) async -> BigUInt {
         
         // Get the ABI of the loyalty contract
@@ -409,12 +434,12 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     }
     
     /**
-    Adds loyalty points to the user's account.
-    - Parameters:
-        - contractAddress: The address of the loyalty contract.
-        - userAddress: The address of the user's account to add points to.
-        - points: The number of points to add to the user's account.
-    */
+     Adds loyalty points to the user's account.
+     - Parameters:
+     - contractAddress: The address of the loyalty contract.
+     - userAddress: The address of the user's account to add points to.
+     - points: The number of points to add to the user's account.
+     */
     public func loyaltyAdd(_ contractAddress: String, _ userAddress: String, _ points: UInt) async {
         
         let contractABI = await getContractABI("LedgerContract");
@@ -446,11 +471,11 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     
     /**
      Many loyalty programs want to reward users by converting points to stored value. This transaction redeems points and increases stored value balances for recipient.
-    - Parameters:
-        - contractAddress: The address of the loyalty contract.
-        - recipientAddress: The address of the user's account to add points to.
-        - points: The number of points to add to the user's account.
-    */
+     - Parameters:
+     - contractAddress: The address of the loyalty contract.
+     - recipientAddress: The address of the user's account to add points to.
+     - points: The number of points to add to the user's account.
+     */
     public func convertPointsToCoins(_ contractAddress: String, _ recipientAddress: String, _ points: UInt) async {
         
         let contractABI = await getContractABI("LedgerContract");
@@ -482,11 +507,11 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     
     /**
      Separated from redemption, this is called if points expire or other activities cause a balance to be reduced by amount without any benefit going to the member recipient.
-    - Parameters:
-        - contractAddress: The address of the loyalty contract.
-        - recipientAddress: The address of the user's account to add points to.
-        - points: The number of points to add to the user's account.
-    */
+     - Parameters:
+     - contractAddress: The address of the loyalty contract.
+     - recipientAddress: The address of the user's account to add points to.
+     - points: The number of points to add to the user's account.
+     */
     public func loyaltyForfeit(_ contractAddress: String, _ recipientAddress: String, _ points: UInt) async {
         
         let contractABI = await getContractABI("LedgerContract");
@@ -518,11 +543,11 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     
     /**
      If points are to be converted into stored value or rewards, this can be called to reduce the current points balance for the recipient by pointsAmt, associated with a redemption event eventId.
-    - Parameters:
-        - contractAddress: The address of the loyalty contract.
-        - recipientAddress: The address of the user's account to add points to.
-        - points: The number of points to add to the user's account.
-    */
+     - Parameters:
+     - contractAddress: The address of the loyalty contract.
+     - recipientAddress: The address of the user's account to add points to.
+     - points: The number of points to add to the user's account.
+     */
     public func loyaltyRedeem(_ contractAddress: String, _ recipientAddress: String, _ points: UInt, _ eventId: UInt) async {
         
         let contractABI = await getContractABI("LedgerContract");
@@ -554,13 +579,13 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     
     /**
      Returns the balance of current points owned by recipient, which does NOT take all redemptions and forfeitures into account. This amount can only grow.
-    - Parameters:
-        - contractAddress: The address of the loyalty contract.
-        - recipientAddress: The address of the user's account to add points to.
-        - points: The number of points to add to the user's account.
-    */
+     - Parameters:
+     - contractAddress: The address of the loyalty contract.
+     - recipientAddress: The address of the user's account to add points to.
+     - points: The number of points to add to the user's account.
+     */
     public func loyaltyLifetimeCheck(_ contractAddress: String, _ userAddress: String) async -> BigUInt {
-
+        
         let contractABI = await getContractABI("LedgerContract");
         
         do {
@@ -584,12 +609,12 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     }
     
     /**
-    Checks the balance of a user's account for a given ERC20 token contract.
-    - Parameters:
-        - contractAddress: The address of the ERC20 token contract.
-        - userAddress: The address of the user's account to check the balance of.
-    - Returns: The balance of the user's account.
-    */
+     Checks the balance of a user's account for a given ERC20 token contract.
+     - Parameters:
+     - contractAddress: The address of the ERC20 token contract.
+     - userAddress: The address of the user's account to check the balance of.
+     - Returns: The balance of the user's account.
+     */
     public func svCheck(_ contractAddress: String, _ userAddress: String) async -> BigUInt {
         
         let contractABI = await getContractABI("ERC20TestContract");
@@ -617,11 +642,11 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     }
     
     /**
-    Retrieves the connection information for a given serial number from the Connected Packaging smart contract.
-    - Parameters:
-        - serialNumber: The serial number of the connected packaging.
-    - Returns: The Ethereum address of the connected packaging.
-    */
+     Retrieves the connection information for a given serial number from the Connected Packaging smart contract.
+     - Parameters:
+     - serialNumber: The serial number of the connected packaging.
+     - Returns: The Ethereum address of the connected packaging.
+     */
     public func connectedPackageQuery(serialNumber: String) async -> String {
         
         // Get the ABI and contract address.
@@ -654,11 +679,11 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     }
     
     /**
-    Claims a connection for a given user address and serial number in the Connected Packaging smart contract.
-    - Parameters:
-        - userAddress: The Ethereum address of the user.
-        - serialNumber: The serial number of the connected packaging.
-    */
+     Claims a connection for a given user address and serial number in the Connected Packaging smart contract.
+     - Parameters:
+     - userAddress: The Ethereum address of the user.
+     - serialNumber: The serial number of the connected packaging.
+     */
     public func connectedPackagePublish(userAddress: String, serialNumber: String) async {
         
         // Get the ABI and contract address.
@@ -697,10 +722,10 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     }
     
     /**
-    Revokes a connection for a given serial number in the Connected Packaging smart contract.
-    - Parameters:
-        - serialNumber: The serial number of the connected packaging.
-    */
+     Revokes a connection for a given serial number in the Connected Packaging smart contract.
+     - Parameters:
+     - serialNumber: The serial number of the connected packaging.
+     */
     public func connectedPackagePurge(serialNumber: String) async {
         
         let contractABI = await getContractABI("ConnectedPackagingContract");
@@ -733,10 +758,10 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     
     /**
      Returns the ABI (Application Binary Interface) of a smart contract.
-    - Parameters:
-        - contractName: The name of the smart contract.
-     - Returns: The ABI data of the smart contract.
-    */
+     - Parameters:
+     - contractName: The name of the smart contract.
+     - Returns: The ABI data of t                  he smart contract.
+     */
     func getContractABI(_ contractName: String) async -> Data {
         //TODO: cache the contract ABIs
         guard let thisurl = URL(string: "https://unpkg.com/@credenza-web3/contracts/artifacts/"+contractName+".json")
@@ -894,9 +919,9 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     /**
      This function is called when the NFC reader fails to read or write to a tag.
      - Parameters:
-       - session: an instance of NFCReader that represents the session.
-       - error: an Error instance that contains information about the error that occurred.
-    */
+     - session: an instance of NFCReader that represents the session.
+     - error: an Error instance that contains information about the error that occurred.
+     */
     public func reader(_ session: NFCReader, didInvalidateWithError error: Error) {
         print("ERROR:\(error)")
         readerWriter.end()
@@ -905,7 +930,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     /// --------------------------------
     // MARK: - 3. NFC Tag Reader(iOS 13)
     /// --------------------------------
-   
+    
     public func reader(_ session: NFCReader, didDetect tag: __NFCTag, didDetectNDEF message: NFCNDEFMessage) {
         //let thisTagId = readerWriter.tagIdentifier(with: tag)
         //let content = contentsForMessages([message])
@@ -973,32 +998,507 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         }
     }
     
+    // MARK: - activatePassScan method
+    /**
+     Activates the passport scan functionality.
+     - Parameter viewController: The view controller where the QRCodeScannerController will be presented.
+     */
+    public func activatePassScan(_ viewController: UIViewController, completionHandler: ((String) -> Void)?) throws {
+        self.activePassScanCompletion = completionHandler
+        guard let magic = magic else { throw Errors.notLoggedIn }
+        magic.user.isLoggedIn(response: { response in
+            guard let result = response.result else {
+                return print("Error:", response.error.debugDescription)}
+            if result {
+                let scanner = QRCodeScannerController()
+                scanner.delegate = self
+                viewController.present(scanner, animated: true, completion: nil)
+                self.shouldMakeStringCheck = true
+            } else {
+                print("user is not loged in",result)
+            }
+        })
+    }
+    
+    private func getJsonActivePassScan(result: String) async -> String {
+        let jsonString = ""
+        guard let token = UserDefaults.standard.string(forKey: "Token") else { return ""}
+        let address = await getAddressforlogincode()
+        guard let loginCode = await getloginCode(address: address) else {return ""}
+        let signature = await getSignedSignature(loginCode: loginCode, address: address)
+        let accesstoken = await authenticateAndGetToken(signature: signature, loginCode: loginCode, Token: token)
+        
+        if let encodedResult = result.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
+            print("encodedResult:", encodedResult)
+            if let url = URL(string: "https://api.testnets.credenza.online/scanner/decode?rawString=\(encodedResult)") {
+                print("Complete URL: \(url)")
+                var request = URLRequest(url: url)
+                request.httpMethod = "GET"
+                request.setValue("application/json", forHTTPHeaderField: "accept")
+                request.setValue("Bearer \(accesstoken)", forHTTPHeaderField: "Authorization")
+                
+                // Make the API call
+                let (data, _) = try! await URLSession.shared.data(from: url)
+                
+                do {
+                    // Parse the JSON response
+                    let json = try JSONSerialization.jsonObject(with: data, options: [])
+                    let jsonData = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
+                    if let jsonString = String(data: jsonData, encoding: .utf8) {
+                        print("JSON response:", jsonString)
+                        print("JSON response:", json)
+                        self.activePassScanCompletion?(jsonString)
+                    }
+                } catch {
+                    print("Error parsing JSON:", error.localizedDescription)
+                }
+            }
+        }
+        self.shouldMakeStringCheck = false
+        return jsonString
+    }
+    
+    // MARK: - queryRuleset method
+    /**
+     Queries the ruleset for a given passport and ruleset ID.
+     - Parameter passportId: The ID of the passport.
+     - Parameter ruleSetId: The ID of the ruleset.
+     - Returns: A Data object containing information about the ruleset.
+     */
+    public func queryRuleset(passportId: String, ruleSetId: String) async -> Data? {
+        // Construct the URL
+        guard let url = URL(string: "https://api.testnets.credenza.online/discounts/rulesets/validate") else {
+            // Return nil if the URL is invalid.
+            return nil
+        }
+        
+        guard let token = UserDefaults.standard.string(forKey: "Token") else { return nil}
+        let address = await getAddressforlogincode()
+        guard let loginCode = await getloginCode(address: address) else {return nil}
+        let signature = await getSignedSignature(loginCode: loginCode, address: address)
+        let accesstoken = await authenticateAndGetToken(signature: signature, loginCode: loginCode, Token: token)
+        // Create a URLRequest with the URL
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "accept")
+        request.setValue("Bearer \(accesstoken)", forHTTPHeaderField: "Authorization")
+        
+        // Construct the JSON payload
+        let payloadDict: [String: String] = [
+            "passportId": passportId,
+            "ruleSetId": ruleSetId
+        ]
+        
+        if let payloadData = try? JSONSerialization.data(withJSONObject: payloadDict) {
+            // Set the request body
+            request.httpBody = payloadData
+            
+            do {
+                // Send the rt and get the response
+                let (data, response) = try await URLSession.shared.data(for: request)
+                
+                if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
+                    // Check if the response status code is 200 (OK)
+                    print("responseruleset",response)
+                    return data
+                } else {
+                    // Handle the error or non-200 response here
+                    // You can log the response or handle it as needed
+                    return nil
+                }
+            } catch {
+                // Handle any errors that occurred during the request
+                print("Error: \(error)")
+                return nil
+            }
+        } else {
+            // Handle JSON serialization error
+            return nil
+        }
+    }
+    
+    // MARK: - showPassportIDQRCode method
+    /**
+     Shows the QR code for the passport ID.
+     This method checks if the user is logged in and then generates and displays the QR code.
+     */
+    public func showPassportIDQRCode() async throws -> UIImage {
+        guard let magic = magic else { throw Errors.notLoggedIn }
+        
+        return await withCheckedContinuation { continuation in
+            magic.user.isLoggedIn(response: { [self] response in
+                guard let result = response.result, result else {
+                    // User is not logged in or an error occurred.
+                    print("User is not logged in or an error occurred.")
+                    return
+                }
+                
+                // User is logged in, proceed with generating the QR code.
+                let scanType = "PASSPORT_ID"
+                let date = ISO8601DateFormatter.string(from: Date(), timeZone: .current, formatOptions: [.withInternetDateTime])
+                let chainId = "80001" // You should replace this with the actual chain ID.
+                let timestamp = String(Int(Date().timeIntervalSince1970))
+                DispatchQueue.global(qos: .background).async {
+                    let signature = self.signTimestamp(Timestamp: timestamp)
+                    print("signaature",signature)
+                    let qrCodeData: [String: Any] = [
+                        "scanType": scanType,
+                        "date": date,
+                        "chainId": chainId,
+                        "sig": signature
+                    ]
+                    
+                    if let jsonString = self.jsonString(from: qrCodeData), let image = self.generateQRCode(from: jsonString) {
+                        // Now you have the QR code image, and you can display it or use it as needed.
+                        // Example: imageView.image = qrCodeImage
+                        continuation.resume(returning: image)
+                        print("Signature:", signature)
+                    }
+                }
+            })
+            
+        }
+    }
+    
+    // Function to sign the timestamp using MagicSDK_Web3
+    /**
+     Signs the timestamp using MagicSDK_Web3.
+     - Returns: A string representing the signature.
+     */
+    private func signTimestamp(Timestamp: String) -> String {
+        let web3 = Web3.init(provider: Magic.shared.rpcProvider)
+        let contractAddress = self.address
+        guard let message = "\(loginCode)\(Timestamp)".data(using: .utf8) else {
+            return ""
+        }
+        
+        do {
+            let signature = try web3.eth.sign(from: try EthereumAddress(ethereumValue: contractAddress), message: EthereumData.init(message)).wait()
+            print("sigt:",signature.hex())
+            return signature.hex()
+        } catch {
+            print("Error: \(error)")
+            return "Error occurred: \(error)"
+        }
+    }
+    
+    // Function to convert a dictionary to a JSON string
+    /**
+     Converts a dictionary to a JSON string.
+     - Parameter data: The dictionary to be converted.
+     - Returns: A JSON string.
+     */
+    private func jsonString(from data: [String: Any]) -> String? {
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: data)
+            if let jsonString = String(data: jsonData, encoding: .utf8) {
+                return jsonString
+            }
+        } catch {
+            print("Error while converting to JSON string: \(error)")
+        }
+        return nil
+    }
+    
+    // MARK: - generateQRCode method
+    /**
+     Generates a QR code from a JSON string.
+     - Parameter jsonString: The JSON string to generate the QR code from.
+     - Returns: A UIImage containing the QR code.
+     */
+    private func generateQRCode(from jsonString: String) -> UIImage? {
+        if let data = jsonString.data(using: .utf8) {
+            if let filter = CIFilter(name: "CIQRCodeGenerator") {
+                filter.setValue(data, forKey: "inputMessage")
+                let transform = CGAffineTransform(scaleX: 10, y: 10)
+                if let output = filter.outputImage?.transformed(by: transform) {
+                    return UIImage(ciImage: output)
+                }
+            }
+        }
+        return nil
+    }
+    
+    // MARK: - getWalletPass method
+    /**
+     Retrieves the wallet pass for the logged-in user.
+     This method first checks if the user is logged in, then calls the appropriate API to get the wallet pass.
+     */
+    public func getWalletPass() async throws -> PKPass? {
+        let magic = Magic.shared
+        guard let magic = magic else { throw Errors.notLoggedIn }
+        magic.user.isLoggedIn(response: { response in
+            guard let result = response.result
+            else {
+                return print("Error:", response.error.debugDescription)
+            }
+            print("Result", result)
+        })
+        do {
+            // If the user is logged in, call the GET API
+            guard let token = UserDefaults.standard.string(forKey: "Token") else {
+                // Token not available, handle the situation accordingly
+                print("Token not available.")
+                throw Errors.tokenUnavailable
+            }
+            print("Token available.",token)
+            let address = await getAddressforlogincode()
+            guard let loginCode = await getloginCode(address: address) else { return nil }
+            let signature = await getSignedSignature(loginCode: loginCode, address: address)
+            let accessToken = await authenticateAndGetToken(signature: signature, loginCode: loginCode, Token: token)
+            
+            let chainId = 80001
+            // Call the API to get the wallet pass
+            let apiUrl = "https://api.testnets.credenza.online/apple/pkpass/passportId"
+            var urlComponents = URLComponents(string: apiUrl)!
+            urlComponents.queryItems = [
+                URLQueryItem(name: "chainId", value: String(chainId)),
+                URLQueryItem(name: "address", value: self.address)
+            ]
+            print("urlComponents f:",urlComponents)
+            var request = URLRequest(url: urlComponents.url!)
+            request.httpMethod = "GET"
+            request.setValue("application/json", forHTTPHeaderField: "accept")
+            request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+            
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw Errors.networkRequestFailed
+            }
+            
+            if httpResponse.statusCode == 200 {
+                // Initialize PKPass with the pass data
+                let pass = try PKPass(data: data)
+                return pass
+                
+            } else {
+                print("Unexpected status code: \(httpResponse.statusCode)")
+                return nil
+            }
+            
+        }catch {
+            print("Error checking login status: \(error)")
+            throw error
+        }
+    }
+    
+    // MARK: - getAddressforlogincode method
+    /**
+     Gets the user's Ethereum public address using the Magic.link SDK and passes it to the `delegation` instance.
+     - Note: Calls `loginComplete(address:)` of the `delegation` instance to pass the Ethereum public address to it.
+     */
+    private func getAddressforlogincode()async -> String {
+        await withCheckedContinuation({ continuation in
+            let web3 = Web3.init(provider: Magic.shared.rpcProvider)
+            firstly {
+                // Get user's Ethereum public address
+                web3.eth.accounts()
+            }.done { accounts -> Void in
+                if let account = accounts.first {
+                    // Set to UILa
+                    let address = account.hex(eip55: false)
+                    self.address = address
+                    continuation.resume(returning: address)
+                    print("add:",address)
+                } else {
+                    print("No Account Found")
+                    continuation.resume(returning: "")
+                }
+            }.catch { error in
+                print("Error loading accounts and balance: \(error)")
+                continuation.resume(returning: "")
+            }
+        })
+    }
+    
+    // MARK: - getloginCode method
+    /**
+     Retrieves a login code from the server.
+     This method gets the user's Ethereum address, then calls the API to get the login code.
+     */
+    private func getloginCode(address: String) async -> String? {
+        // Call the API to get the wallet pass
+        let apiUrl = "https://api.testnets.credenza.online/auth"
+        var urlComponents = URLComponents(string: apiUrl)!
+        urlComponents.queryItems = [
+            URLQueryItem(name: "address", value: address)
+        ]
+        print("urlComponents t:", urlComponents)
+        
+        // Use URL directly here
+        guard let url = urlComponents.url else {
+            print("Invalid URL")
+            return nil
+        }
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(from: url)
+            
+            guard let httpResponse = response as? HTTPURLResponse else {
+                print("Invalid HTTP response")
+                return nil
+            }
+            
+            if httpResponse.statusCode == 200 {
+                // The server responded with a 200 OK status
+                do {
+                    // Try to parse the data as JSON
+                    if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                       let loginCode = json["loginCode"] as? String {
+                        self.loginCode = loginCode
+                        // self.showPassportIDQRCode()
+                        print("loginc:",loginCode)
+                        return loginCode
+                    }
+                } catch {
+                    print("Error parsing JSON: \(error)")
+                    return nil
+                }
+            } else {
+                print("Unexpected status code: \(httpResponse.statusCode)")
+                return nil
+            }
+        } catch {
+            print("Error downloading wallet pass: \(error)")
+            return nil
+        }
+        return nil
+    }
+    
+    // Function to sign the timestamp using MagicSDK_Web3
+    /**
+     Signs .
+     - Returns: A string representing the signature.
+     */
+    private func getSignedSignature(loginCode: String, address: String) async -> String {
+        let web3 = Web3.init(provider: Magic.shared.rpcProvider)
+        let contractAddress = self.address
+        guard let message = loginCode.data(using: .utf8) else {
+            return ""
+        }
+        
+        do {
+            let signature = try web3.eth.sign(from: try EthereumAddress(ethereumValue: contractAddress), message: EthereumData.init(message)).wait()
+            print("sigt:",signature.hex())
+            self.signature = signature.hex()
+            return signature.hex()
+        } catch {
+            print("Error: \(error)")
+            return "Error occurred: \(error)"
+        }
+    }
+    // MARK: - auth method
+    /**
+     Performs authentication.
+     - Parameter : A closure to be called upon completion of the authentication process.
+     */
+    private func authenticateAndGetToken(signature: String, loginCode: String, Token: String) async -> String {
+        // Construct the URL
+        guard let url = URL(string: "https://api.testnets.credenza.online/auth") else {
+            return "\(NSError(domain: "Invalid URL", code: -1, userInfo: nil))"
+        }
+        
+        // Create a URLRequest with the URL
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        
+        // Set the Content-Type header
+        request.setValue("application/json", forHTTPHeaderField: "accept")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        // Construct the JSON payload
+        let payloadDict: [String: String] = [
+            "loginCode": loginCode,
+            "signature": signature,
+            "provider": "magicLink",
+            "didToken": Token,
+        ]
+        
+        do {
+            // Serialize the payload
+            let payloadData = try JSONSerialization.data(withJSONObject: payloadDict)
+            
+            // Set the request body
+            request.httpBody = payloadData
+            
+            // Send the request asynchronously using async/await
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
+                // Check if the response status code is 200 (OK)
+                do {
+                    // Deserialize the JSON response
+                    if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                        // Access the "accessToken" from the JSON response
+                        if let accessToken = json["accessToken"] as? String {
+                            print("accessToken:", accessToken)
+                            self.accessToken = accessToken
+                            // Access the user dictionary from the JSON response
+                            if let user = json["user"] as? [String: Any] {
+                                // Access "updatedAt" and "id" from the user dictionary
+                                if let updatedAt = user["updatedAt"] as? String {
+                                    print("updatedAt:", updatedAt)
+                                    self.updatedAt = updatedAt
+                                }
+                                
+                                if let userId = user["id"] as? String {
+                                    print("id:", userId)
+                                    self.userId = userId
+                                }
+                            } else {
+                                return "\(NSError(domain: "Invalid JSON Response", code: -1, userInfo: nil))"
+                            }
+                            return "\(accessToken)"
+                        } else {
+                            return "\(NSError(domain: "Invalid JSON Response", code: -1, userInfo: nil))"
+                        }
+                    }
+                } catch {
+                    return "\(NSError(domain: "Invalid HTTP Response", code: httpResponse.statusCode, userInfo: nil))"
+                    
+                }
+            } else {
+                // Handle the error or non-200 response here
+                // You can log the response or handle it as needed
+                return "\(NSError(domain: "Invalid URL", code: -1, userInfo: nil))"
+            }
+        } catch {
+            // Handle other errors
+            return "\(error)"
+        }
+        return "An unexpected error occurred."
+    }
 }
 
 // MARK: - Delegate for QR scanner
 extension PassportUtility: QRScannerCodeDelegate {
     /// It gets call when scanner did complete scanning QRCode.
     public func qrScanner(_ controller: UIViewController, scanDidComplete result: String) {
-        self.delegation.qrScannerSuccess(result: result)
+        print("Scanned QR code: \(result)")
+        if shouldMakeStringCheck == true {
+            Task{
+                await getJsonActivePassScan(result: result)
+            }
+        }else{
+            self.delegation.qrScannerSuccess(result: result)
+        }
     }
-    
     /// It gets call when scanner did fail while scanning QRCode.
     public func qrScannerDidFail(_ controller: UIViewController, error: QRCodeError) {
         self.delegation.qrScannerDidFail(error: error)
     }
-    
     /// It gets call when scanner did cancel before scanning QRCode.
     public func qrScannerDidCancel(_ controller: UIViewController) {
         self.delegation.qrScannerDidCancel()
     }
-    
 }
 
 extension Data {
     /// Hexadecimal string representation of `Data` object.
     var hexadecimal: String {
         return map { String(format: "%02x", $0) }
-        .joined()
+            .joined()
     }
 }
 

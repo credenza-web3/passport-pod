@@ -1,6 +1,6 @@
 PODS:
   - BigInt (5.2.0)
-  - credenzapassport (1.1.2):
+  - credenzapassport (1.1.3):
     - MagicSDK (= 8.0.0)
     - MagicSDK-Web3
     - NFCReaderWriter
@@ -50,7 +50,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   BigInt: f668a80089607f521586bbe29513d708491ef2f7
-  credenzapassport: 19b99bdaee30a23311b1d4e56273a71c9a729628
+  credenzapassport: f7175bcc7944f47bebcd096e39504baf05f91215
   CryptoSwift: 01b0f0cba1d5c212e5a335ff6c054fb75a204f00
   MagicSDK: 04298f832c51af535e95fbc2b0d487a8413e62eb
   MagicSDK-Web3: 53384d35658f56e909ec84b8644dfa0c637db9b6
@@ -59,6 +59,6 @@ SPEC CHECKSUMS:
   QRCodeSwiftScanner: db82a51c3cd794753a310990b97fb739fec6659a
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
 
-PODFILE CHECKSUM: 57c1a001c10f19289464351f50573ffcd57b722d
+PODFILE CHECKSUM: b89b98a85dba2841be87d1148dbe094a35fa45e1
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.13.0
