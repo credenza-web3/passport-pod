@@ -19,9 +19,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
-        let config = CustomNodeConfiguration(rpcUrl: "https://rpc.ankr.com/polygon_mumbai", chainId: 80001)
-        Magic.shared = Magic(apiKey: "pk_live_A2A484A5087E5029", customNode: config);
-        
+        let config = CustomNodeConfiguration(rpcUrl: "RPC_URL", chainId: 80001)
+        Magic.shared = Magic.init(apiKey: "API_KEY", customNode: config);
         return true
     }
 

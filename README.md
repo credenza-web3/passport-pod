@@ -1,4 +1,4 @@
-# credenzapassport
+# Credenzapassport
 
 [![CI Status](https://img.shields.io/travis/sandyUPGRADED/credenzapassport.svg?style=flat)](https://travis-ci.org/sandyUPGRADED/credenzapassport)
 [![Version](https://img.shields.io/cocoapods/v/credenzapassport.svg?style=flat)](https://cocoapods.org/pods/credenzapassport)
@@ -9,7 +9,10 @@
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
-## Requirements
+## Requirements & Setup
+
+    - Magic SDK API Key: To use passport authentication enter your magic sdk api key in app delegate file.
+    - KRYPTKEY : Setup your private key in info.plist file replace 'INSERT_KRYPTKEY' with your original key in plist file.
 
 ## Installation
 

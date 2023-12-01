@@ -122,26 +122,23 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      - emailAddress: An email address for which to perform sign-in.
      - Note: Stores the login token in UserDefaults after successful authentication.
      */
+
     public func handleSignIn(_ emailAddress: String) {
         
         let magic = Magic.shared
-        
         guard let magic = magic else { return }
-        let configuration = LoginWithMagicLinkConfiguration(email: emailAddress)
-        magic.auth.loginWithMagicLink(configuration, eventLog: true).once(eventName: AuthModule.LoginWithMagicLinkEvent.emailSent.rawValue){
-            print("email-sent")
-        }.done { token -> Void in
+        let configuration = LoginWithEmailOTPConfiguration(email: emailAddress)
+        magic.auth.loginWithEmailOTP(configuration, response: { response in
+            guard let token = response.result
+            else { return print("Error:", response.error.debugDescription) }
+            print("Result", token)
             let defaults = UserDefaults.standard
             defaults.set(token, forKey: "Token")
             print("Token",token)
             self.token = token
             print("provider",Magic.shared.user.provider.urlBuilder.apiKey)
-            
             self.getAccount();
-        }.catch { error in
-            print("Error", error)
-        }
-        
+        })
     }
     
     /**
@@ -1501,7 +1498,3 @@ extension Data {
             .joined()
     }
 }
-
-
-
-

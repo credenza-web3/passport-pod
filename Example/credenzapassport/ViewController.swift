@@ -52,32 +52,30 @@ class ViewController: UIViewController, PassportDelegate {
          readerWriter.detectedMessage = "detected Tag info"*/
         Task {
             let b = await pUtility!
-                .loyaltyCheck("0x61ff3d77ab2befece7b1c8e0764ac973ad85a9ef","0x375fa2f7fec390872a04f9c147c943eb8e48c43d");
+                .loyaltyCheck("CONTRACT_ADDRESS","USER_ADDRESS");
             print(b)
             
             let c = await pUtility!
-                .checkMembership("0x3366F71c99A4684282BfE8af800194abeEF5F4C3","0xc3736D688d2F83cBADFf0675b9A604A2Ae60D151", "0x375fa2f7fec390872a04f9c147c943eb8e48c43d")
+                .checkMembership("CONTRACT_ADDRESS","OWNER_ADDRESS", "USER_ADDRESS")
             print(c)
             
             let d = await pUtility!
-                .checkVersion("0x61ff3d77ab2befece7b1c8e0764ac973ad85a9ef","LedgerContract");
+                .checkVersion("CONTRACT_ADDRESS","CONTRACT_TYPE");
             print(d)
-            
-            
+
             let e = await pUtility!
-                .svCheck("0x893fBedDaDfdfb836CC069902F7270eA56fD6ebF","0x2d3e53bea19d756624dbfa3a9cd9b616878cf698");
+                .svCheck("CONTRACT_ADDRESS","USER_ADDRESS");
             print(e)
             
-            
             let f = await pUtility!
-                .nftCheck("0x4d20968f609bf10e06495529590623d5d858c5c7","0x2d3e53bea19d756624dbfa3a9cd9b616878cf698");
+                .nftCheck("CONTRACT_ADDRESS","USER_ADDRESS");
             print(f)
             
-            //await pUtility!.loyaltyAdd("0x61ff3d77ab2befece7b1c8e0764ac973ad85a9ef", "0x375fa2f7fec390872a04f9c147c943eb8e48c43d", 11)
+            //await pUtility!.loyaltyAdd("CONTRACT_ADDRESS", "USER_ADDRESS", POINTS)
             
-            //await pUtility!.removeMembership("0x3366F71c99A4684282BfE8af800194abeEF5F4C3", "0x375fa2f7fec390872a04f9c147c943eb8e48c43d")
+            //await pUtility!.removeMembership("CONTRACT_ADDRESS", "USER_ADDRESS")
             
-            await pUtility!.addMembership("0x3366F71c99A4684282BfE8af800194abeEF5F4C3", "0x375fa2f7fec390872a04f9c147c943eb8e48c43d","app metameta")
+            await pUtility!.addMembership("CONTRACT_ADDRESS", "USER_ADDRESS","META_DATA");
         }
     }
     
