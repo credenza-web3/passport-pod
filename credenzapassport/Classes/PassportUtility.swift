@@ -1135,7 +1135,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             let signature = await getSignedSignature(loginCode: loginCode, address: address)
             let accesstoken = await authenticateAndGetToken(signature: signature, loginCode: loginCode, Token: token)
             let baseUrl = (Bundle.main.infoDictionary?["BASEURL"] as? String) ?? ""
-            guard let urls = URL(string: "\(baseUrl)/chains/\(chainId)/requestLoyaltyPoints?eventId=\(eventId)&contractAddress=\(signature)") else {
+            guard let urls = URL(string: "\(baseUrl)/chains/\(chainId)/requestLoyaltyPoints?eventId=\(eventId)&contractAddress=\(contractAddress)") else {
                 return
             }
             let url = urls
