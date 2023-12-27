@@ -100,6 +100,10 @@ class ViewController: UIViewController, PassportDelegate {
         print("QRCodeScanner did cancel")
     }
     
+    func passScanComplete(response: String) {
+        print("passScanComplete: \(response)")
+    }
+    
 }
 
 //MARK: - Example methods

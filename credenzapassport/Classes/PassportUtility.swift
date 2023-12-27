@@ -19,6 +19,7 @@ public protocol PassportDelegate {
     func qrScannerSuccess(result: String)
     func qrScannerDidFail(error: Error)
     func qrScannerDidCancel()
+    func passScanComplete(response: String)
 }
 
 /**
@@ -64,6 +65,12 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         case qrCodeGenerationError
         case networkRequestFailed
     }
+    
+    private enum ScanType: String {
+        case AirDrop = "AIR_DROP"
+        case RequestLoyaltyPoints = "REQUEST_LOYALTY_POINTS"
+    }
+    
     /**
      Initializes a new instance of the PassportUtility class.
      - Parameter delegate: The PassportDelegate object used for delegation.
@@ -122,7 +129,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      - emailAddress: An email address for which to perform sign-in.
      - Note: Stores the login token in UserDefaults after successful authentication.
      */
-
+    
     public func handleSignIn(_ emailAddress: String) {
         
         let magic = Magic.shared
@@ -259,11 +266,12 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             guard let add2 = try? EthereumAddress(hex: userAddress,eip55: false) else { return }
             let key = (Bundle.main.infoDictionary?["KRYPTKEY"] as? String) ?? ""
             let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: key)
-            
+            let chainIdString = (Bundle.main.infoDictionary?["chainId"] as? String) ?? ""
+            let chainId = EthereumQuantity(quantity: BigUInt(Int(chainIdString) ?? 0))
             web3.eth.getTransactionCount(address: myPrivateKey.address, block: .latest)
                 .done{ nonce in
                     let transaction = contract["addMembership"]?(add2, metadata).createTransaction(nonce: nonce, from: myPrivateKey.address, value: 0, gas: 150000, gasPrice: EthereumQuantity(quantity: 21.gwei))
-                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: 80001) else { return }
+                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: chainId) else { return }
                     let result = web3.eth.sendRawTransaction(transaction: signedTx)
                     debugPrint(result)
                 }.done { txHash in
@@ -299,14 +307,15 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             // Retrieve private key for the transaction from info.plist
             let key = (Bundle.main.infoDictionary?["KRYPTKEY"] as? String) ?? ""
             let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: key)
-            
+            let chainIdString = (Bundle.main.infoDictionary?["chainId"] as? String) ?? ""
+            let chainId = EthereumQuantity(quantity: BigUInt(Int(chainIdString) ?? 0))
             // Get transaction count for nonce
             web3.eth.getTransactionCount(address: myPrivateKey.address, block: .latest)
                 .done{ nonce in
                     // Create transaction object
                     let transaction = contract["removeMembership"]?(add2).createTransaction(nonce: nonce, from: myPrivateKey.address, value: 0, gas: 150000, gasPrice: EthereumQuantity(quantity: 21.gwei))
                     // Sign transaction with private key
-                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: 80001) else { return }
+                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: chainId) else { return }
                     // Send transaction
                     let result = web3.eth.sendRawTransaction(transaction: signedTx)
                     debugPrint(result)
@@ -447,11 +456,12 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             guard let add2 = try? EthereumAddress(hex: userAddress,eip55: false) else { return }
             let key = (Bundle.main.infoDictionary?["KRYPTKEY"] as? String) ?? ""
             let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: key)
-            
+            let chainIdString = (Bundle.main.infoDictionary?["chainId"] as? String) ?? ""
+            let chainId = EthereumQuantity(quantity: BigUInt(Int(chainIdString) ?? 0))
             web3.eth.getTransactionCount(address: myPrivateKey.address, block: .latest)
                 .done{ nonce in
                     let transaction = contract["addPoints"]?(add2, points).createTransaction(nonce: nonce, from: myPrivateKey.address, value: 0, gas: 150000, gasPrice: EthereumQuantity(quantity: 21.gwei))
-                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: 80001) else { return }
+                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: chainId) else { return }
                     let result = web3.eth.sendRawTransaction(transaction: signedTx)
                     debugPrint(result)
                 }.done { txHash in
@@ -483,11 +493,12 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             guard let add2 = try? EthereumAddress(hex: recipientAddress,eip55: false) else { return }
             let key = (Bundle.main.infoDictionary?["KRYPTKEY"] as? String) ?? ""
             let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: key)
-            
+            let chainIdString = (Bundle.main.infoDictionary?["chainId"] as? String) ?? ""
+            let chainId = EthereumQuantity(quantity: BigUInt(Int(chainIdString) ?? 0))
             web3.eth.getTransactionCount(address: myPrivateKey.address, block: .latest)
                 .done{ nonce in
                     let transaction = contract["convertPointsToCoins"]?(add2, points).createTransaction(nonce: nonce, from: myPrivateKey.address, value: 0, gas: 150000, gasPrice: EthereumQuantity(quantity: 21.gwei))
-                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: 80001) else { return }
+                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: chainId) else { return }
                     let result = web3.eth.sendRawTransaction(transaction: signedTx)
                     debugPrint(result)
                 }.done { txHash in
@@ -519,11 +530,12 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             guard let add2 = try? EthereumAddress(hex: recipientAddress,eip55: false) else { return }
             let key = (Bundle.main.infoDictionary?["KRYPTKEY"] as? String) ?? ""
             let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: key)
-            
+            let chainIdString = (Bundle.main.infoDictionary?["chainId"] as? String) ?? ""
+            let chainId = EthereumQuantity(quantity: BigUInt(Int(chainIdString) ?? 0))
             web3.eth.getTransactionCount(address: myPrivateKey.address, block: .latest)
                 .done{ nonce in
                     let transaction = contract["forfeitPoints"]?(add2, points).createTransaction(nonce: nonce, from: myPrivateKey.address, value: 0, gas: 150000, gasPrice: EthereumQuantity(quantity: 21.gwei))
-                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: 80001) else { return }
+                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: chainId) else { return }
                     let result = web3.eth.sendRawTransaction(transaction: signedTx)
                     debugPrint(result)
                 }.done { txHash in
@@ -555,11 +567,12 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             guard let add2 = try? EthereumAddress(hex: recipientAddress,eip55: false) else { return }
             let key = (Bundle.main.infoDictionary?["KRYPTKEY"] as? String) ?? ""
             let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: key)
-            
+            let chainIdString = (Bundle.main.infoDictionary?["chainId"] as? String) ?? ""
+            let chainId = EthereumQuantity(quantity: BigUInt(Int(chainIdString) ?? 0))
             web3.eth.getTransactionCount(address: myPrivateKey.address, block: .latest)
                 .done{ nonce in
                     let transaction = contract["redeemPoints"]?(add2, points).createTransaction(nonce: nonce, from: myPrivateKey.address, value: 0, gas: 150000, gasPrice: EthereumQuantity(quantity: 21.gwei))
-                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: 80001) else { return }
+                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: chainId) else { return }
                     let result = web3.eth.sendRawTransaction(transaction: signedTx)
                     debugPrint(result)
                 }.done { txHash in
@@ -697,14 +710,15 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             // Get the private key.
             let key = (Bundle.main.infoDictionary?["KRYPTKEY"] as? String) ?? ""
             let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: key)
-            
+            let chainIdString = (Bundle.main.infoDictionary?["chainId"] as? String) ?? ""
+            let chainId = EthereumQuantity(quantity: BigUInt(Int(chainIdString) ?? 0))
             // Get the transaction count and create the transaction.
             web3.eth.getTransactionCount(address: myPrivateKey.address, block: .latest)
                 .done{nonce in
                     let transaction = contract["claimConnection"]?(serialNumber,add2).createTransaction(nonce: nonce, from: myPrivateKey.address, value: 0, gas: 150000, gasPrice: EthereumQuantity(quantity: 21.gwei))
                     
                     // Sign and send the transaction.
-                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: 80001) else { return }
+                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: chainId) else { return }
                     let result = web3.eth.sendRawTransaction(transaction: signedTx)
                     debugPrint(result)
                 }.done { txHash in
@@ -733,11 +747,12 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             let key = (Bundle.main.infoDictionary?["KRYPTKEY"] as? String) ?? ""
             let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: key)
-            
+            let chainIdString = (Bundle.main.infoDictionary?["chainId"] as? String) ?? ""
+            let chainId = EthereumQuantity(quantity: BigUInt(Int(chainIdString) ?? 0))
             web3.eth.getTransactionCount(address: myPrivateKey.address, block: .latest)
                 .done{nonce in
                     let transaction = contract["revokeConnection"]?(serialNumber).createTransaction(nonce: nonce, from: myPrivateKey.address, value: 0, gas: 150000, gasPrice: EthereumQuantity(quantity: 21.gwei))
-                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: 80001) else { return }
+                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: chainId) else { return }
                     let result = web3.eth.sendRawTransaction(transaction: signedTx)
                     debugPrint(result)
                 }.done { txHash in
@@ -1017,43 +1032,130 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         })
     }
     
-    private func getJsonActivePassScan(result: String) async -> String {
-        let jsonString = ""
-        guard let token = UserDefaults.standard.string(forKey: "Token") else { return ""}
-        let address = await getAddressforlogincode()
-        guard let loginCode = await getloginCode(address: address) else {return ""}
-        let signature = await getSignedSignature(loginCode: loginCode, address: address)
-        let accesstoken = await authenticateAndGetToken(signature: signature, loginCode: loginCode, Token: token)
+    // MARK: - PassScanProtocolRouter method
+    /**
+     Processes the JSON string and performs actions based on the specified scan type.
+     - Parameter jsonString: The JSON string to be processed.
+     */
+    public func PassScanProtocolRouter(_ jsonString: String) async {
         
-        if let encodedResult = result.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
-            print("encodedResult:", encodedResult)
-            if let url = URL(string: "https://api.testnets.credenza.online/scanner/decode?rawString=\(encodedResult)") {
-                print("Complete URL: \(url)")
-                var request = URLRequest(url: url)
-                request.httpMethod = "GET"
-                request.setValue("application/json", forHTTPHeaderField: "accept")
-                request.setValue("Bearer \(accesstoken)", forHTTPHeaderField: "Authorization")
-                
-                // Make the API call
-                let (data, _) = try! await URLSession.shared.data(from: url)
-                
-                do {
-                    // Parse the JSON response
-                    let json = try JSONSerialization.jsonObject(with: data, options: [])
-                    let jsonData = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
-                    if let jsonString = String(data: jsonData, encoding: .utf8) {
-                        print("JSON response:", jsonString)
-                        print("JSON response:", json)
-                        self.activePassScanCompletion?(jsonString)
-                    }
-                } catch {
-                    print("Error parsing JSON:", error.localizedDescription)
-                }
+        guard let jsonData = jsonString.data(using: .utf8) else {
+            print("Invalid JSON string")
+            return
+        }
+        
+        do {
+            let jsonObject = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any]
+            
+            guard let scanTypeString = jsonObject?["scanType"] as? String,
+                  let scanType = ScanType(rawValue: scanTypeString) else {
+                print("Invalid or missing ScanType in JSON")
+                return
             }
+            
+            switch scanType {
+            case .AirDrop:
+                await handleAirDrop(json: jsonObject)
+            case .RequestLoyaltyPoints:
+                await handleRequestLoyaltyPoints(json: jsonObject)
+            }
+        } catch {
+            print("Error parsing JSON: \(error)")
         }
         self.shouldMakeStringCheck = false
-        return jsonString
     }
+    
+    // MARK: - handleAirDrop method
+    /**
+     Handles the AirDrop functionality based on the provided JSON parameters.
+     - Parameter json: The JSON dictionary containing parameters for the AirDrop.
+     */
+    private func handleAirDrop(json: [String: Any]?) async {
+        guard let contractAddress = json?["contractAddress"] as? String,
+              let tokenId = json?["tokenId"],
+              let amount = json?["amount"] as? Int,
+              let signature = json?["sig"] as? String,
+              let chainId = json?["chainId"] as? String else {
+            print("Missing required parameters for AIR_DROP")
+            return
+        }
+        do {
+            guard let token = UserDefaults.standard.string(forKey: "Token") else { return }
+            let targetAddress = await getAddressforlogincode()
+            guard let loginCode = await getloginCode(address: targetAddress) else { return }
+            let accesstoken = await authenticateAndGetToken(signature: signature, loginCode: loginCode, Token: token)
+            let baseUrl = (Bundle.main.infoDictionary?["BASEURL"] as? String) ?? ""
+            guard let urls = URL(string: "\(baseUrl)/chains/\(chainId)/\(contractAddress)/tokens/airDrop") else {
+                return
+            }
+            let url = urls
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "accept")
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.setValue("Bearer \(accesstoken)", forHTTPHeaderField: "Authorization")
+            let body: [String: Any] = [
+                "targetAddress": targetAddress,
+                "tokenId": tokenId,
+                "amount": amount
+            ]
+            
+            let requestBody = try JSONSerialization.data(withJSONObject: body)
+            request.httpBody = requestBody
+            
+            let (data, response) = try await URLSession.shared.data(for: request)
+            print("Response: \(response)")
+            guard let responseString = String(data: data, encoding: .utf8) else {
+                return
+            }
+            self.delegation.passScanComplete(response: responseString)
+        } catch {
+            print("Error encoding request body: \(error)")
+            return
+        }
+    }
+    
+    // MARK: - handleRequestLoyaltyPoints method
+    /**
+     Handles the request for loyalty points based on the provided JSON parameters.
+     - Parameter json: The JSON dictionary containing parameters for the loyalty points request.
+     */
+    private func handleRequestLoyaltyPoints(json: [String: Any]?) async {
+        guard let eventId = json?["eventId"] as? String,
+              let chainId = json?["chainId"] as? String,
+              let contractAddress = json?["contractAddress"] as? String else {
+            print("Missing required parameters for REQUEST_LOYALTY_POINTS")
+            return
+        }
+        
+        do {
+            guard let token = UserDefaults.standard.string(forKey: "Token") else { return }
+            let address = await getAddressforlogincode()
+            guard let loginCode = await getloginCode(address: address) else { return }
+            let signature = await getSignedSignature(loginCode: loginCode, address: address)
+            let accesstoken = await authenticateAndGetToken(signature: signature, loginCode: loginCode, Token: token)
+            let baseUrl = (Bundle.main.infoDictionary?["BASEURL"] as? String) ?? ""
+            guard let urls = URL(string: "\(baseUrl)/chains/\(chainId)/requestLoyaltyPoints?eventId=\(eventId)&contractAddress=\(signature)") else {
+                return
+            }
+            let url = urls
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "accept")
+            request.setValue("Bearer \(accesstoken)", forHTTPHeaderField: "Authorization")
+            
+            let (data, response) = try await URLSession.shared.data(for: request)
+            print("Response: \(response)")
+            guard let responseString = String(data: data, encoding: .utf8) else {
+                return
+            }
+            self.delegation.passScanComplete(response: responseString)
+        } catch {
+            print("Error checking login status: \(error)")
+            return
+        }
+    }
+    
     
     // MARK: - queryRuleset method
     /**
@@ -1064,7 +1166,8 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      */
     public func queryRuleset(passportId: String, ruleSetId: String) async -> Data? {
         // Construct the URL
-        guard let url = URL(string: "https://api.testnets.credenza.online/discounts/rulesets/validate") else {
+        let baseUrl = (Bundle.main.infoDictionary?["BASEURL"] as? String) ?? ""
+        guard let url = URL(string: "\(baseUrl)/discounts/rulesets/validate") else {
             // Return nil if the URL is invalid.
             return nil
         }
@@ -1133,7 +1236,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
                 // User is logged in, proceed with generating the QR code.
                 let scanType = "PASSPORT_ID"
                 let date = ISO8601DateFormatter.string(from: Date(), timeZone: .current, formatOptions: [.withInternetDateTime])
-                let chainId = "80001" // You should replace this with the actual chain ID.
+                let chainId = (Bundle.main.infoDictionary?["CHAINID"] as? String) ?? ""
                 let timestamp = String(Int(Date().timeIntervalSince1970))
                 DispatchQueue.global(qos: .background).async {
                     let signature = self.signTimestamp(Timestamp: timestamp)
@@ -1244,12 +1347,13 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             let signature = await getSignedSignature(loginCode: loginCode, address: address)
             let accessToken = await authenticateAndGetToken(signature: signature, loginCode: loginCode, Token: token)
             
-            let chainId = 80001
+            let chainId = (Bundle.main.infoDictionary?["CHAINID"] as? String) ?? ""
+            let baseUrl = (Bundle.main.infoDictionary?["BASEURL"] as? String) ?? ""
             // Call the API to get the wallet pass
-            let apiUrl = "https://api.testnets.credenza.online/apple/pkpass/passportId"
+            let apiUrl = "\(baseUrl)/apple/pkpass/passportId"
             var urlComponents = URLComponents(string: apiUrl)!
             urlComponents.queryItems = [
-                URLQueryItem(name: "chainId", value: String(chainId)),
+                URLQueryItem(name: "chainId", value: chainId),
                 URLQueryItem(name: "address", value: self.address)
             ]
             print("urlComponents f:",urlComponents)
@@ -1316,7 +1420,8 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      */
     private func getloginCode(address: String) async -> String? {
         // Call the API to get the wallet pass
-        let apiUrl = "https://api.testnets.credenza.online/auth"
+        let baseUrl = (Bundle.main.infoDictionary?["BASEURL"] as? String) ?? ""
+        let apiUrl = "\(baseUrl)/auth"
         var urlComponents = URLComponents(string: apiUrl)!
         urlComponents.queryItems = [
             URLQueryItem(name: "address", value: address)
@@ -1392,7 +1497,8 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      */
     private func authenticateAndGetToken(signature: String, loginCode: String, Token: String) async -> String {
         // Construct the URL
-        guard let url = URL(string: "https://api.testnets.credenza.online/auth") else {
+        let baseUrl = (Bundle.main.infoDictionary?["BASEURL"] as? String) ?? ""
+        guard let url = URL(string: "\(baseUrl)/auth") else {
             return "\(NSError(domain: "Invalid URL", code: -1, userInfo: nil))"
         }
         
@@ -1473,11 +1579,11 @@ extension PassportUtility: QRScannerCodeDelegate {
     /// It gets call when scanner did complete scanning QRCode.
     public func qrScanner(_ controller: UIViewController, scanDidComplete result: String) {
         print("Scanned QR code: \(result)")
-        if shouldMakeStringCheck == true {
-            Task{
-                await getJsonActivePassScan(result: result)
+        if shouldMakeStringCheck {
+            Task {
+                await PassScanProtocolRouter(result)
             }
-        }else{
+        } else {
             self.delegation.qrScannerSuccess(result: result)
         }
     }
