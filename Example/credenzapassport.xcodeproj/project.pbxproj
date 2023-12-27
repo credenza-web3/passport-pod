@@ -30,7 +30,6 @@
 /* Begin PBXFileReference section */
 		0F374B5C97DF97B4D8B54B5B /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		265ECA0E29090ABF008F5A48 /* credenzapassport_Example.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = credenzapassport_Example.entitlements; sourceTree = "<group>"; };
-		266BAAC32911C60D0032A00A /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		46CDA1C0A943008D9084C8C9 /* Pods_credenzapassport_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_credenzapassport_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD01AFB9204008FA782 /* credenzapassport_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = credenzapassport_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -94,7 +93,6 @@
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
-				266BAAC32911C60D0032A00A /* File.swift */,
 				265ECA0E29090ABF008F5A48 /* credenzapassport_Example.entitlements */,
 				607FACF51AFB993E008FA782 /* Podspec Metadata */,
 				607FACD21AFB9204008FA782 /* Example for credenzapassport */,
