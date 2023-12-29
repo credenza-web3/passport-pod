@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>KRYPTKEY</key>
+	<string>INSERT_KRYPTKEY</string>
+	<key>CHAINID</key>
+	<string>INSERT_CHAINID</string>
+	<key>BASEURL</key>
+	<string>INSERT_BASEURL</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>

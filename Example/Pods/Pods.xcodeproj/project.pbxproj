@@ -123,6 +123,7 @@
 		585019AC3C2E4CA815A8A24FECA28249 /* Web3Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC906542F9F1C9101C64CE748F628C52 /* Web3Extension.swift */; };
 		586DEE22648E58E8017088A3B8A14178 /* EventResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD63EFDB15F5750DC3803483446A7EA1 /* EventResponse.swift */; };
 		588ED67FF93FB4B266AB0130B788E056 /* NFCReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 27675CBDE4374C5D7EA592F2E53E307D /* NFCReader.m */; };
+		589D8DA42B3EE0E600D07504 /* AppSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 589D8DA32B3EE0E600D07504 /* AppSetting.swift */; };
 		5A05632174962E954E091F3B2D3A291A /* BlockEncryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2A9C65723F43C367D3DE8D22E18D509 /* BlockEncryptor.swift */; };
 		5A866692135C7D7B92F3CA46D13B493B /* RoundButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B6FB3051BAFB2506C6E0DF42E0B894 /* RoundButton.swift */; };
 		5B55835159FBD29F14FBDDCE034E3492 /* UnsignedInteger+Shifting.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA08D66460FE58C022253AB609024781 /* UnsignedInteger+Shifting.swift */; };
@@ -509,7 +510,7 @@
 		0CA2BEA0414284EC8280467AE3B629DB /* secp256k1-config.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "secp256k1-config.h"; path = "secp256k1/Classes/secp256k1-config.h"; sourceTree = "<group>"; };
 		0CF537F77C4E1757109B97D064DCDE78 /* ABIObject.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ABIObject.swift; path = "MagicSDK-Web3/Classes/ContractABI/Contract/ABIObject.swift"; sourceTree = "<group>"; };
 		0D5E19DFC745E758B50BB4A6001372FF /* MagicSDK-Web3 */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "MagicSDK-Web3"; path = MagicSDK_Web3.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		0D7F40D0EACF096DD58CF4AA7EB38B2A /* secp256k1.c */ = {isa = PBXFileReference; includeInIndex = 1; name = secp256k1.c; path = secp256k1/Classes/secp256k1/src/secp256k1.c; sourceTree = "<group>"; };
+		0D7F40D0EACF096DD58CF4AA7EB38B2A /* secp256k1.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = secp256k1.c; path = secp256k1/Classes/secp256k1/src/secp256k1.c; sourceTree = "<group>"; };
 		0F6CE29D5D69DAB1F5BC9FEDF6EDAFCD /* PromiseKit-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "PromiseKit-umbrella.h"; sourceTree = "<group>"; };
 		0F72A22EB1402A404A05E8CDCA9086B0 /* BigInt.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BigInt.swift; path = Sources/BigInt.swift; sourceTree = "<group>"; };
 		0F7BD94F2FB6E1F6890C41FE9113FC3C /* ChaCha20.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ChaCha20.swift; path = Sources/CryptoSwift/ChaCha20.swift; sourceTree = "<group>"; };
@@ -561,7 +562,7 @@
 		32642FCABD4D12D8F6C38963A00A8AB9 /* Prime Test.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Prime Test.swift"; path = "Sources/Prime Test.swift"; sourceTree = "<group>"; };
 		32EEFCBC118AF5C75DC3EEB207DAF425 /* main_impl.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = main_impl.h; path = secp256k1/Classes/secp256k1/src/modules/ecdh/main_impl.h; sourceTree = "<group>"; };
 		3324A5AA598510ADA79CD7F0FC3B838A /* NFCReaderWriter-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "NFCReaderWriter-umbrella.h"; sourceTree = "<group>"; };
-		3435634987D3FB5ACAE76681D86777F7 /* lax_der_parsing.c */ = {isa = PBXFileReference; includeInIndex = 1; name = lax_der_parsing.c; path = secp256k1/Classes/secp256k1/contrib/lax_der_parsing.c; sourceTree = "<group>"; };
+		3435634987D3FB5ACAE76681D86777F7 /* lax_der_parsing.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = lax_der_parsing.c; path = secp256k1/Classes/secp256k1/contrib/lax_der_parsing.c; sourceTree = "<group>"; };
 		34F17D6114E4333ECCA7A48063FD32C1 /* Eth+Contract.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Eth+Contract.swift"; path = "MagicSDK-Web3/Classes/ContractABI/Contract/Eth+Contract.swift"; sourceTree = "<group>"; };
 		365B7B7D6275D39199865DA26033D531 /* Bytes+UInt.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Bytes+UInt.swift"; path = "MagicSDK-Web3/Classes/Core/Toolbox/Bytes+UInt.swift"; sourceTree = "<group>"; };
 		37DDB22D759093D08A4078181AA23A69 /* BigInt-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "BigInt-umbrella.h"; sourceTree = "<group>"; };
@@ -578,7 +579,7 @@
 		3DC3E8181883DF1169E630CE5D52F94A /* secp256k1_recovery.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = secp256k1_recovery.h; path = secp256k1/Classes/secp256k1/include/secp256k1_recovery.h; sourceTree = "<group>"; };
 		3E712DC6DA5250E5DF1518DD20F493AF /* Addition.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Addition.swift; path = Sources/Addition.swift; sourceTree = "<group>"; };
 		3E71A06299DE1B98E06070F239790716 /* PromiseKit.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = PromiseKit.h; path = Sources/PromiseKit.h; sourceTree = "<group>"; };
-		3EDE899AD817898016BAD116A2B6735C /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; path = README.md; sourceTree = "<group>"; };
+		3EDE899AD817898016BAD116A2B6735C /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3F317B2C76BF276363B13D9412DF4247 /* MagicSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = MagicSDK.debug.xcconfig; sourceTree = "<group>"; };
 		40CCE1281164DE769303759678296832 /* secp256k1.swift */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = secp256k1.swift; path = secp256k1.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		41D16B48C97F7DDCF2C9E752F45D3744 /* Pods-credenzapassport_Example-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-credenzapassport_Example-acknowledgements.plist"; sourceTree = "<group>"; };
@@ -617,6 +618,7 @@
 		569A10DC1DEFFB72AEF7AD53B4F097DC /* RLPItem.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RLPItem.swift; path = "MagicSDK-Web3/Classes/Core/RLP/RLPItem.swift"; sourceTree = "<group>"; };
 		5731FD74D2C5609383792889F0189BF8 /* NFCReaderWriter */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = NFCReaderWriter; path = NFCReaderWriter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		58223CAB2B2B7F11461F91598363BF27 /* ISO78164Padding.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ISO78164Padding.swift; path = Sources/CryptoSwift/ISO78164Padding.swift; sourceTree = "<group>"; };
+		589D8DA32B3EE0E600D07504 /* AppSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppSetting.swift; path = credenzapassport/Classes/AppSetting.swift; sourceTree = "<group>"; };
 		58D6FB952525649CAEBA74A9D9422447 /* SolidityTuple.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SolidityTuple.swift; path = "MagicSDK-Web3/Classes/ContractABI/ABI/SolidityTuple.swift"; sourceTree = "<group>"; };
 		5B54E94C99FF37960F3B62AD15001969 /* Pods-credenzapassport_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-credenzapassport_Example.release.xcconfig"; sourceTree = "<group>"; };
 		5B79AE829E1E85AF6F998A442B5D817B /* race.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = race.swift; path = Sources/race.swift; sourceTree = "<group>"; };
@@ -631,7 +633,7 @@
 		63640D095E61CE4ECDDF7F2B711E2F88 /* Bitwise Ops.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Bitwise Ops.swift"; path = "Sources/Bitwise Ops.swift"; sourceTree = "<group>"; };
 		63BB82F257D3533F5153C41FE6D6C5E6 /* NFCNDEFWriter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = NFCNDEFWriter.h; path = Sources/NFCReaderWriter/NFCNDEFWriter.h; sourceTree = "<group>"; };
 		64BB8D83901D2593055E006DB0CD5561 /* PromiseKit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = PromiseKit.release.xcconfig; sourceTree = "<group>"; };
-		6538ED705EDD6D0AA0D7D7F94C18CB3F /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE; sourceTree = "<group>"; };
+		6538ED705EDD6D0AA0D7D7F94C18CB3F /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		65B998D76D5C3E992F954937CEE9AD48 /* group.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = group.h; path = secp256k1/Classes/secp256k1/src/group.h; sourceTree = "<group>"; };
 		66A4CF68400EB74B02065FB123001223 /* Updatable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Updatable.swift; path = Sources/CryptoSwift/Updatable.swift; sourceTree = "<group>"; };
 		6726723C16FC615F101BD6740FDF52C4 /* Utils.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Utils.swift; path = Sources/CryptoSwift/Utils.swift; sourceTree = "<group>"; };
@@ -716,7 +718,7 @@
 		9B6E5AA4C4CEFE3B22E9AC28EE6EC58A /* CryptoSwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = CryptoSwift.debug.xcconfig; sourceTree = "<group>"; };
 		9CBDBC5F0C105F418249F20314121363 /* Types+RLPItemConvertible.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Types+RLPItemConvertible.swift"; path = "MagicSDK-Web3/Classes/Core/RLP/Types+RLPItemConvertible.swift"; sourceTree = "<group>"; };
 		9D34A9DF197B5B4433F5B59472E1A182 /* RLPItemConvertible.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RLPItemConvertible.swift; path = "MagicSDK-Web3/Classes/Core/RLP/RLPItemConvertible.swift"; sourceTree = "<group>"; };
-		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		9DD71BA64D1E76FAAB43FEA1AE898127 /* HMAC.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HMAC.swift; path = Sources/CryptoSwift/HMAC.swift; sourceTree = "<group>"; };
 		9E2AF329CA91EF9A8BFB24FC0FF9A798 /* NFCReaderWriter.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = NFCReaderWriter.modulemap; sourceTree = "<group>"; };
 		9E4B9EB19AEEA732B6CBA08D97945E8A /* Pods-credenzapassport_Tests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-credenzapassport_Tests-Info.plist"; sourceTree = "<group>"; };
@@ -785,7 +787,7 @@
 		C2357A87AA24FC0C27106B5E9A2FAF58 /* RpcProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RpcProvider.swift; path = Sources/MagicSDK/Core/Provider/RpcProvider.swift; sourceTree = "<group>"; };
 		C2AB534B0422DF6E357818F48D0F8E75 /* SolidityType+Codable.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "SolidityType+Codable.swift"; path = "MagicSDK-Web3/Classes/ContractABI/ABI/SolidityType+Codable.swift"; sourceTree = "<group>"; };
 		C42284D83A84F498CBA16B5B4B58AC09 /* field_5x52.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = field_5x52.h; path = secp256k1/Classes/secp256k1/src/field_5x52.h; sourceTree = "<group>"; };
-		C5492984116FFEEFBD6B2DF7B5A3D952 /* credenzapassport.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = credenzapassport.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		C5492984116FFEEFBD6B2DF7B5A3D952 /* credenzapassport.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = credenzapassport.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		C54FD6CCC139C10D361742BCE2AB497F /* ERC20.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ERC20.swift; path = "MagicSDK-Web3/Classes/ContractABI/Contract/ERC20.swift"; sourceTree = "<group>"; };
 		C59B3B401EFA6B2F9C45800983D98DE0 /* PromiseKit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = PromiseKit.debug.xcconfig; sourceTree = "<group>"; };
 		C59C4A72E293FC027A8C1169EBC5BBE3 /* secp256k1.swift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = secp256k1.swift.release.xcconfig; sourceTree = "<group>"; };
@@ -797,7 +799,7 @@
 		C89800172CF2D652990887183B2C48B6 /* NFCConstants.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = NFCConstants.h; path = Sources/NFCReaderWriter/NFCConstants.h; sourceTree = "<group>"; };
 		C966E168BE095D21353860D40D3D12A5 /* Pods-credenzapassport_Example-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-credenzapassport_Example-frameworks.sh"; sourceTree = "<group>"; };
 		C9F859E63F0A3EBFCEA6498331D25FDA /* NetworkClient.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NetworkClient.swift; path = Sources/MagicSDK/Core/Provider/NetworkClient.swift; sourceTree = "<group>"; };
-		CB1E16159E5AEFBD4C53AA412D31707B /* lax_der_privatekey_parsing.c */ = {isa = PBXFileReference; includeInIndex = 1; name = lax_der_privatekey_parsing.c; path = secp256k1/Classes/secp256k1/contrib/lax_der_privatekey_parsing.c; sourceTree = "<group>"; };
+		CB1E16159E5AEFBD4C53AA412D31707B /* lax_der_privatekey_parsing.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = lax_der_privatekey_parsing.c; path = secp256k1/Classes/secp256k1/contrib/lax_der_privatekey_parsing.c; sourceTree = "<group>"; };
 		CB81D930973A3247A5A1A7DA925CF64B /* PassportUtility.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PassportUtility.swift; path = credenzapassport/Classes/PassportUtility.swift; sourceTree = "<group>"; };
 		CBAD11CC968CC4A829F665FE8CC6525B /* Eth+ABI.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Eth+ABI.swift"; path = "MagicSDK-Web3/Classes/ContractABI/ABI/Eth+ABI.swift"; sourceTree = "<group>"; };
 		CCE8029BE04A1CA313D26FAE47DC2AD4 /* field_5x52_impl.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = field_5x52_impl.h; path = secp256k1/Classes/secp256k1/src/field_5x52_impl.h; sourceTree = "<group>"; };
@@ -1032,7 +1034,6 @@
 				053789D5804DDA66DDFB7A802B2A606A /* CorePromise */,
 				329353469B68B8FE2250BFDE9A1C8BF5 /* Support Files */,
 			);
-			name = PromiseKit;
 			path = PromiseKit;
 			sourceTree = "<group>";
 		};
@@ -1166,7 +1167,6 @@
 				036B7F90F47E8884E10BCF1CB9B06213 /* ZeroPadding.swift */,
 				06D5B6E6F781528F1C0513BB917B2462 /* Support Files */,
 			);
-			name = CryptoSwift;
 			path = CryptoSwift;
 			sourceTree = "<group>";
 		};
@@ -1265,7 +1265,6 @@
 				2018D25FEA9A8AE4028D680AC2F9ED88 /* PromiseKit */,
 				847C7F337E4B0FA8EA03C29C873B3B52 /* Support Files */,
 			);
-			name = "MagicSDK-Web3";
 			path = "MagicSDK-Web3";
 			sourceTree = "<group>";
 		};
@@ -1301,6 +1300,7 @@
 				CB81D930973A3247A5A1A7DA925CF64B /* PassportUtility.swift */,
 				A29D011B2E2D6BDC9E18FC914D4F1DEC /* Pod */,
 				3171733579D902F2421B5BA9EFA4A1B9 /* Support Files */,
+				589D8DA32B3EE0E600D07504 /* AppSetting.swift */,
 			);
 			name = credenzapassport;
 			path = ../..;
@@ -1380,7 +1380,6 @@
 				322C569CEFF0F1D43658CAADBCC55D70 /* util.h */,
 				BFEAE8C7983A150165418DC9E27ADDE4 /* Support Files */,
 			);
-			name = secp256k1.swift;
 			path = secp256k1.swift;
 			sourceTree = "<group>";
 		};
@@ -1397,7 +1396,6 @@
 				777BE3488EE08DFD76B57E914AC84479 /* UIImage+Extension.swift */,
 				9A6FDB2440D1ECE4B1F0C558EAEA9AAC /* Support Files */,
 			);
-			name = QRCodeSwiftScanner;
 			path = QRCodeSwiftScanner;
 			sourceTree = "<group>";
 		};
@@ -1473,7 +1471,6 @@
 				14B37282B195C0A40D3165CE63449CE9 /* NFCTagReader.m */,
 				A2399D2676691E062ADE3F3C39E16495 /* Support Files */,
 			);
-			name = NFCReaderWriter;
 			path = NFCReaderWriter;
 			sourceTree = "<group>";
 		};
@@ -1577,7 +1574,6 @@
 				8CD2864C1747C8F23DE6DDA645EE21AA /* Words and Bits.swift */,
 				39D5CF63DAB8763E1C504A11D803100E /* Support Files */,
 			);
-			name = BigInt;
 			path = BigInt;
 			sourceTree = "<group>";
 		};
@@ -1648,7 +1644,6 @@
 				246E6E9D6B906DE221041E95825DD89E /* WebViewController.swift */,
 				38DD9C40BFEA4580D1BF932FE474B2BF /* Support Files */,
 			);
-			name = MagicSDK;
 			path = MagicSDK;
 			sourceTree = "<group>";
 		};
@@ -2461,6 +2456,7 @@
 			files = (
 				3CD2CFB79A0C49709E4A0D0B2AD1710C /* credenzapassport-dummy.m in Sources */,
 				BC8DC8A71A9E075BC23906247947C463 /* PassportUtility.swift in Sources */,
+				589D8DA42B3EE0E600D07504 /* AppSetting.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3113,8 +3109,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRIP_INSTALLED_PRODUCT = NO;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 5.0;
 				SYMROOT = "${SRCROOT}/../build";
 			};

@@ -19,11 +19,11 @@ import Foundation
 
 class ViewController: UIViewController, PassportDelegate {
     
-//    @IBOutlet weak var tagID: UILabel!
+    //    @IBOutlet weak var tagID: UILabel!
     @IBOutlet weak var webView: WKWebView!
-//    @IBOutlet weak var viewForEmbeddingWebView: UIView!
+    //    @IBOutlet weak var viewForEmbeddingWebView: UIView!
     @IBOutlet weak var emailID: UITextField!
-//    @IBOutlet weak var qrCodeImageView: UIImageView!
+    //    @IBOutlet weak var qrCodeImageView: UIImageView!
     
     var pUtility: PassportUtility?
     
@@ -62,7 +62,7 @@ class ViewController: UIViewController, PassportDelegate {
             let d = await pUtility!
                 .checkVersion("CONTRACT_ADDRESS","CONTRACT_TYPE");
             print(d)
-
+            
             let e = await pUtility!
                 .svCheck("CONTRACT_ADDRESS","USER_ADDRESS");
             print(e)
@@ -100,6 +100,10 @@ class ViewController: UIViewController, PassportDelegate {
         print("QRCodeScanner did cancel")
     }
     
+    func passScanComplete(response: String) {
+        print("passScanComplete: \(response)")
+    }
+    
 }
 
 //MARK: - Example methods
@@ -128,9 +132,7 @@ extension ViewController {
     
     func activePassScan(){
         // calling of activatePassScan
-        try? pUtility!.activatePassScan(self, completionHandler: {
-            data in print("activepassscan:",data)
-        })
+        try? pUtility?.activatePassScan(self)
     }
     
     func queryRuleset(){

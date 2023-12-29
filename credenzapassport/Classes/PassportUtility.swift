@@ -19,6 +19,7 @@ public protocol PassportDelegate {
     func qrScannerSuccess(result: String)
     func qrScannerDidFail(error: Error)
     func qrScannerDidCancel()
+    func passScanComplete(response: String)
 }
 
 /**
@@ -36,7 +37,6 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     fileprivate var accessToken: String = ""
     fileprivate var userId: String = ""
     fileprivate var updatedAt: String = ""
-    fileprivate var activePassScanCompletion: ((String) -> Void)?
     /// The address of the NFT smart contract.
     fileprivate var nftContractAddressC = ""
     
@@ -63,7 +63,18 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         case tokenUnavailable
         case qrCodeGenerationError
         case networkRequestFailed
+        case missingParameters
+        case invalidResponse
+        case apiCalling(Error)
+        case jsonParsing(Error)
+        case invalidScanType
     }
+    
+    private enum ScanType: String {
+        case AirDrop = "AIR_DROP"
+        case RequestLoyaltyPoints = "REQUEST_LOYALTY_POINTS"
+    }
+    
     /**
      Initializes a new instance of the PassportUtility class.
      - Parameter delegate: The PassportDelegate object used for delegation.
@@ -122,7 +133,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      - emailAddress: An email address for which to perform sign-in.
      - Note: Stores the login token in UserDefaults after successful authentication.
      */
-
+    
     public func handleSignIn(_ emailAddress: String) {
         
         let magic = Magic.shared
@@ -132,8 +143,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             guard let token = response.result
             else { return print("Error:", response.error.debugDescription) }
             print("Result", token)
-            let defaults = UserDefaults.standard
-            defaults.set(token, forKey: "Token")
+            AppSettings.authToken = token
             print("Token",token)
             self.token = token
             print("provider",Magic.shared.user.provider.urlBuilder.apiKey)
@@ -257,13 +267,12 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             let web3 = Web3.init(provider: Magic.shared.rpcProvider)
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             guard let add2 = try? EthereumAddress(hex: userAddress,eip55: false) else { return }
-            let key = (Bundle.main.infoDictionary?["KRYPTKEY"] as? String) ?? ""
-            let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: key)
-            
+            let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: AppSettings.kryPTKey)
+            let chainId = EthereumQuantity(quantity: BigUInt(Int(AppSettings.chainId) ?? 0))
             web3.eth.getTransactionCount(address: myPrivateKey.address, block: .latest)
                 .done{ nonce in
                     let transaction = contract["addMembership"]?(add2, metadata).createTransaction(nonce: nonce, from: myPrivateKey.address, value: 0, gas: 150000, gasPrice: EthereumQuantity(quantity: 21.gwei))
-                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: 80001) else { return }
+                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: chainId) else { return }
                     let result = web3.eth.sendRawTransaction(transaction: signedTx)
                     debugPrint(result)
                 }.done { txHash in
@@ -297,16 +306,15 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             guard let add2 = try? EthereumAddress(hex: userAddress,eip55: false) else { return }
             
             // Retrieve private key for the transaction from info.plist
-            let key = (Bundle.main.infoDictionary?["KRYPTKEY"] as? String) ?? ""
-            let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: key)
-            
+            let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: AppSettings.kryPTKey)
+            let chainId = EthereumQuantity(quantity: BigUInt(Int(AppSettings.chainId) ?? 0))
             // Get transaction count for nonce
             web3.eth.getTransactionCount(address: myPrivateKey.address, block: .latest)
                 .done{ nonce in
                     // Create transaction object
                     let transaction = contract["removeMembership"]?(add2).createTransaction(nonce: nonce, from: myPrivateKey.address, value: 0, gas: 150000, gasPrice: EthereumQuantity(quantity: 21.gwei))
                     // Sign transaction with private key
-                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: 80001) else { return }
+                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: chainId) else { return }
                     // Send transaction
                     let result = web3.eth.sendRawTransaction(transaction: signedTx)
                     debugPrint(result)
@@ -445,13 +453,12 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             let web3 = Web3.init(provider: Magic.shared.rpcProvider)
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             guard let add2 = try? EthereumAddress(hex: userAddress,eip55: false) else { return }
-            let key = (Bundle.main.infoDictionary?["KRYPTKEY"] as? String) ?? ""
-            let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: key)
-            
+            let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: AppSettings.kryPTKey)
+            let chainId = EthereumQuantity(quantity: BigUInt(Int(AppSettings.chainId) ?? 0))
             web3.eth.getTransactionCount(address: myPrivateKey.address, block: .latest)
                 .done{ nonce in
                     let transaction = contract["addPoints"]?(add2, points).createTransaction(nonce: nonce, from: myPrivateKey.address, value: 0, gas: 150000, gasPrice: EthereumQuantity(quantity: 21.gwei))
-                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: 80001) else { return }
+                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: chainId) else { return }
                     let result = web3.eth.sendRawTransaction(transaction: signedTx)
                     debugPrint(result)
                 }.done { txHash in
@@ -481,13 +488,12 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             let web3 = Web3.init(provider: Magic.shared.rpcProvider)
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             guard let add2 = try? EthereumAddress(hex: recipientAddress,eip55: false) else { return }
-            let key = (Bundle.main.infoDictionary?["KRYPTKEY"] as? String) ?? ""
-            let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: key)
-            
+            let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: AppSettings.kryPTKey)
+            let chainId = EthereumQuantity(quantity: BigUInt(Int(AppSettings.chainId) ?? 0))
             web3.eth.getTransactionCount(address: myPrivateKey.address, block: .latest)
                 .done{ nonce in
                     let transaction = contract["convertPointsToCoins"]?(add2, points).createTransaction(nonce: nonce, from: myPrivateKey.address, value: 0, gas: 150000, gasPrice: EthereumQuantity(quantity: 21.gwei))
-                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: 80001) else { return }
+                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: chainId) else { return }
                     let result = web3.eth.sendRawTransaction(transaction: signedTx)
                     debugPrint(result)
                 }.done { txHash in
@@ -517,13 +523,12 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             let web3 = Web3.init(provider: Magic.shared.rpcProvider)
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             guard let add2 = try? EthereumAddress(hex: recipientAddress,eip55: false) else { return }
-            let key = (Bundle.main.infoDictionary?["KRYPTKEY"] as? String) ?? ""
-            let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: key)
-            
+            let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: AppSettings.kryPTKey)
+            let chainId = EthereumQuantity(quantity: BigUInt(Int(AppSettings.chainId) ?? 0))
             web3.eth.getTransactionCount(address: myPrivateKey.address, block: .latest)
                 .done{ nonce in
                     let transaction = contract["forfeitPoints"]?(add2, points).createTransaction(nonce: nonce, from: myPrivateKey.address, value: 0, gas: 150000, gasPrice: EthereumQuantity(quantity: 21.gwei))
-                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: 80001) else { return }
+                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: chainId) else { return }
                     let result = web3.eth.sendRawTransaction(transaction: signedTx)
                     debugPrint(result)
                 }.done { txHash in
@@ -553,13 +558,12 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             let web3 = Web3.init(provider: Magic.shared.rpcProvider)
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             guard let add2 = try? EthereumAddress(hex: recipientAddress,eip55: false) else { return }
-            let key = (Bundle.main.infoDictionary?["KRYPTKEY"] as? String) ?? ""
-            let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: key)
-            
+            let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: AppSettings.kryPTKey)
+            let chainId = EthereumQuantity(quantity: BigUInt(Int(AppSettings.chainId) ?? 0))
             web3.eth.getTransactionCount(address: myPrivateKey.address, block: .latest)
                 .done{ nonce in
                     let transaction = contract["redeemPoints"]?(add2, points).createTransaction(nonce: nonce, from: myPrivateKey.address, value: 0, gas: 150000, gasPrice: EthereumQuantity(quantity: 21.gwei))
-                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: 80001) else { return }
+                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: chainId) else { return }
                     let result = web3.eth.sendRawTransaction(transaction: signedTx)
                     debugPrint(result)
                 }.done { txHash in
@@ -695,16 +699,15 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             guard let add2 = try? EthereumAddress(hex: userAddress,eip55: false) else { return }
             
             // Get the private key.
-            let key = (Bundle.main.infoDictionary?["KRYPTKEY"] as? String) ?? ""
-            let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: key)
-            
+            let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: AppSettings.kryPTKey)
+            let chainId = EthereumQuantity(quantity: BigUInt(Int(AppSettings.chainId) ?? 0))
             // Get the transaction count and create the transaction.
             web3.eth.getTransactionCount(address: myPrivateKey.address, block: .latest)
                 .done{nonce in
                     let transaction = contract["claimConnection"]?(serialNumber,add2).createTransaction(nonce: nonce, from: myPrivateKey.address, value: 0, gas: 150000, gasPrice: EthereumQuantity(quantity: 21.gwei))
                     
                     // Sign and send the transaction.
-                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: 80001) else { return }
+                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: chainId) else { return }
                     let result = web3.eth.sendRawTransaction(transaction: signedTx)
                     debugPrint(result)
                 }.done { txHash in
@@ -731,13 +734,12 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         do {
             let web3 = Web3.init(provider: Magic.shared.rpcProvider)
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
-            let key = (Bundle.main.infoDictionary?["KRYPTKEY"] as? String) ?? ""
-            let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: key)
-            
+            let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: AppSettings.kryPTKey)
+            let chainId = EthereumQuantity(quantity: BigUInt(Int(AppSettings.chainId) ?? 0))
             web3.eth.getTransactionCount(address: myPrivateKey.address, block: .latest)
                 .done{nonce in
                     let transaction = contract["revokeConnection"]?(serialNumber).createTransaction(nonce: nonce, from: myPrivateKey.address, value: 0, gas: 150000, gasPrice: EthereumQuantity(quantity: 21.gwei))
-                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: 80001) else { return }
+                    guard let signedTx = try transaction?.sign(with: myPrivateKey,chainId: chainId) else { return }
                     let result = web3.eth.sendRawTransaction(transaction: signedTx)
                     debugPrint(result)
                 }.done { txHash in
@@ -1000,12 +1002,13 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      Activates the passport scan functionality.
      - Parameter viewController: The view controller where the QRCodeScannerController will be presented.
      */
-    public func activatePassScan(_ viewController: UIViewController, completionHandler: ((String) -> Void)?) throws {
-        self.activePassScanCompletion = completionHandler
-        guard let magic = magic else { throw Errors.notLoggedIn }
+    public func activatePassScan(_ viewController: UIViewController) throws{
+        guard let magic = magic else { throw Errors.notLoggedIn  }
         magic.user.isLoggedIn(response: { response in
-            guard let result = response.result else {
-                return print("Error:", response.error.debugDescription)}
+            guard let result = response.result
+            else { return print("Error:", response.error.debugDescription) }
+            print("Result", result)
+            
             if result {
                 let scanner = QRCodeScannerController()
                 scanner.delegate = self
@@ -1013,47 +1016,132 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
                 self.shouldMakeStringCheck = true
             } else {
                 print("user is not loged in",result)
+                
             }
         })
     }
     
-    private func getJsonActivePassScan(result: String) async -> String {
-        let jsonString = ""
-        guard let token = UserDefaults.standard.string(forKey: "Token") else { return ""}
-        let address = await getAddressforlogincode()
-        guard let loginCode = await getloginCode(address: address) else {return ""}
-        let signature = await getSignedSignature(loginCode: loginCode, address: address)
-        let accesstoken = await authenticateAndGetToken(signature: signature, loginCode: loginCode, Token: token)
+    // MARK: - PassScanProtocolRouter method
+    /**
+     Processes the JSON string and performs actions based on the specified scan type.
+     - Parameter jsonString: The JSON string to be processed.
+     */
+    public func passScanProtocolRouter(_ jsonString: String) async throws {
         
-        if let encodedResult = result.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
-            print("encodedResult:", encodedResult)
-            if let url = URL(string: "https://api.testnets.credenza.online/scanner/decode?rawString=\(encodedResult)") {
-                print("Complete URL: \(url)")
-                var request = URLRequest(url: url)
-                request.httpMethod = "GET"
-                request.setValue("application/json", forHTTPHeaderField: "accept")
-                request.setValue("Bearer \(accesstoken)", forHTTPHeaderField: "Authorization")
-                
-                // Make the API call
-                let (data, _) = try! await URLSession.shared.data(from: url)
-                
-                do {
-                    // Parse the JSON response
-                    let json = try JSONSerialization.jsonObject(with: data, options: [])
-                    let jsonData = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
-                    if let jsonString = String(data: jsonData, encoding: .utf8) {
-                        print("JSON response:", jsonString)
-                        print("JSON response:", json)
-                        self.activePassScanCompletion?(jsonString)
-                    }
-                } catch {
-                    print("Error parsing JSON:", error.localizedDescription)
-                }
+        guard let jsonData = jsonString.data(using: .utf8) else {
+            print("Invalid JSON string")
+            throw Errors.invalidResponse
+        }
+        
+        do {
+            let jsonObject = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any]
+            
+            guard let scanTypeString = jsonObject?["scanType"] as? String,
+                  let scanType = ScanType(rawValue: scanTypeString) else {
+                print("Invalid or missing ScanType in JSON")
+                throw Errors.invalidScanType
             }
+            
+            switch scanType {
+            case .AirDrop:
+                try await handleAirDrop(json: jsonObject)
+            case .RequestLoyaltyPoints:
+                try await handleRequestLoyaltyPoints(json: jsonObject)
+            }
+        } catch {
+            print("Error parsing JSON: \(error)")
+            throw Errors.jsonParsing(error)
         }
         self.shouldMakeStringCheck = false
-        return jsonString
     }
+    
+    // MARK: - handleAirDrop method
+    /**
+     Handles the AirDrop functionality based on the provided JSON parameters.
+     - Parameter json: The JSON dictionary containing parameters for the AirDrop.
+     */
+    private func handleAirDrop(json: [String: Any]?) async throws {
+        guard let contractAddress = json?["contractAddress"] as? String,
+              let tokenId = json?["tokenId"],
+              let amount = json?["amount"] as? Int,
+              let signature = json?["sig"] as? String,
+              let chainId = json?["chainId"] as? String else {
+            print("Missing required parameters for AIR_DROP")
+            throw Errors.missingParameters
+        }
+        do {
+            let targetAddress = await getAddressforlogincode()
+            guard let loginCode = await getloginCode(address: targetAddress) else { return }
+            let accesstoken = await authenticateAndGetToken(signature: signature, loginCode: loginCode, Token: AppSettings.authToken)
+            guard let urls = URL(string: "\(AppSettings.baseUrl)/chains/\(chainId)/\(contractAddress)/tokens/airDrop") else {
+                throw Errors.invalidResponse
+            }
+            let url = urls
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "accept")
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.setValue("Bearer \(accesstoken)", forHTTPHeaderField: "Authorization")
+            let body: [String: Any] = [
+                "targetAddress": targetAddress,
+                "tokenId": tokenId,
+                "amount": amount
+            ]
+            
+            let requestBody = try JSONSerialization.data(withJSONObject: body)
+            request.httpBody = requestBody
+            
+            let (data, response) = try await URLSession.shared.data(for: request)
+            print("Response: \(response)")
+            guard let responseString = String(data: data, encoding: .utf8) else {
+                return
+            }
+            self.delegation.passScanComplete(response: responseString)
+        } catch {
+            print("Error encoding request body: \(error)")
+            throw Errors.apiCalling(error)
+        }
+    }
+    
+    // MARK: - handleRequestLoyaltyPoints method
+    /**
+     Handles the request for loyalty points based on the provided JSON parameters.
+     - Parameter json: The JSON dictionary containing parameters for the loyalty points request.
+     */
+    private func handleRequestLoyaltyPoints(json: [String: Any]?) async throws {
+        guard let eventId = json?["eventId"] as? String,
+              let chainId = json?["chainId"] as? String,
+              let contractAddress = json?["contractAddress"] as? String else {
+            print("Missing required parameters for REQUEST_LOYALTY_POINTS")
+            throw Errors.missingParameters
+        }
+        
+        do {
+            let address = await getAddressforlogincode()
+            guard let loginCode = await getloginCode(address: address) else { return }
+            let signature = await getSignedSignature(loginCode: loginCode, address: address)
+            let accesstoken = await authenticateAndGetToken(signature: signature, loginCode: loginCode, Token: AppSettings.authToken)
+            guard let urls = URL(string: "\(AppSettings.baseUrl)/chains/\(chainId)/requestLoyaltyPoints?eventId=\(eventId)&contractAddress=\(contractAddress)") else {
+                throw Errors.invalidResponse
+            }
+            let url = urls
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "accept")
+            request.setValue("Bearer \(accesstoken)", forHTTPHeaderField: "Authorization")
+            
+            let (data, response) = try await URLSession.shared.data(for: request)
+            print("Response: \(response)")
+            guard let responseString = String(data: data, encoding: .utf8) else {
+                return
+            }
+            self.delegation.passScanComplete(response: responseString)
+        } catch {
+            print("Error checking login status: \(error)")
+            throw Errors.apiCalling(error)
+        }
+    }
+    
     
     // MARK: - queryRuleset method
     /**
@@ -1064,16 +1152,14 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      */
     public func queryRuleset(passportId: String, ruleSetId: String) async -> Data? {
         // Construct the URL
-        guard let url = URL(string: "https://api.testnets.credenza.online/discounts/rulesets/validate") else {
+        guard let url = URL(string: "\(AppSettings.baseUrl)/discounts/rulesets/validate") else {
             // Return nil if the URL is invalid.
             return nil
         }
-        
-        guard let token = UserDefaults.standard.string(forKey: "Token") else { return nil}
         let address = await getAddressforlogincode()
         guard let loginCode = await getloginCode(address: address) else {return nil}
         let signature = await getSignedSignature(loginCode: loginCode, address: address)
-        let accesstoken = await authenticateAndGetToken(signature: signature, loginCode: loginCode, Token: token)
+        let accesstoken = await authenticateAndGetToken(signature: signature, loginCode: loginCode, Token: AppSettings.authToken)
         // Create a URLRequest with the URL
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -1133,7 +1219,6 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
                 // User is logged in, proceed with generating the QR code.
                 let scanType = "PASSPORT_ID"
                 let date = ISO8601DateFormatter.string(from: Date(), timeZone: .current, formatOptions: [.withInternetDateTime])
-                let chainId = "80001" // You should replace this with the actual chain ID.
                 let timestamp = String(Int(Date().timeIntervalSince1970))
                 DispatchQueue.global(qos: .background).async {
                     let signature = self.signTimestamp(Timestamp: timestamp)
@@ -1141,7 +1226,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
                     let qrCodeData: [String: Any] = [
                         "scanType": scanType,
                         "date": date,
-                        "chainId": chainId,
+                        "chainId": AppSettings.chainId,
                         "sig": signature
                     ]
                     
@@ -1232,24 +1317,14 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             print("Result", result)
         })
         do {
-            // If the user is logged in, call the GET API
-            guard let token = UserDefaults.standard.string(forKey: "Token") else {
-                // Token not available, handle the situation accordingly
-                print("Token not available.")
-                throw Errors.tokenUnavailable
-            }
-            print("Token available.",token)
             let address = await getAddressforlogincode()
             guard let loginCode = await getloginCode(address: address) else { return nil }
             let signature = await getSignedSignature(loginCode: loginCode, address: address)
-            let accessToken = await authenticateAndGetToken(signature: signature, loginCode: loginCode, Token: token)
-            
-            let chainId = 80001
-            // Call the API to get the wallet pass
-            let apiUrl = "https://api.testnets.credenza.online/apple/pkpass/passportId"
+            let accessToken = await authenticateAndGetToken(signature: signature, loginCode: loginCode, Token: AppSettings.authToken)
+            let apiUrl = "\(AppSettings.baseUrl)/apple/pkpass/passportId"
             var urlComponents = URLComponents(string: apiUrl)!
             urlComponents.queryItems = [
-                URLQueryItem(name: "chainId", value: String(chainId)),
+                URLQueryItem(name: "chainId", value: AppSettings.chainId),
                 URLQueryItem(name: "address", value: self.address)
             ]
             print("urlComponents f:",urlComponents)
@@ -1316,7 +1391,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      */
     private func getloginCode(address: String) async -> String? {
         // Call the API to get the wallet pass
-        let apiUrl = "https://api.testnets.credenza.online/auth"
+        let apiUrl = "\(AppSettings.baseUrl)/auth"
         var urlComponents = URLComponents(string: apiUrl)!
         urlComponents.queryItems = [
             URLQueryItem(name: "address", value: address)
@@ -1363,6 +1438,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         return nil
     }
     
+    // MARK: - getSignedSignature method
     // Function to sign the timestamp using MagicSDK_Web3
     /**
      Signs .
@@ -1392,7 +1468,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      */
     private func authenticateAndGetToken(signature: String, loginCode: String, Token: String) async -> String {
         // Construct the URL
-        guard let url = URL(string: "https://api.testnets.credenza.online/auth") else {
+        guard let url = URL(string: "\(AppSettings.baseUrl)/auth") else {
             return "\(NSError(domain: "Invalid URL", code: -1, userInfo: nil))"
         }
         
@@ -1473,11 +1549,11 @@ extension PassportUtility: QRScannerCodeDelegate {
     /// It gets call when scanner did complete scanning QRCode.
     public func qrScanner(_ controller: UIViewController, scanDidComplete result: String) {
         print("Scanned QR code: \(result)")
-        if shouldMakeStringCheck == true {
-            Task{
-                await getJsonActivePassScan(result: result)
+        if shouldMakeStringCheck {
+            Task {
+                try await passScanProtocolRouter(result)
             }
-        }else{
+        } else {
             self.delegation.qrScannerSuccess(result: result)
         }
     }
