@@ -43,7 +43,6 @@ class ViewController: UIViewController, PassportDelegate {
         Task { @MainActor in
             pUtility!.handleSignIn(emailID.text!)
         }
-        
     }
     
     @IBAction func readTagIDButtonTapped(_ sender: Any)  {
