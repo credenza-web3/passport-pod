@@ -14,7 +14,10 @@ To run the example project, clone the repo, and run `pod install` from the Examp
     - Magic SDK API Key: To use passport authentication enter your magic sdk api key in app delegate file.
     - KRYPTKEY : Setup your private key in info.plist file replace 'INSERT_KRYPTKEY' with your original key in plist file.
     - CHAINID  : Setup your chain ID in info.plist file replace 'INSERT_CHAINID' with your original key in plist file.
-    - BASEURL  : Setup your chain ID in info.plist file replace 'INSERT_BASEURL' with your original key in plist file.
+    - BASEURL  : Setup your Base URL in info.plist file replace 'INSERT_BASEURL' with your original key in plist file.
+    - NFTCONTRACTADDRESSC  : Setup your NFT CONTRACTADDRESS in info.plist file replace 'INSERT_NFTCONTRACTADDRESSC' with your original key in plist file.
+    - STOREDVALUECONTRACTADDRESSC  : Setup your STORED VALUE CONTRACT ADDRESS in info.plist file replace 'INSERT_STOREDVALUECONTRACTADDRESSC' with your original key in plist file.
+    - CONNECTEDCONTRACTADDRESSC  : Setup your CONNECTED CONTRACT ADDRESS in info.plist file replace 'INSERT_CONNECTEDCONTRACTADDRESSC' with your original key in plist file.
 ## Installation
 
 credenzapassport is available through [CocoaPods](https://cocoapods.org). To install

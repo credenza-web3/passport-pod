@@ -27,4 +27,16 @@ final class AppSettings: NSObject {
         return (Bundle.main.infoDictionary?["KRYPTKEY"] as? String) ?? ""
     }
     
+    class var nftContractAddressC: String {
+            return (Bundle.main.infoDictionary?["NFTCONTRACTADDRESSC"] as? String) ?? ""
+        }
+
+    class var storedValueContractAddressC: String {
+            return (Bundle.main.infoDictionary?["STOREDVALUECONTRACTADDRESSC"] as? String) ?? ""
+        }
+
+    class var connectedContractAddressC: String {
+            return (Bundle.main.infoDictionary?["CONNECTEDCONTRACTADDRESSC"] as? String) ?? ""
+        }
+    
 }

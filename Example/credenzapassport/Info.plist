@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NFTCONTRACTADDRESSC</key>
+	<string>INSERT_NFTCONTRACTADDRESSC</string>
+	<key>STOREDVALUECONTRACTADDRESSC</key>
+	<string>INSERT_STOREDVALUECONTRACTADDRESSC</string>
+	<key>CONNECTEDCONTRACTADDRESSC</key>
+	<string>INSERT_CONNECTEDCONTRACTADDRESSC</string>
 	<key>KRYPTKEY</key>
 	<string>INSERT_KRYPTKEY</string>
 	<key>CHAINID</key>

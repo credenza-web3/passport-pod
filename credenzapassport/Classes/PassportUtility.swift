@@ -37,14 +37,18 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     fileprivate var accessToken: String = ""
     fileprivate var userId: String = ""
     fileprivate var updatedAt: String = ""
+    
+    /// CompletionHandler to return address on readNFCAddress method
+    private var NFCAddressCompletionHandler: ((String) -> Void)?
+    
     /// The address of the NFT smart contract.
-    fileprivate var nftContractAddressC = ""
+    fileprivate var nftContractAddressC = AppSettings.nftContractAddressC
     
     /// The address of the stored value smart contract.
-    fileprivate var storedValueContractAddressC = ""
+    fileprivate var storedValueContractAddressC = AppSettings.storedValueContractAddressC
     
     /// The address of the connected smart contract.
-    fileprivate var connectedContractAddressC = ""
+    fileprivate var connectedContractAddressC = AppSettings.connectedContractAddressC
     
     /// An instance of the NFCReaderWriter class.
     public let readerWriter = NFCReaderWriter.sharedInstance()
@@ -113,9 +117,20 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     // MARK: - Actions
     
     ///Initiates a new NFC reader/writer session for reading from the passport-enabled tag.
-    public func readNFC() {
+    public func readNFCAddress(completion: @escaping (String) -> Void) {
         readerWriter.newWriterSession(with: self, isLegacy: false, invalidateAfterFirstRead: true, alertMessage: "Scan Your Passport-Enabled Tag")
         readerWriter.begin()
+        self.NFCAddressCompletionHandler = completion
+    }
+
+    ///Initiates a new NFC reader/writer session for reading from the passport-enabled tag and then calling passScanProtocolRouter.
+    public func readNFCPass() async {
+        let address = await withCheckedContinuation { continuation in
+            readNFCAddress { address in
+                continuation.resume(returning: address)
+            }
+        }
+        try! await self.passScanProtocolRouter(address)
     }
     
     /**
@@ -946,6 +961,8 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         DispatchQueue.main.async {
             self.delegation.nfcScanComplete(address: serialID)
             //self.loadContent(firstCheck);
+            self.NFCAddressCompletionHandler?(serialID)
+            self.NFCAddressCompletionHandler = nil
         }
         //self.readerWriter. = "NFC Tag Info detected"
         self.readerWriter.end()
