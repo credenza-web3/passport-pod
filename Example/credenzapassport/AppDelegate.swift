@@ -19,8 +19,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         let chainId = (Bundle.main.infoDictionary?["CHAINID"] as? String) ?? ""
-        let config = CustomNodeConfiguration(rpcUrl: "RPC_URL", chainId: Int(chainId) ?? 0)
-        Magic.shared = Magic.init(apiKey: "API_KEY", customNode: config);
+        let config = CustomNodeConfiguration(rpcUrl: "INSERT_RPC_URL", chainId: Int(chainId) ?? 0)
+        Magic.shared = Magic.init(apiKey: "INSERT_API_KEY", customNode: config);
         return true
     }
 

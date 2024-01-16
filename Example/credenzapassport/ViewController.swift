@@ -51,30 +51,31 @@ class ViewController: UIViewController, PassportDelegate {
          readerWriter.detectedMessage = "detected Tag info"*/
         Task {
             let b = await pUtility!
-                .loyaltyCheck("CONTRACT_ADDRESS","USER_ADDRESS");
-            print(b)
+                .loyaltyCheck("INSERT_CONTRACT_ADDRESS","INSERT_USER_ADDRESS","INSERT_CONTRACT_TYPE");
+            print("b:",b)
             
             let c = await pUtility!
-                .checkMembership("CONTRACT_ADDRESS","OWNER_ADDRESS", "USER_ADDRESS")
-            print(c)
+                .checkMembership("INSERT_CONTRACT_ADDRESS","INSERT_OWNER_ADDRESS", "INSERT_USER_ADDRESS","INSERT_CONTRACT_TYPE")
+            print("c:",c)
             
-            let d = await pUtility!
-                .checkVersion("CONTRACT_ADDRESS","CONTRACT_TYPE");
-            print(d)
+            let d = try await pUtility!
+                .checkVersion("INSERT_CONTRACT_ADDRESS","INSERT_CONTRACT_TYPE");
+            print("d:",d)
             
             let e = await pUtility!
-                .svCheck("CONTRACT_ADDRESS","USER_ADDRESS");
-            print(e)
+                .svCheck("INSERT_CONTRACT_ADDRESS","INSERT_USER_ADDRESS","INSERT_CONTRACT_TYPE");
+            print("e:",e)
             
             let f = await pUtility!
-                .nftCheck("CONTRACT_ADDRESS","USER_ADDRESS");
-            print(f)
+                .nftCheck("INSERT_CONTRACT_ADDRESS","INSERT_USER_ADDRESS","INSERT_CONTRACT_TYPE");
+            print("f:",f)
             
-            //await pUtility!.loyaltyAdd("CONTRACT_ADDRESS", "USER_ADDRESS", POINTS)
+            //await pUtility!.loyaltyAdd("INSERT_CONTRACT_ADDRESS", "INSERT_USER_ADDRESS", INSERT_POINTS,"INSERT_CONTRACT_TYPE")
             
-            //await pUtility!.removeMembership("CONTRACT_ADDRESS", "USER_ADDRESS")
+            //await pUtility!.removeMembership("INSERT_CONTRACT_ADDRESS", "INSERT_USER_ADDRESS","INSERT_CONTRACT_TYPE")
             
-            await pUtility!.addMembership("CONTRACT_ADDRESS", "USER_ADDRESS","META_DATA");
+            await pUtility!.addMembership("INSERT_CONTRACT_ADDRESS", "INSERT_USER_ADDRESS","INSERT_META_DATA","INSERT_CONTRACT_TYPE");
+
         }
     }
     
@@ -137,7 +138,7 @@ extension ViewController {
     func queryRuleset(){
         // calling of queryRuleset
         Task{
-            await pUtility?.queryRuleset(passportId: "PASSPORT_ID", ruleSetId: "RULESET_ID")
+            await pUtility?.queryRuleset(passportId: "INSERT_PASSPORT_ID", ruleSetId: "INSERT_RULESET_ID")
         }
     }
     

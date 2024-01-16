@@ -72,6 +72,8 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         case apiCalling(Error)
         case jsonParsing(Error)
         case invalidScanType
+        case unknownError
+        case invalidVersion
     }
     
     private enum ScanType: String {
@@ -137,9 +139,18 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      Retrieves a version number from a specific smart contract.
      - Returns: An asynchronous task that returns the version number as a String.
      */
-    public func getVersion(_ contractAddress: String, _ contractType: String) async {
-        let versionNumber = await checkVersion(contractAddress, contractType)
-        print (versionNumber)
+    public func getVersion(_ contractAddress: String, _ contractType: String) async throws -> String {
+        do {
+            let versionNumber = try await checkVersion(contractAddress, contractType)
+            debugPrint("Version Number: \(versionNumber)")
+            return versionNumber
+        } catch Errors.invalidVersion {
+            debugPrint("Invalid version encountered")
+            throw Errors.invalidVersion
+        } catch {
+            debugPrint("Error getting version: \(error.localizedDescription)")
+            throw error
+        }
     }
     
     /**
@@ -199,9 +210,9 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      - userAddress: An Ethereum public address of the user whose NFT balance to check.
      - Returns: The balance of NFT.
      */
-    public func nftCheck(_ contractAddress: String, _ userAddress: String) async -> BigUInt {
+    public func nftCheck(_ contractAddress: String, _ userAddress: String,_ contractType: String) async -> BigUInt {
         
-        let contractABI = await getContractABI("OzzieContract");
+        let contractABI = await getContractABI(contractType);
         
         do {
             let web3 = Web3.init(provider: Magic.shared.rpcProvider)
@@ -238,29 +249,31 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      - contractType: The type of the contract for which to check the version.
      - Returns: A string containing the contract version or "NONE" if there was an error.
      */
-    public func checkVersion(_ contractAddress: String, _ contractType: String) async -> String {
-        
-        let contractABI = await getContractABI(contractType);
-        
+    public func checkVersion(_ contractAddress: String, _ contractType: String) async throws -> String {
         do {
+            let contractABI = await getContractABI(contractType)
+
             let web3 = Web3.init(provider: Magic.shared.rpcProvider)
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
-            
-            return await withCheckedContinuation { continuation in
+            print(contract)
+            return try await withCheckedThrowingContinuation { continuation in
                 contract["getVersion"]?().call() { response, error in
                     if let response = response {
-                        continuation.resume(returning: response["version"] as? String ?? "")
-                        //return response;
+                        if let version = response["version"] as? String {
+                            continuation.resume(returning: version)
+                        } else {
+                            continuation.resume(throwing: Errors.invalidResponse)
+                        }
+                    } else if let error = error {
+                        continuation.resume(throwing: error)
                     } else {
-                        print(error?.localizedDescription ?? "Failed to get response")
+                        continuation.resume(throwing: Errors.unknownError)
                     }
                 }
             }
         } catch {
-            print(error.localizedDescription)
+            throw error
         }
-        return "NONE"
-        
     }
     
     /**
@@ -274,9 +287,9 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      - userAddress: The Ethereum address of the user to add as a member.
      - metadata: The metadata to associate with the membership.
      */
-    public func addMembership(_ contractAddress: String, _ userAddress: String, _ metadata: String) async {
+    public func addMembership(_ contractAddress: String, _ userAddress: String, _ metadata: String,_ contractType: String) async {
         
-        let contractABI = await getContractABI("MetadataMembershipContract");
+        let contractABI = await getContractABI(contractType);
         
         do {
             let web3 = Web3.init(provider: Magic.shared.rpcProvider)
@@ -309,9 +322,9 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      - userAddress: The Ethereum address of the user whose membership needs to be removed.
      - Returns: Void.
      */
-    public func removeMembership(_ contractAddress: String, _ userAddress: String) async {
+    public func removeMembership(_ contractAddress: String, _ userAddress: String,_ contractType: String) async {
         
-        let contractABI = await getContractABI("MetadataMembershipContract");
+        let contractABI = await getContractABI(contractType);
         
         do {
             let web3 = Web3.init(provider: Magic.shared.rpcProvider)
@@ -352,9 +365,9 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      - userAddress: The Ethereum address of the user to be checked.
      - Returns: A boolean value indicating whether the user is a confirmed member of the contract.
      */
-    public func checkMembership(_ contractAddress: String, _ ownerAddress: String, _ userAddress: String) async -> Bool {
+    public func checkMembership(_ contractAddress: String, _ ownerAddress: String, _ userAddress: String,_ contractType: String) async -> Bool {
         
-        let contractABI = await getContractABI("MembershipContract");
+        let contractABI = await getContractABI(contractType);
         
         do {
             let web3 = Web3.init(provider: Magic.shared.rpcProvider)
@@ -382,9 +395,9 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         return false
     }
     
-    public func getMembershipMetadata(_ contractAddress: String, _ ownerAddress: String, _ userAddress: String) async -> String {
+    public func getMembershipMetadata(_ contractAddress: String, _ ownerAddress: String, _ userAddress: String,_ contractType: String) async -> String {
         
-        let contractABI = await getContractABI("MetadataMembershipContract");
+        let contractABI = await getContractABI(contractType);
         
         do {
             let web3 = Web3.init(provider: Magic.shared.rpcProvider)
@@ -418,10 +431,10 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      - userAddress: The Ethereum address of the user to check loyalty points for.
      - Returns: A `BigUInt` representing the user's loyalty points.
      */
-    public func loyaltyCheck(_ contractAddress: String, _ userAddress: String) async -> BigUInt {
+    public func loyaltyCheck(_ contractAddress: String, _ userAddress: String,_ contractType: String) async -> BigUInt {
         
         // Get the ABI of the loyalty contract
-        let contractABI = await getContractABI("LedgerContract");
+        let contractABI = await getContractABI(contractType);
         
         do {
             // Create a Web3 object using the Magic RPC provider
@@ -460,9 +473,9 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      - userAddress: The address of the user's account to add points to.
      - points: The number of points to add to the user's account.
      */
-    public func loyaltyAdd(_ contractAddress: String, _ userAddress: String, _ points: UInt) async {
+    public func loyaltyAdd(_ contractAddress: String, _ userAddress: String, _ points: UInt,_ contractType: String) async {
         
-        let contractABI = await getContractABI("LedgerContract");
+        let contractABI = await getContractABI(contractType);
         
         do {
             let web3 = Web3.init(provider: Magic.shared.rpcProvider)
@@ -495,9 +508,9 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      - recipientAddress: The address of the user's account to add points to.
      - points: The number of points to add to the user's account.
      */
-    public func convertPointsToCoins(_ contractAddress: String, _ recipientAddress: String, _ points: UInt) async {
+    public func convertPointsToCoins(_ contractAddress: String, _ recipientAddress: String, _ points: UInt,_ contractType: String) async {
         
-        let contractABI = await getContractABI("LedgerContract");
+        let contractABI = await getContractABI(contractType);
         
         do {
             let web3 = Web3.init(provider: Magic.shared.rpcProvider)
@@ -530,9 +543,9 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      - recipientAddress: The address of the user's account to add points to.
      - points: The number of points to add to the user's account.
      */
-    public func loyaltyForfeit(_ contractAddress: String, _ recipientAddress: String, _ points: UInt) async {
+    public func loyaltyForfeit(_ contractAddress: String, _ recipientAddress: String, _ points: UInt,_ contractType: String) async {
         
-        let contractABI = await getContractABI("LedgerContract");
+        let contractABI = await getContractABI(contractType);
         
         do {
             let web3 = Web3.init(provider: Magic.shared.rpcProvider)
@@ -565,9 +578,9 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      - recipientAddress: The address of the user's account to add points to.
      - points: The number of points to add to the user's account.
      */
-    public func loyaltyRedeem(_ contractAddress: String, _ recipientAddress: String, _ points: UInt, _ eventId: UInt) async {
+    public func loyaltyRedeem(_ contractAddress: String, _ recipientAddress: String, _ points: UInt, _ eventId: UInt,_ contractType: String) async {
         
-        let contractABI = await getContractABI("LedgerContract");
+        let contractABI = await getContractABI(contractType);
         
         do {
             let web3 = Web3.init(provider: Magic.shared.rpcProvider)
@@ -600,9 +613,9 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      - recipientAddress: The address of the user's account to add points to.
      - points: The number of points to add to the user's account.
      */
-    public func loyaltyLifetimeCheck(_ contractAddress: String, _ userAddress: String) async -> BigUInt {
+    public func loyaltyLifetimeCheck(_ contractAddress: String, _ userAddress: String,_ contractType: String) async -> BigUInt {
         
-        let contractABI = await getContractABI("LedgerContract");
+        let contractABI = await getContractABI(contractType);
         
         do {
             let web3 = Web3.init(provider: Magic.shared.rpcProvider)
@@ -631,9 +644,9 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      - userAddress: The address of the user's account to check the balance of.
      - Returns: The balance of the user's account.
      */
-    public func svCheck(_ contractAddress: String, _ userAddress: String) async -> BigUInt {
+    public func svCheck(_ contractAddress: String, _ userAddress: String,_ contractType: String) async -> BigUInt {
         
-        let contractABI = await getContractABI("ERC20TestContract");
+        let contractABI = await getContractABI(contractType);
         let contractAddress = storedValueContractAddressC;
         
         do {
@@ -663,10 +676,10 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      - serialNumber: The serial number of the connected packaging.
      - Returns: The Ethereum address of the connected packaging.
      */
-    public func connectedPackageQuery(serialNumber: String) async -> String {
+    public func connectedPackageQuery(serialNumber: String,_ contractType: String) async -> String {
         
         // Get the ABI and contract address.
-        let contractABI = await getContractABI("ConnectedPackagingContract");
+        let contractABI = await getContractABI(contractType);
         let contractAddress = connectedContractAddressC;
         
         do {
@@ -700,10 +713,10 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      - userAddress: The Ethereum address of the user.
      - serialNumber: The serial number of the connected packaging.
      */
-    public func connectedPackagePublish(userAddress: String, serialNumber: String) async {
+    public func connectedPackagePublish(userAddress: String, serialNumber: String,_ contractType: String) async {
         
         // Get the ABI and contract address.
-        let contractABI = await getContractABI("ConnectedPackagingContract");
+        let contractABI = await getContractABI(contractType);
         let contractAddress = connectedContractAddressC;
         
         do {
@@ -741,9 +754,9 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      - Parameters:
      - serialNumber: The serial number of the connected packaging.
      */
-    public func connectedPackagePurge(serialNumber: String) async {
+    public func connectedPackagePurge(serialNumber: String,_ contractType: String) async {
         
-        let contractABI = await getContractABI("ConnectedPackagingContract");
+        let contractABI = await getContractABI(contractType);
         let contractAddress = connectedContractAddressC;
         
         do {
