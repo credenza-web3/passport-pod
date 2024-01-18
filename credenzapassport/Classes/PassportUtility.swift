@@ -676,7 +676,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      - serialNumber: The serial number of the connected packaging.
      - Returns: The Ethereum address of the connected packaging.
      */
-    public func connectedPackageQuery(serialNumber: String,_ contractType: String) async -> String {
+    public func connectedPackageQueryID(serialNumber: String,_ contractType: String) async -> String {
         
         // Get the ABI and contract address.
         let contractABI = await getContractABI(contractType);
@@ -690,7 +690,45 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             
             // Call the "retrieveConnection" function.
             return await withCheckedContinuation { continuation in
-                contract["retrieveConnection"]?(serialNumber).call() { response, error in
+                contract["retrieveNFCID"]?(serialNumber).call() { response, error in
+                    if let response = response {
+                        let eth = response[""] as? EthereumAddress
+                        continuation.resume(returning: eth?.hex(eip55: false) ?? "")
+                        //return response;
+                    } else {
+                        print(error?.localizedDescription ?? "Failed to get response")
+                    }
+                }
+            }
+        } catch {
+            // Return an error message if there was an issue.
+            print(error.localizedDescription)
+        }
+        return "ERROR"
+    }
+    
+    /**
+     Retrieves the connection information for a given serial number from the Connected Packaging smart contract.
+     - Parameters:
+        - serialNumber: The serial number of the connected packaging.
+        - contractType: The type of smart contract.
+     - Returns: The Ethereum address of the connected packaging.
+     */
+    public func connectedPackageQueryPass(serialNumber: String,_ contractType: String) async -> String {
+        
+        // Get the ABI and contract address.
+        let contractABI = await getContractABI(contractType);
+        let contractAddress = connectedContractAddressC;
+        
+        do {
+            let web3 = Web3.init(provider: Magic.shared.rpcProvider)
+            
+            // Instantiate the contract.
+            let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
+            
+            // Call the "retrieveConnection" function.
+            return await withCheckedContinuation { continuation in
+                contract["retrieveNFCPass"]?(serialNumber).call() { response, error in
                     if let response = response {
                         let eth = response[""] as? EthereumAddress
                         continuation.resume(returning: eth?.hex(eip55: false) ?? "")
