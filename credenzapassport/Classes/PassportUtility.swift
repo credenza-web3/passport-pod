@@ -124,7 +124,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         readerWriter.begin()
         self.NFCAddressCompletionHandler = completion
     }
-
+    
     ///Initiates a new NFC reader/writer session for reading from the passport-enabled tag and then calling passScanProtocolRouter.
     public func readNFCPass() async {
         let address = await withCheckedContinuation { continuation in
@@ -252,7 +252,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     public func checkVersion(_ contractAddress: String, _ contractType: String) async throws -> String {
         do {
             let contractABI = await getContractABI(contractType)
-
+            
             let web3 = Web3.init(provider: Magic.shared.rpcProvider)
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             print(contract)
@@ -710,8 +710,8 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     /**
      Retrieves the connection information for a given serial number from the Connected Packaging smart contract.
      - Parameters:
-        - serialNumber: The serial number of the connected packaging.
-        - contractType: The type of smart contract.
+     - serialNumber: The serial number of the connected packaging.
+     - contractType: The type of smart contract.
      - Returns: The Ethereum address of the connected packaging.
      */
     public func connectedPackageQueryPass(serialNumber: String,_ contractType: String) async -> String {
@@ -730,8 +730,8 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             return await withCheckedContinuation { continuation in
                 contract["retrieveNFCPass"]?(serialNumber).call() { response, error in
                     if let response = response {
-                        let eth = response[""] as? EthereumAddress
-                        continuation.resume(returning: eth?.hex(eip55: false) ?? "")
+                        let eth = response[""] as? String
+                        continuation.resume(returning: eth ?? "")
                         //return response;
                     } else {
                         print(error?.localizedDescription ?? "Failed to get response")
