@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "2E66BADF-6F12-4371-9104-13333E2B2BEF"
+   type = "0"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0F2D2C0E-5827-4F85-AFAE-217CB8BB8782"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../credenzapassport/Classes/PassportUtility.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1608"
+            endingLineNumber = "1608"
+            landmarkName = "getToken(from:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "0F2D2C0E-5827-4F85-AFAE-217CB8BB8782 - bf1c3806d61f5b93"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for credenzapassport.PassportUtility.getToken(from: Swift.String) async -&gt; ()"
+                  moduleName = "credenzapassport"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/abhishek/Downloads/passport-pod/credenzapassport/Classes/PassportUtility.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1609"
+                  endingLineNumber = "1609"
+                  offsetFromSymbolStart = "1564">
+               </Location>
+               <Location
+                  uuid = "0F2D2C0E-5827-4F85-AFAE-217CB8BB8782 - bf1c3806d61f5bb2"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for credenzapassport.PassportUtility.getToken(from: Swift.String) async -&gt; ()"
+                  moduleName = "credenzapassport"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/abhishek/Downloads/passport-pod/credenzapassport/Classes/PassportUtility.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1608"
+                  endingLineNumber = "1608"
+                  offsetFromSymbolStart = "288">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "ECEC5C47-8211-44DE-A2E7-2290B2B67204"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../credenzapassport/Classes/PassportUtility.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1526"
+            endingLineNumber = "1526"
+            landmarkName = "makeOAuthRequest(clientID:clientSecret:completion:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "ECEC5C47-8211-44DE-A2E7-2290B2B67204 - 777bfe34f6467b74"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "credenzapassport.PassportUtility.makeOAuthRequest(clientID: Swift.String, clientSecret: Swift.String, completion: (Swift.Optional&lt;Foundation.URLRequest&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "credenzapassport"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/abhishek/Downloads/passport-pod/credenzapassport/Classes/PassportUtility.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1525"
+                  endingLineNumber = "1525"
+                  offsetFromSymbolStart = "2484">
+               </Location>
+               <Location
+                  uuid = "ECEC5C47-8211-44DE-A2E7-2290B2B67204 - 777bfe34f6467b74"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "credenzapassport.PassportUtility.makeOAuthRequest(clientID: Swift.String, clientSecret: Swift.String, completion: (Swift.Optional&lt;Foundation.URLRequest&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "credenzapassport"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/abhishek/Downloads/passport-pod/credenzapassport/Classes/PassportUtility.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1525"
+                  endingLineNumber = "1525"
+                  offsetFromSymbolStart = "800">
+               </Location>
+               <Location
+                  uuid = "ECEC5C47-8211-44DE-A2E7-2290B2B67204 - 777bfe34f6467b53"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "credenzapassport.PassportUtility.makeOAuthRequest(clientID: Swift.String, clientSecret: Swift.String, completion: (Swift.Optional&lt;Foundation.URLRequest&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "credenzapassport"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/abhishek/Downloads/passport-pod/credenzapassport/Classes/PassportUtility.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1526"
+                  endingLineNumber = "1526"
+                  offsetFromSymbolStart = "1184">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "77A12031-468B-4E79-AAC0-A439B823766D"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../credenzapassport/Classes/PassportUtility.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1867"
+            endingLineNumber = "1867"
+            landmarkName = "webView(_:didFinish:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7680E76C-1DCE-4E96-B36B-A8E02707B84C"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../credenzapassport/Classes/PassportUtility.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1650"
+            endingLineNumber = "1650"
+            landmarkName = "getToken(from:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "7680E76C-1DCE-4E96-B36B-A8E02707B84C - a75170adfed12e15"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 @Sendable (Swift.Optional&lt;Foundation.Data&gt;, Swift.Optional&lt;__C.NSURLResponse&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in credenzapassport.PassportUtility.getToken(from: Swift.String) async -&gt; ()"
+                  moduleName = "credenzapassport"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/abhishek/Downloads/passport-pod/credenzapassport/Classes/PassportUtility.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1650"
+                  endingLineNumber = "1650"
+                  offsetFromSymbolStart = "3456">
+               </Location>
+               <Location
+                  uuid = "7680E76C-1DCE-4E96-B36B-A8E02707B84C - 6babdfd2a31e99f1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Sendable () async -&gt; () in closure #2 @Sendable (Swift.Optional&lt;Foundation.Data&gt;, Swift.Optional&lt;__C.NSURLResponse&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in credenzapassport.PassportUtility.getToken(from: Swift.String) async -&gt; ()"
+                  moduleName = "credenzapassport"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/abhishek/Downloads/passport-pod/credenzapassport/Classes/PassportUtility.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1651"
+                  endingLineNumber = "1651"
+                  offsetFromSymbolStart = "96">
+               </Location>
+               <Location
+                  uuid = "7680E76C-1DCE-4E96-B36B-A8E02707B84C - a75170adfed12e15"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 @Sendable (Swift.Optional&lt;Foundation.Data&gt;, Swift.Optional&lt;__C.NSURLResponse&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in credenzapassport.PassportUtility.getToken(from: Swift.String) async -&gt; ()"
+                  moduleName = "credenzapassport"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/abhishek/Downloads/passport-pod/credenzapassport/Classes/PassportUtility.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1650"
+                  endingLineNumber = "1650"
+                  offsetFromSymbolStart = "284">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8CC2353B-FB9E-41BB-9900-B158EC7C44FB"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../credenzapassport/Classes/PassportUtility.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1625"
+            endingLineNumber = "1625"
+            landmarkName = "getToken(from:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "8CC2353B-FB9E-41BB-9900-B158EC7C44FB - bf1c3806d61f5983"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for credenzapassport.PassportUtility.getToken(from: Swift.String) async -&gt; ()"
+                  moduleName = "credenzapassport"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/abhishek/Downloads/passport-pod/credenzapassport/Classes/PassportUtility.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1625"
+                  endingLineNumber = "1625"
+                  offsetFromSymbolStart = "2704">
+               </Location>
+               <Location
+                  uuid = "8CC2353B-FB9E-41BB-9900-B158EC7C44FB - bf1c3806d61f5983"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for credenzapassport.PassportUtility.getToken(from: Swift.String) async -&gt; ()"
+                  moduleName = "credenzapassport"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/abhishek/Downloads/passport-pod/credenzapassport/Classes/PassportUtility.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1625"
+                  endingLineNumber = "1625"
+                  offsetFromSymbolStart = "1476">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3BC027AC-D538-4DBE-9E60-CDAD16A68A4F"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../credenzapassport/Classes/PassportUtility.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1529"
+            endingLineNumber = "1529"
+            landmarkName = "makeOAuthRequest(clientID:clientSecret:completion:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "3BC027AC-D538-4DBE-9E60-CDAD16A68A4F - 777bfe34f6467bf0"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "credenzapassport.PassportUtility.makeOAuthRequest(clientID: Swift.String, clientSecret: Swift.String, completion: (Swift.Optional&lt;Foundation.URLRequest&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "credenzapassport"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/abhishek/Downloads/passport-pod/credenzapassport/Classes/PassportUtility.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1529"
+                  endingLineNumber = "1529"
+                  offsetFromSymbolStart = "2940">
+               </Location>
+               <Location
+                  uuid = "3BC027AC-D538-4DBE-9E60-CDAD16A68A4F - 777bfe34f6467bf0"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "credenzapassport.PassportUtility.makeOAuthRequest(clientID: Swift.String, clientSecret: Swift.String, completion: (Swift.Optional&lt;Foundation.URLRequest&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "credenzapassport"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/abhishek/Downloads/passport-pod/credenzapassport/Classes/PassportUtility.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1529"
+                  endingLineNumber = "1529"
+                  offsetFromSymbolStart = "1360">
+               </Location>
+               <Location
+                  uuid = "3BC027AC-D538-4DBE-9E60-CDAD16A68A4F - 777bfe34f6467bf0"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "credenzapassport.PassportUtility.makeOAuthRequest(clientID: Swift.String, clientSecret: Swift.String, completion: (Swift.Optional&lt;Foundation.URLRequest&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "credenzapassport"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/abhishek/Downloads/passport-pod/credenzapassport/Classes/PassportUtility.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1529"
+                  endingLineNumber = "1529"
+                  offsetFromSymbolStart = "1408">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5E2CA1A4-8362-4747-A759-1AAA6B9C9AE4"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../credenzapassport/Classes/PassportUtility.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1490"
+            endingLineNumber = "1490"
+            landmarkName = "base64EncodedString(from:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "5E2CA1A4-8362-4747-A759-1AAA6B9C9AE4 - 52ee271148566928"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "credenzapassport.PassportUtility.base64EncodedString(from: Swift.String) -&gt; Swift.String"
+                  moduleName = "credenzapassport"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/abhishek/Downloads/passport-pod/credenzapassport/Classes/PassportUtility.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1490"
+                  endingLineNumber = "1490"
+                  offsetFromSymbolStart = "312">
+               </Location>
+               <Location
+                  uuid = "5E2CA1A4-8362-4747-A759-1AAA6B9C9AE4 - 52ee271148566928"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "credenzapassport.PassportUtility.base64EncodedString(from: Swift.String) -&gt; Swift.String"
+                  moduleName = "credenzapassport"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/abhishek/Downloads/passport-pod/credenzapassport/Classes/PassportUtility.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1490"
+                  endingLineNumber = "1490"
+                  offsetFromSymbolStart = "128">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>

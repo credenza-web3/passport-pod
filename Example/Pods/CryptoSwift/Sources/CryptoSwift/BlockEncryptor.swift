@@ -1,6 +1,6 @@
 //  CryptoSwift
 //
-//  Copyright (C) 2014-2018 Marcin Krzyżanowski <marcin@krzyzanowskim.com>
+//  Copyright (C) 2014-2022 Marcin Krzyżanowski <marcin@krzyzanowskim.com>
 //  This software is provided 'as-is', without any express or implied warranty.
 //
 //  In no event will the authors be held liable for any damages arising from the use of this software.
@@ -11,7 +11,14 @@
 //  - Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
 //  - This notice may not be removed or altered from any source or binary distribution.
 //
+
+@usableFromInline
 final class BlockEncryptor: Cryptor, Updatable {
+
+  public enum Error: Swift.Error {
+    case unsupported
+  }
+
   private let blockSize: Int
   private var worker: CipherModeWorker
   private let padding: Padding
@@ -20,6 +27,7 @@ final class BlockEncryptor: Cryptor, Updatable {
 
   private var lastBlockRemainder = 0
 
+  @usableFromInline
   init(blockSize: Int, padding: Padding, _ worker: CipherModeWorker) throws {
     self.blockSize = blockSize
     self.padding = padding
@@ -52,7 +60,8 @@ final class BlockEncryptor: Cryptor, Updatable {
     return encrypted
   }
 
+  @usableFromInline
   func seek(to: Int) throws {
-    fatalError("Not supported")
+    throw Error.unsupported
   }
 }

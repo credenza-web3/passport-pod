@@ -178,22 +178,20 @@ code_sign_if_enabled() {
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/BigInt/BigInt.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CryptoSwift/CryptoSwift.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/MagicSDK/MagicSDK.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/MagicSDK-Web3/MagicSDK_Web3.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/NFCReaderWriter/NFCReaderWriter.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PromiseKit/PromiseKit.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/QRCodeSwiftScanner/QRCodeSwiftScanner.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/Web3/Web3.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/credenzapassport/credenzapassport.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/secp256k1.swift/secp256k1.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework "${BUILT_PRODUCTS_DIR}/BigInt/BigInt.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/CryptoSwift/CryptoSwift.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/MagicSDK/MagicSDK.framework"
-  install_framework "${BUILT_PRODUCTS_DIR}/MagicSDK-Web3/MagicSDK_Web3.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/NFCReaderWriter/NFCReaderWriter.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/PromiseKit/PromiseKit.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/QRCodeSwiftScanner/QRCodeSwiftScanner.framework"
+  install_framework "${BUILT_PRODUCTS_DIR}/Web3/Web3.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/credenzapassport/credenzapassport.framework"
   install_framework "${BUILT_PRODUCTS_DIR}/secp256k1.swift/secp256k1.framework"
 fi

@@ -2,6 +2,16 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>EVMBASEURL</key>
+	<string>INSERT_EVMBASEURL</string>
+	<key>ACCOUNTBASEURL</key>
+	<string>INSERT_ACCOUNTBASEURL</string>
+	<key>CLIENTSECRET</key>
+	<string>INSERT_CLIENTSECRET</string>
+	<key>CLIENTID</key>
+	<string>INSERT_CLIENTID</string>
+	<key>RPCURL</key>
+	<string>INSERT_RPCURL</string>
 	<key>NFTCONTRACTADDRESSC</key>
 	<string>INSERT_NFTCONTRACTADDRESSC</string>
 	<key>STOREDVALUECONTRACTADDRESSC</key>
@@ -12,7 +22,7 @@
 	<string>INSERT_KRYPTKEY</string>
 	<key>CHAINID</key>
 	<string>INSERT_CHAINID</string>
-	<key>BASEURL</key>
+	<key>PASSCODEBASEURL</key>
 	<string>INSERT_BASEURL</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>

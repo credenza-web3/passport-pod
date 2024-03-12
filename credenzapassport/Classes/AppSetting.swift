@@ -9,7 +9,6 @@ import Foundation
 
 final class AppSettings: NSObject {
     
-    
     class var authToken: String {
         get { UserDefaults.standard.string(forKey: "Token") ?? "" }
         set { UserDefaults.standard.set(newValue, forKey: "Token") }
@@ -19,12 +18,32 @@ final class AppSettings: NSObject {
         return (Bundle.main.infoDictionary?["CHAINID"] as? String) ?? ""
     }
     
-    class var baseUrl: String {
-        return (Bundle.main.infoDictionary?["BASEURL"] as? String) ?? ""
+    class var passCodeBaseUrl: String {
+        return (Bundle.main.infoDictionary?["PASSCODEBASEURL"] as? String) ?? ""
+    }
+    
+    class var accountBaseUrl: String {
+        return (Bundle.main.infoDictionary?["ACCOUNTBASEURL"] as? String) ?? ""
+    }
+    
+    class var evmBaseUrl: String {
+        return (Bundle.main.infoDictionary?["EVMBASEURL"] as? String) ?? ""
+    }
+    
+    class var rpcUrl: String {
+        return (Bundle.main.infoDictionary?["RPCURL"] as? String) ?? ""
     }
     
     class var kryPTKey: String {
         return (Bundle.main.infoDictionary?["KRYPTKEY"] as? String) ?? ""
+    }
+    
+    class var clientID: String {
+        return (Bundle.main.infoDictionary?["CLIENTID"] as? String) ?? ""
+    }
+    
+    class var clientSecret: String {
+        return (Bundle.main.infoDictionary?["CLIENTSECRET"] as? String) ?? ""
     }
     
     class var nftContractAddressC: String {

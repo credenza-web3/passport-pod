@@ -1,6 +1,6 @@
 //  CryptoSwift
 //
-//  Copyright (C) 2014-2018 Marcin Krzyżanowski <marcin@krzyzanowskim.com>
+//  Copyright (C) 2014-2022 Marcin Krzyżanowski <marcin@krzyzanowskim.com>
 //  This software is provided 'as-is', without any express or implied warranty.
 //
 //  In no event will the authors be held liable for any damages arising from the use of this software.
@@ -13,17 +13,31 @@
 //
 
 public class BlockDecryptor: Cryptor, Updatable {
-  private let blockSize: Int
-  private let padding: Padding
-  private var worker: CipherModeWorker
-  private var accumulated = Array<UInt8>()
 
+  public enum Error: Swift.Error {
+    case unsupported
+  }
+
+  @usableFromInline
+  let blockSize: Int
+
+  @usableFromInline
+  let padding: Padding
+
+  @usableFromInline
+  var worker: CipherModeWorker
+
+  @usableFromInline
+  var accumulated = Array<UInt8>()
+
+  @usableFromInline
   init(blockSize: Int, padding: Padding, _ worker: CipherModeWorker) throws {
     self.blockSize = blockSize
     self.padding = padding
     self.worker = worker
   }
 
+  @inlinable
   public func update(withBytes bytes: ArraySlice<UInt8>, isLast: Bool = false) throws -> Array<UInt8> {
     self.accumulated += bytes
 
@@ -78,7 +92,7 @@ public class BlockDecryptor: Cryptor, Updatable {
 
   public func seek(to position: Int) throws {
     guard var worker = self.worker as? SeekableModeWorker else {
-      fatalError("Not supported")
+      throw Error.unsupported
     }
 
     try worker.seek(to: position)

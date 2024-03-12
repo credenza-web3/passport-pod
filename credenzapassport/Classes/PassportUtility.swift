@@ -6,12 +6,14 @@
 //
 
 import NFCReaderWriter
-import MagicSDK
-import MagicSDK_Web3
+import Web3
 import Foundation
 import QRCodeSwiftScanner
 import PassKit
 import UIKit
+import WebKit
+import CryptoKit
+import CommonCrypto
 
 public protocol PassportDelegate {
     func loginComplete(address: String)
@@ -29,14 +31,17 @@ public protocol PassportDelegate {
 open class PassportUtility: NSObject, NFCReaderDelegate {
     
     // MARK: Local Variables
-    
     fileprivate var address: String = ""
     fileprivate var token: String = ""
     fileprivate var signature: String = ""
     fileprivate var loginCode: String = ""
     fileprivate var accessToken: String = ""
-    fileprivate var userId: String = ""
-    fileprivate var updatedAt: String = ""
+    fileprivate var clientId: String = ""
+    fileprivate var clientSecretId: String = ""
+    fileprivate var IdToken: String = ""
+    fileprivate var refreshToken: String = ""
+    fileprivate let codeVerifier = UUID().uuidString
+    fileprivate var codeChallenge: String = ""
     
     /// CompletionHandler to return address on readNFCAddress method
     private var NFCAddressCompletionHandler: ((String) -> Void)?
@@ -52,9 +57,6 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     
     /// An instance of the NFCReaderWriter class.
     public let readerWriter = NFCReaderWriter.sharedInstance()
-    
-    /// An instance of the Magic class.
-    let magic = Magic.shared
     
     /// The PassportDelegate object used for delegation.
     fileprivate var delegation: PassportDelegate
@@ -74,6 +76,9 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         case invalidScanType
         case unknownError
         case invalidVersion
+        case nullAddress
+        case emptyAccessToken
+        case FailedToPresentViewController
     }
     
     private enum ScanType: String {
@@ -160,47 +165,36 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      - Note: Stores the login token in UserDefaults after successful authentication.
      */
     
-    public func handleSignIn(_ emailAddress: String) {
+    public func handleSignIn() {
+        oauth2Login(clientID: AppSettings.clientID, clientSecret: AppSettings.clientSecret) { urlRequest in
+            guard let request = urlRequest else {
+                print("Failed to create URLRequest")
+                return
+            }
+            URLSession.shared.dataTask(with: request) { data, response, error in
+            }.resume()
+        }
         
-        let magic = Magic.shared
-        guard let magic = magic else { return }
-        let configuration = LoginWithEmailOTPConfiguration(email: emailAddress)
-        magic.auth.loginWithEmailOTP(configuration, response: { response in
-            guard let token = response.result
-            else { return print("Error:", response.error.debugDescription) }
-            print("Result", token)
-            AppSettings.authToken = token
-            print("Token",token)
-            self.token = token
-            print("provider",Magic.shared.user.provider.urlBuilder.apiKey)
-            self.getAccount();
-        })
+        // Your remaining code for handleSignIn
+        guard !accessToken.isEmpty else {
+            print("address is empty")
+            return
+        }
+        AppSettings.authToken = accessToken
+        self.token = accessToken
+        self.getAccount()
     }
     
     /**
      Gets the user's Ethereum public address using the Magic.link SDK and passes it to the `delegation` instance.
      - Note: Calls `loginComplete(address:)` of the `delegation` instance to pass the Ethereum public address to it.
      */
-    public func getAccount() {
-        
-        let web3 = Web3.init(provider: Magic.shared.rpcProvider)
-        
-        firstly {
-            // Get user's Ethereum public address
-            web3.eth.accounts()
-        }.done { accounts -> Void in
-            if let account = accounts.first {
-                // Set to UILa
-                let address = account.hex(eip55: false)
-                self.address = address
-                self.delegation.loginComplete(address: account.hex(eip55: false))
-                //                self.getloginCode()
-            } else {
-                print("No Account Found")
-            }
-        }.catch { error in
-            print("Error loading accounts and balance: \(error)")
-        }
+    public func getAccount()  {
+        guard !accessToken.isEmpty else {
+               print("address is empty")
+            return
+           }
+        self.delegation.loginComplete(address: address)
     }
     
     /**
@@ -210,12 +204,13 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      - userAddress: An Ethereum public address of the user whose NFT balance to check.
      - Returns: The balance of NFT.
      */
+    
     public func nftCheck(_ contractAddress: String, _ userAddress: String,_ contractType: String) async -> BigUInt {
         
         let contractABI = await getContractABI(contractType);
         
         do {
-            let web3 = Web3.init(provider: Magic.shared.rpcProvider)
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             guard let add2 = try? EthereumAddress(hex: userAddress,eip55: false) else { return BigUInt() }
             
@@ -236,7 +231,6 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             print(error.localizedDescription)
         }
         return BigUInt()
-        
     }
     
     /**
@@ -252,8 +246,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     public func checkVersion(_ contractAddress: String, _ contractType: String) async throws -> String {
         do {
             let contractABI = await getContractABI(contractType)
-            
-            let web3 = Web3.init(provider: Magic.shared.rpcProvider)
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             print(contract)
             return try await withCheckedThrowingContinuation { continuation in
@@ -275,7 +268,6 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             throw error
         }
     }
-    
     /**
      This asynchronous function adds a membership to the given contract address for the given user Ethereum address and metadata.
      It gets the contract ABI (Application Binary Interface) using the 'getContractABI' function,
@@ -292,7 +284,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         let contractABI = await getContractABI(contractType);
         
         do {
-            let web3 = Web3.init(provider: Magic.shared.rpcProvider)
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             guard let add2 = try? EthereumAddress(hex: userAddress,eip55: false) else { return }
             let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: AppSettings.kryPTKey)
@@ -312,7 +304,6 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             print(error.localizedDescription)
         }
         return
-        
     }
     
     /**
@@ -327,7 +318,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         let contractABI = await getContractABI(contractType);
         
         do {
-            let web3 = Web3.init(provider: Magic.shared.rpcProvider)
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             
             // Convert user address to EthereumAddress object
@@ -356,7 +347,6 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         }
         return
     }
-    
     /**
      Checks if a user is a confirmed member of a contract on the Ethereum blockchain.
      - Parameters:
@@ -370,7 +360,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         let contractABI = await getContractABI(contractType);
         
         do {
-            let web3 = Web3.init(provider: Magic.shared.rpcProvider)
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             
             // Convert owner and user addresses to EthereumAddress objects
@@ -400,7 +390,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         let contractABI = await getContractABI(contractType);
         
         do {
-            let web3 = Web3.init(provider: Magic.shared.rpcProvider)
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             
             // Convert owner and user addresses to EthereumAddress objects
@@ -438,7 +428,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         
         do {
             // Create a Web3 object using the Magic RPC provider
-            let web3 = Web3.init(provider: Magic.shared.rpcProvider)
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
             
             // Create a contract object using the contract address and ABI
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
@@ -478,7 +468,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         let contractABI = await getContractABI(contractType);
         
         do {
-            let web3 = Web3.init(provider: Magic.shared.rpcProvider)
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             guard let add2 = try? EthereumAddress(hex: userAddress,eip55: false) else { return }
             let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: AppSettings.kryPTKey)
@@ -513,7 +503,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         let contractABI = await getContractABI(contractType);
         
         do {
-            let web3 = Web3.init(provider: Magic.shared.rpcProvider)
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             guard let add2 = try? EthereumAddress(hex: recipientAddress,eip55: false) else { return }
             let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: AppSettings.kryPTKey)
@@ -535,7 +525,6 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         return
         
     }
-    
     /**
      Separated from redemption, this is called if points expire or other activities cause a balance to be reduced by amount without any benefit going to the member recipient.
      - Parameters:
@@ -548,7 +537,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         let contractABI = await getContractABI(contractType);
         
         do {
-            let web3 = Web3.init(provider: Magic.shared.rpcProvider)
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             guard let add2 = try? EthereumAddress(hex: recipientAddress,eip55: false) else { return }
             let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: AppSettings.kryPTKey)
@@ -583,7 +572,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         let contractABI = await getContractABI(contractType);
         
         do {
-            let web3 = Web3.init(provider: Magic.shared.rpcProvider)
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             guard let add2 = try? EthereumAddress(hex: recipientAddress,eip55: false) else { return }
             let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: AppSettings.kryPTKey)
@@ -618,7 +607,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         let contractABI = await getContractABI(contractType);
         
         do {
-            let web3 = Web3.init(provider: Magic.shared.rpcProvider)
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             guard let add2 = try? EthereumAddress(hex: userAddress,eip55: false) else { return BigUInt() }
             
@@ -650,7 +639,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         let contractAddress = storedValueContractAddressC;
         
         do {
-            let web3 = Web3.init(provider: Magic.shared.rpcProvider)
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             guard let add2 = try? EthereumAddress(hex: userAddress,eip55: false) else { return BigUInt() }
             
@@ -683,7 +672,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         let contractAddress = connectedContractAddressC;
         
         do {
-            let web3 = Web3.init(provider: Magic.shared.rpcProvider)
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
             
             // Instantiate the contract.
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
@@ -721,7 +710,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         let contractAddress = connectedContractAddressC;
         
         do {
-            let web3 = Web3.init(provider: Magic.shared.rpcProvider)
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
             
             // Instantiate the contract.
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
@@ -758,7 +747,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         let contractAddress = connectedContractAddressC;
         
         do {
-            let web3 = Web3.init(provider: Magic.shared.rpcProvider)
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             
             // Convert the user address to an Ethereum address.
@@ -786,7 +775,6 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         }
         return
     }
-    
     /**
      Revokes a connection for a given serial number in the Connected Packaging smart contract.
      - Parameters:
@@ -798,7 +786,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         let contractAddress = connectedContractAddressC;
         
         do {
-            let web3 = Web3.init(provider: Magic.shared.rpcProvider)
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: AppSettings.kryPTKey)
             let chainId = EthereumQuantity(quantity: BigUInt(Int(AppSettings.chainId) ?? 0))
@@ -1071,22 +1059,19 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      - Parameter viewController: The view controller where the QRCodeScannerController will be presented.
      */
     public func activatePassScan(_ viewController: UIViewController) throws{
-        guard let magic = magic else { throw Errors.notLoggedIn  }
-        magic.user.isLoggedIn(response: { response in
-            guard let result = response.result
-            else { return print("Error:", response.error.debugDescription) }
-            print("Result", result)
-            
-            if result {
-                let scanner = QRCodeScannerController()
-                scanner.delegate = self
-                viewController.present(scanner, animated: true, completion: nil)
-                self.shouldMakeStringCheck = true
-            } else {
-                print("user is not loged in",result)
-                
-            }
-        })
+        do {
+            guard !accessToken.isEmpty else {
+                   print("Access token is empty login first")
+                   // Handle the case when accessToken is empty, such as throwing an error
+                   throw Errors.emptyAccessToken
+               }
+            let scanner = QRCodeScannerController()
+            scanner.delegate = self
+            viewController.present(scanner, animated: true, completion: nil)
+            self.shouldMakeStringCheck = true
+        }catch{
+            print("user is not loged in")
+        }
     }
     
     // MARK: - PassScanProtocolRouter method
@@ -1132,16 +1117,14 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         guard let contractAddress = json?["contractAddress"] as? String,
               let tokenId = json?["tokenId"],
               let amount = json?["amount"] as? Int,
-              let signature = json?["sig"] as? String,
               let chainId = json?["chainId"] as? String else {
             print("Missing required parameters for AIR_DROP")
             throw Errors.missingParameters
         }
         do {
             let targetAddress = await getAddressforlogincode()
-            guard let loginCode = await getloginCode(address: targetAddress) else { return }
-            let accesstoken = await authenticateAndGetToken(signature: signature, loginCode: loginCode, Token: AppSettings.authToken)
-            guard let urls = URL(string: "\(AppSettings.baseUrl)/chains/\(chainId)/\(contractAddress)/tokens/airDrop") else {
+            let accesstoken = await authenticateAndGetToken()
+            guard let urls = URL(string: "\(AppSettings.passCodeBaseUrl)/chains/\(chainId)/\(contractAddress)/tokens/airDrop") else {
                 throw Errors.invalidResponse
             }
             let url = urls
@@ -1185,11 +1168,8 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         }
         
         do {
-            let address = await getAddressforlogincode()
-            guard let loginCode = await getloginCode(address: address) else { return }
-            let signature = await getSignedSignature(loginCode: loginCode, address: address)
-            let accesstoken = await authenticateAndGetToken(signature: signature, loginCode: loginCode, Token: AppSettings.authToken)
-            guard let urls = URL(string: "\(AppSettings.baseUrl)/chains/\(chainId)/requestLoyaltyPoints?eventId=\(eventId)&contractAddress=\(contractAddress)") else {
+            let accesstoken = await authenticateAndGetToken()
+            guard let urls = URL(string: "\(AppSettings.passCodeBaseUrl)/chains/\(chainId)/requestLoyaltyPoints?eventId=\(eventId)&contractAddress=\(contractAddress)") else {
                 throw Errors.invalidResponse
             }
             let url = urls
@@ -1220,14 +1200,11 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      */
     public func queryRuleset(passportId: String, ruleSetId: String) async -> Data? {
         // Construct the URL
-        guard let url = URL(string: "\(AppSettings.baseUrl)/discounts/rulesets/validate") else {
+        guard let url = URL(string: "\(AppSettings.passCodeBaseUrl)/discounts/rulesets/validate") else {
             // Return nil if the URL is invalid.
             return nil
         }
-        let address = await getAddressforlogincode()
-        guard let loginCode = await getloginCode(address: address) else {return nil}
-        let signature = await getSignedSignature(loginCode: loginCode, address: address)
-        let accesstoken = await authenticateAndGetToken(signature: signature, loginCode: loginCode, Token: AppSettings.authToken)
+        let accesstoken = await authenticateAndGetToken()
         // Create a URLRequest with the URL
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -1274,16 +1251,13 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      This method checks if the user is logged in and then generates and displays the QR code.
      */
     public func showPassportIDQRCode() async throws -> UIImage {
-        guard let magic = magic else { throw Errors.notLoggedIn }
-        
         return await withCheckedContinuation { continuation in
-            magic.user.isLoggedIn(response: { [self] response in
-                guard let result = response.result, result else {
-                    // User is not logged in or an error occurred.
+           
+                guard !accessToken.isEmpty else {
+                       print("address is empty")
                     print("User is not logged in or an error occurred.")
                     return
-                }
-                
+                   }
                 // User is logged in, proceed with generating the QR code.
                 let scanType = "PASSPORT_ID"
                 let date = ISO8601DateFormatter.string(from: Date(), timeZone: .current, formatOptions: [.withInternetDateTime])
@@ -1305,8 +1279,6 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
                         print("Signature:", signature)
                     }
                 }
-            })
-            
         }
     }
     
@@ -1316,16 +1288,15 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      - Returns: A string representing the signature.
      */
     private func signTimestamp(Timestamp: String) -> String {
-        let web3 = Web3.init(provider: Magic.shared.rpcProvider)
         let contractAddress = self.address
-        guard let message = "\(loginCode)\(Timestamp)".data(using: .utf8) else {
+        guard "\(loginCode)\(Timestamp)".data(using: .utf8) != nil else {
             return ""
         }
         
         do {
-            let signature = try web3.eth.sign(from: try EthereumAddress(ethereumValue: contractAddress), message: EthereumData.init(message)).wait()
-            print("sigt:",signature.hex())
-            return signature.hex()
+            let signature = try EthereumAddress(ethereumValue: contractAddress)
+            print("sigt:",signature.hex(eip55: false))
+            return signature.hex(eip55: false)
         } catch {
             print("Error: \(error)")
             return "Error occurred: \(error)"
@@ -1375,25 +1346,21 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      This method first checks if the user is logged in, then calls the appropriate API to get the wallet pass.
      */
     public func getWalletPass() async throws -> PKPass? {
-        let magic = Magic.shared
-        guard let magic = magic else { throw Errors.notLoggedIn }
-        magic.user.isLoggedIn(response: { response in
-            guard let result = response.result
-            else {
-                return print("Error:", response.error.debugDescription)
-            }
-            print("Result", result)
-        })
+        
+        guard !accessToken.isEmpty else {
+               print("Access token is empty login first")
+               // Handle the case when accessToken is empty, such as throwing an error
+               throw Errors.emptyAccessToken
+           }
         do {
             let address = await getAddressforlogincode()
-            guard let loginCode = await getloginCode(address: address) else { return nil }
-            let signature = await getSignedSignature(loginCode: loginCode, address: address)
-            let accessToken = await authenticateAndGetToken(signature: signature, loginCode: loginCode, Token: AppSettings.authToken)
-            let apiUrl = "\(AppSettings.baseUrl)/apple/pkpass/passportId"
+            let accessToken = await authenticateAndGetToken()
+            let apiUrl = "\(AppSettings.passCodeBaseUrl)/apple/pkpass/passportId"
             var urlComponents = URLComponents(string: apiUrl)!
             urlComponents.queryItems = [
                 URLQueryItem(name: "chainId", value: AppSettings.chainId),
-                URLQueryItem(name: "address", value: self.address)
+                URLQueryItem(name: "address", value: address),
+                URLQueryItem(name: "sessionToken", value: accessToken)
             ]
             print("urlComponents f:",urlComponents)
             var request = URLRequest(url: urlComponents.url!)
@@ -1428,28 +1395,12 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      Gets the user's Ethereum public address using the Magic.link SDK and passes it to the `delegation` instance.
      - Note: Calls `loginComplete(address:)` of the `delegation` instance to pass the Ethereum public address to it.
      */
-    private func getAddressforlogincode()async -> String {
-        await withCheckedContinuation({ continuation in
-            let web3 = Web3.init(provider: Magic.shared.rpcProvider)
-            firstly {
-                // Get user's Ethereum public address
-                web3.eth.accounts()
-            }.done { accounts -> Void in
-                if let account = accounts.first {
-                    // Set to UILa
-                    let address = account.hex(eip55: false)
-                    self.address = address
-                    continuation.resume(returning: address)
-                    print("add:",address)
-                } else {
-                    print("No Account Found")
-                    continuation.resume(returning: "")
-                }
-            }.catch { error in
-                print("Error loading accounts and balance: \(error)")
-                continuation.resume(returning: "")
-            }
-        })
+    private func getAddressforlogincode() async -> String {
+        guard !address.isEmpty else {
+               print("address is empty")
+            return ""
+           }
+        return address
     }
     
     // MARK: - getloginCode method
@@ -1457,9 +1408,9 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      Retrieves a login code from the server.
      This method gets the user's Ethereum address, then calls the API to get the login code.
      */
-    private func getloginCode(address: String) async -> String? {
+    private func getloginCode(address: String) async {
         // Call the API to get the wallet pass
-        let apiUrl = "\(AppSettings.baseUrl)/auth"
+        let apiUrl = "\(AppSettings.passCodeBaseUrl)/auth"
         var urlComponents = URLComponents(string: apiUrl)!
         urlComponents.queryItems = [
             URLQueryItem(name: "address", value: address)
@@ -1469,7 +1420,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         // Use URL directly here
         guard let url = urlComponents.url else {
             print("Invalid URL")
-            return nil
+            return
         }
         
         do {
@@ -1477,7 +1428,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             
             guard let httpResponse = response as? HTTPURLResponse else {
                 print("Invalid HTTP response")
-                return nil
+                return
             }
             
             if httpResponse.statusCode == 200 {
@@ -1489,130 +1440,346 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
                         self.loginCode = loginCode
                         // self.showPassportIDQRCode()
                         print("loginc:",loginCode)
-                        return loginCode
+                        return
                     }
                 } catch {
                     print("Error parsing JSON: \(error)")
-                    return nil
+                    return
                 }
             } else {
                 print("Unexpected status code: \(httpResponse.statusCode)")
-                return nil
+                return
             }
         } catch {
             print("Error downloading wallet pass: \(error)")
-            return nil
+            return
         }
-        return nil
+        return
     }
     
-    // MARK: - getSignedSignature method
-    // Function to sign the timestamp using MagicSDK_Web3
-    /**
-     Signs .
-     - Returns: A string representing the signature.
-     */
-    private func getSignedSignature(loginCode: String, address: String) async -> String {
-        let web3 = Web3.init(provider: Magic.shared.rpcProvider)
-        let contractAddress = self.address
-        guard let message = loginCode.data(using: .utf8) else {
+    private func getLoginCode() async -> String {
+        guard !loginCode.isEmpty else {
+               print("loginCode is empty")
             return ""
-        }
-        
-        do {
-            let signature = try web3.eth.sign(from: try EthereumAddress(ethereumValue: contractAddress), message: EthereumData.init(message)).wait()
-            print("sigt:",signature.hex())
-            self.signature = signature.hex()
-            return signature.hex()
-        } catch {
-            print("Error: \(error)")
-            return "Error occurred: \(error)"
-        }
+           }
+        return loginCode
     }
+    
     // MARK: - auth method
     /**
      Performs authentication.
      - Parameter : A closure to be called upon completion of the authentication process.
      */
-    private func authenticateAndGetToken(signature: String, loginCode: String, Token: String) async -> String {
-        // Construct the URL
-        guard let url = URL(string: "\(AppSettings.baseUrl)/auth") else {
-            return "\(NSError(domain: "Invalid URL", code: -1, userInfo: nil))"
+    private func authenticateAndGetToken() async -> String {
+        guard !accessToken.isEmpty else {
+               print("accessToken is empty")
+            return ""
+           }
+        return accessToken
+    }
+    
+    // MARK: - oauth2ToAuthorize
+    /**
+         Performs authentication using OAuth2 authorization.
+         - Parameters:
+            - clientID: The client ID for OAuth2 authentication.
+            - clientSecret: The client secret for OAuth2 authentication.
+            - completion: A closure to be called upon completion of the authentication process. It returns a URLRequest for the authentication URL.
+    */
+    private func oauth2Login(clientID: String, clientSecret: String, completion: @escaping (URLRequest?) -> Void) {
+        debugPrint("codeVerifier: \(codeVerifier)")
+        let sha256Digest = codeVerifier.hashSha256()
+        let codeChallenge = sha256Digest.base64urlencode()
+        self.codeChallenge = codeChallenge
+        debugPrint("codeChallenge: \(codeChallenge)")
+        clientId = clientID
+        clientSecretId = clientSecret
+        let urlString = "\(AppSettings.accountBaseUrl)/authorize"
+        let queryParameters = [
+            "client_id": clientID,
+            "state": "state",
+            "redirect_uri": "https://example.com/callback",
+            "scope": "openid profile email phone blockchain.evm blockchain.evm.write",
+            "response_type": "code",
+            "code_challenge": codeChallenge,
+            "code_challenge_method": "S256",
+            "nonce": "nonce123"
+        ]
+        
+        // Combine the base URL and query parameters
+        var components = URLComponents(string: urlString)!
+        var queryItems = [URLQueryItem]()
+        for (key, value) in queryParameters {
+            queryItems.append(URLQueryItem(name: key, value: value))
+        }
+        components.queryItems = queryItems
+        
+        // Create the URL request from the manually constructed URL
+        guard let url = components.url else {
+            completion(nil)
+            return
         }
         
-        // Create a URLRequest with the URL
+        var request = URLRequest(url: url)
+        
+        // Set the HTTP method and headers
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+      
+        // Call presentWebView(withURL:) passing the URL
+        Task{
+            try webViewLogin(withURL: url)
+        }
+        
+        completion(request)
+    }
+
+    // MARK: - WebView login
+    /**
+         Presents a web view with the provided URL.
+         - Parameter url: The URL to be loaded in the web view.
+         */
+    private func webViewLogin(withURL url: URL) throws {
+        // Create a WKWebView instance
+        let webView = WKWebView(frame: UIScreen.main.bounds)
+        webView.navigationDelegate = self
+
+        // Load the provided URL
+        let request = URLRequest(url: url)
+        webView.load(request)
+
+        // Present the web view controller from the top-most view controller
+        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let topViewController = scene.windows.first?.rootViewController {
+            showLoginWebPage(on: topViewController)
+        }else if let window = UIApplication.shared.delegate?.window,
+                 let topViewController = window?.rootViewController {
+            showLoginWebPage(on: topViewController)
+        }else {
+            throw Errors.FailedToPresentViewController
+        }
+        
+        func showLoginWebPage(on vc: UIViewController){
+            let webViewController = UIViewController()
+            webViewController.view = webView
+            vc.present(webViewController, animated: true, completion: nil)
+        }
+    }
+
+    // MARK: - oauth2ToToken
+    /**
+         Performs authentication.
+         - Parameter completion: A closure to be called upon completion of the authentication process.
+         */
+    private func getToken(from code: String) async {
+        let urlString = "\(AppSettings.accountBaseUrl)/token"
+        print("codeVerifier: \(codeVerifier)")
+        
+        guard let url = URL(string: urlString) else {
+            print("Error: Invalid URL")
+            return
+        }
+                
+        let parameters: [String: Any] = [
+            "client_id": self.clientId,
+            "client_secret": self.clientSecretId,
+            "grant_type": "authorization_code",
+            "code": code,
+            "code_verifier": codeVerifier,
+            "redirect_uri": "https://example.com/callback"
+        ]
+        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         
         // Set the Content-Type header
-        request.setValue("application/json", forHTTPHeaderField: "accept")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         
-        // Construct the JSON payload
-        let payloadDict: [String: String] = [
-            "loginCode": loginCode,
-            "signature": signature,
-            "provider": "magicLink",
-            "didToken": Token,
-        ]
+        // Construct the HTTP body from the parameters
+        let httpBody = parameters.compactMap { (key, value) -> String? in
+            guard let value = value as? String else { return nil }
+            return "\(key)=\(value.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"
+        }.joined(separator: "&")
         
-        do {
-            // Serialize the payload
-            let payloadData = try JSONSerialization.data(withJSONObject: payloadDict)
+        request.httpBody = httpBody.data(using: .utf8)
+        
+        // Encode client ID and client secret for Authorization header
+        let credentials = "\(clientId):\(clientSecretId)"
+        guard let credentialsData = credentials.data(using: .utf8) else {
+            print("Error encoding credentials")
+            return
+        }
+        let base64Credentials = credentialsData.base64EncodedString()
+        request.setValue("Basic \(base64Credentials)", forHTTPHeaderField: "Authorization")
+        
+        // Create URLSession task
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                print("Error: \(error.localizedDescription)")
+                return
+            }
             
-            // Set the request body
-            request.httpBody = payloadData
+            guard let httpResponse = response as? HTTPURLResponse else {
+                print("Error: Non-HTTPURLResponse received")
+                return
+            }
             
-            // Send the request asynchronously using async/await
-            let (data, response) = try await URLSession.shared.data(for: request)
+            print("Response status code: \(httpResponse.statusCode)")
             
-            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
-                // Check if the response status code is 200 (OK)
+            if let data = data {
                 do {
-                    // Deserialize the JSON response
                     if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                        // Access the "accessToken" from the JSON response
-                        if let accessToken = json["accessToken"] as? String {
-                            print("accessToken:", accessToken)
+                        if let accessToken = json["access_token"] as? String {
+                            print("Access Token: \(accessToken)")
+                            // Save access token to a variable or UserDefaults here
+                            UserDefaults.standard.set(accessToken, forKey: "accessToken")
                             self.accessToken = accessToken
-                            // Access the user dictionary from the JSON response
-                            if let user = json["user"] as? [String: Any] {
-                                // Access "updatedAt" and "id" from the user dictionary
-                                if let updatedAt = user["updatedAt"] as? String {
-                                    print("updatedAt:", updatedAt)
-                                    self.updatedAt = updatedAt
-                                }
-                                
-                                if let userId = user["id"] as? String {
-                                    print("id:", userId)
-                                    self.userId = userId
-                                }
-                            } else {
-                                return "\(NSError(domain: "Invalid JSON Response", code: -1, userInfo: nil))"
+                            Task{
+                                 await self.getloginCode(address: accessToken);
+                                   await self.getAccountAddress()
                             }
-                            return "\(accessToken)"
-                        } else {
-                            return "\(NSError(domain: "Invalid JSON Response", code: -1, userInfo: nil))"
+                        }else{
+                            print("Access Token is null")
                         }
+                        if let idToken = json["id_token"] as? String {
+                            print("ID Token: \(idToken)")
+                            // Save id token to a variable or UserDefaults here
+                            UserDefaults.standard.set(idToken, forKey: "idToken")
+                            self.IdToken = idToken
+                        }
+                        else{
+                            print("ID Token is null")
+                        }
+                        if let refreshToken = json["refresh_token"] as? String {
+                            print("Refresh Token: \(refreshToken)")
+                            // Save refresh token to a variable or UserDefaults here
+                            UserDefaults.standard.set(refreshToken, forKey: "refreshToken")
+                            self.refreshToken = refreshToken
+                        }else{
+                            print("Refresh Token is null")
+                        }
+                    } else {
+                        print("Response data could not be parsed as JSON")
                     }
                 } catch {
-                    return "\(NSError(domain: "Invalid HTTP Response", code: httpResponse.statusCode, userInfo: nil))"
-                    
+                    print("Error parsing response data: \(error)")
                 }
             } else {
-                // Handle the error or non-200 response here
-                // You can log the response or handle it as needed
-                return "\(NSError(domain: "Invalid URL", code: -1, userInfo: nil))"
+                print("No response data received")
+            }
+        }
+        
+        // Resume the task
+        task.resume()
+    }
+    
+    //MARK: - getAccountAddress
+    /**
+     Performs authentication.
+     - Parameter completion: A closure to be called upon completion of the authentication process.
+     */
+    private func getAccountAddress() async {
+        let urlString = "\(AppSettings.evmBaseUrl)/address"
+        let bearerToken = self.accessToken
+        guard let url = URL(string: urlString) else {
+            print("Invalid URL")
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            if let httpResponse = response as? HTTPURLResponse {
+                if httpResponse.statusCode == 200 {
+                    do {
+                        let jsonResponse = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+                        if let address = jsonResponse?["address"] as? String {
+                            self.address = address
+                            Task {
+                                await getSignature(address: address)
+                            }
+                        }
+                    } catch {
+                        print("Error parsing JSON: \(error.localizedDescription)")
+                    }
+                } else {
+                    print("Server response error: \(httpResponse.statusCode)")
+                    if let responseData = String(data: data, encoding: .utf8) {
+                        print("Response body: \(responseData)")
+                    }
+                }
             }
         } catch {
-            // Handle other errors
-            return "\(error)"
+            print("Error: \(error.localizedDescription)")
         }
-        return "An unexpected error occurred."
     }
+    
+    //MARK: - GetSignature
+    /**
+     Performs authentication.
+     - Parameter address: The address to generate signature for.
+     - Parameter completion: A closure to be called upon completion of the authentication process.
+     */
+    private func getSignature(address: String) async {
+            
+            let bearerToken = self.accessToken
+            // Prepare URL
+            guard let url = URL(string: "\(AppSettings.evmBaseUrl)/sign") else {
+                print("Invalid URL")
+                return
+            }
+            
+            // Prepare request object
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.setValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
+            // Prepare request body
+            let params: [String: Any] = [
+                "method": "personal_sign",
+                "params": [
+                    "Text",
+                    address
+                ]
+            ]
+            guard let httpBody = try? JSONSerialization.data(withJSONObject: params, options: []) else {
+                print("Failed to serialize JSON")
+                return
+            }
+            request.httpBody = httpBody
+            
+            // Create URLSession task
+            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                guard let data = data, error == nil else {
+                    print("Error: \(error?.localizedDescription ?? "Unknown error")")
+                    return
+                }
+                
+                if let httpResponse = response as? HTTPURLResponse {
+                    print("Status code: \(httpResponse.statusCode)")
+                }
+                
+                // Parse response JSON
+                if let jsonResponse = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                    print("Response JSON: \(jsonResponse)")
+                    if let signature = jsonResponse["signature"] as? String {
+                        print("Signature: \(signature)")
+                        self.signature = signature
+                    }
+                } else {
+                    print("Failed to parse response JSON")
+                }
+            }
+            task.resume()
+        }
 }
 
-// MARK: - Delegate for QR scanner
+// MARK: -  QR scanner Delegate
 extension PassportUtility: QRScannerCodeDelegate {
     /// It gets call when scanner did complete scanning QRCode.
     public func qrScanner(_ controller: UIViewController, scanDidComplete result: String) {
@@ -1642,3 +1809,42 @@ extension Data {
             .joined()
     }
 }
+
+// MARK: - Webview delegate methods
+
+extension PassportUtility: WKNavigationDelegate {
+    
+    public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        if navigationAction.navigationType == .linkActivated {
+            if let url = navigationAction.request.url {
+                print("Clicked URL:", url.absoluteString)
+            }
+        }
+        decisionHandler(.allow)
+    }
+    
+    public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        if let url = webView.url {
+            print("Final URL:", url.absoluteString)
+            
+            if let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+               let queryItems = components.queryItems {
+                for queryItem in queryItems {
+                    if queryItem.name == "code", let code = queryItem.value {
+                        print("Found code:", code)
+                        UserDefaults.standard.set(code, forKey: "savedCode")
+                        Task {
+                            await getToken(from: code)
+                        }
+                        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                                               let topViewController = scene.windows.first?.rootViewController {
+                                                topViewController.dismiss(animated: true, completion: nil)
+                                            }
+                        return
+                    }
+                }
+            }
+        }
+    }
+}
+   

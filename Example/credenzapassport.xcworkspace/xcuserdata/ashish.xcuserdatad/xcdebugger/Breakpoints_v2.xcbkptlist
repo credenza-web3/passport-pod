@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "4B30D239-AC48-4259-96A2-B59680622865"
+   type = "0"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7F89EC1F-0438-4E76-AF22-CB5C4A58F189"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../credenzapassport/Classes/PassportUtility.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1275"
+            endingLineNumber = "1275"
+            landmarkName = "showPassportIDQRCode()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "7F89EC1F-0438-4E76-AF22-CB5C4A58F189 - e1d49ac63955c1c2"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Sendable () -&gt; () in closure #1 (Swift.CheckedContinuation&lt;__C.UIImage, Swift.Never&gt;) -&gt; () in credenzapassport.PassportUtility.showPassportIDQRCode() async throws -&gt; __C.UIImage"
+                  moduleName = "credenzapassport"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/ashish/Desktop/passport-pod/credenzapassport/Classes/PassportUtility.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1275"
+                  endingLineNumber = "1275">
+               </Location>
+               <Location
+                  uuid = "7F89EC1F-0438-4E76-AF22-CB5C4A58F189 - e1d49ac63955c1c2"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Sendable () -&gt; () in closure #1 (Swift.CheckedContinuation&lt;__C.UIImage, Swift.Never&gt;) -&gt; () in credenzapassport.PassportUtility.showPassportIDQRCode() async throws -&gt; __C.UIImage"
+                  moduleName = "credenzapassport"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/ashish/Desktop/passport-pod/credenzapassport/Classes/PassportUtility.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1275"
+                  endingLineNumber = "1275">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "75733DA1-D67C-4C15-A012-66B4D4BEA2E3"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../credenzapassport/Classes/PassportUtility.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1278"
+            endingLineNumber = "1278"
+            landmarkName = "showPassportIDQRCode()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>

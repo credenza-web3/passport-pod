@@ -1,34 +1,30 @@
 PODS:
-  - BigInt (5.2.0)
-  - credenzapassport (1.1.5):
-    - MagicSDK (= 8.0.0)
-    - MagicSDK-Web3
+  - BigInt (4.0.0)
+  - credenzapassport (1.2.1):
     - NFCReaderWriter
     - QRCodeSwiftScanner
-  - CryptoSwift (1.3.8)
-  - MagicSDK (8.0.0):
-    - MagicSDK-Web3 (~> 1.0)
-    - MagicSDK-Web3/ContractABI (~> 1.0)
-    - MagicSDK-Web3/PromiseKit (~> 1.0)
-    - PromiseKit/CorePromise (~> 6.15)
-  - MagicSDK-Web3 (1.0.2):
-    - MagicSDK-Web3/Core (= 1.0.2)
-    - MagicSDK-Web3/HTTPExtension (= 1.0.2)
-  - MagicSDK-Web3/ContractABI (1.0.2):
-    - MagicSDK-Web3/Core
-  - MagicSDK-Web3/Core (1.0.2):
-    - BigInt (~> 5.0)
-    - CryptoSwift (= 1.3.8)
-    - secp256k1.swift (~> 0.1)
-  - MagicSDK-Web3/HTTPExtension (1.0.2):
-    - MagicSDK-Web3/Core
-  - MagicSDK-Web3/PromiseKit (1.0.2):
-    - MagicSDK-Web3/Core
-    - PromiseKit/CorePromise (~> 6.0)
+    - Web3 (~> 0.4)
+    - Web3/ContractABI
+    - Web3/PromiseKit
+  - CryptoSwift (1.8.1)
   - NFCReaderWriter (1.1.4)
   - PromiseKit/CorePromise (6.18.1)
   - QRCodeSwiftScanner (0.1.2)
   - secp256k1.swift (0.1.4)
+  - Web3 (0.4.2):
+    - Web3/Core (= 0.4.2)
+    - Web3/HTTPExtension (= 0.4.2)
+  - Web3/ContractABI (0.4.2):
+    - Web3/Core
+  - Web3/Core (0.4.2):
+    - BigInt (~> 4.0)
+    - CryptoSwift (~> 1.0)
+    - secp256k1.swift (~> 0.1)
+  - Web3/HTTPExtension (0.4.2):
+    - Web3/Core
+  - Web3/PromiseKit (0.4.2):
+    - PromiseKit/CorePromise (~> 6.0)
+    - Web3/Core
 
 DEPENDENCIES:
   - credenzapassport (from `../../passport-pod`)
@@ -37,28 +33,26 @@ SPEC REPOS:
   trunk:
     - BigInt
     - CryptoSwift
-    - MagicSDK
-    - MagicSDK-Web3
     - NFCReaderWriter
     - PromiseKit
     - QRCodeSwiftScanner
     - secp256k1.swift
+    - Web3
 
 EXTERNAL SOURCES:
   credenzapassport:
     :path: "../../passport-pod"
 
 SPEC CHECKSUMS:
-  BigInt: f668a80089607f521586bbe29513d708491ef2f7
-  credenzapassport: ff3b6cf1ea75d61e020ed970748e6ff88b0d2f34
-  CryptoSwift: 01b0f0cba1d5c212e5a335ff6c054fb75a204f00
-  MagicSDK: 04298f832c51af535e95fbc2b0d487a8413e62eb
-  MagicSDK-Web3: 53384d35658f56e909ec84b8644dfa0c637db9b6
+  BigInt: 2aad1a9942dc932ec8b84290d2c564a3d76f97ab
+  credenzapassport: 2faf76eb7eea2d67ffacb44c52ba3683c5e40f1e
+  CryptoSwift: b9c701d6f5011df23794dbf7f2e480a77835d83d
   NFCReaderWriter: b21965d1b3b8c53f7648f58f597b77a13f6ecdc5
   PromiseKit: 49d70c53d5d20e346beaea4b276b5dd2ab446bb4
   QRCodeSwiftScanner: db82a51c3cd794753a310990b97fb739fec6659a
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
+  Web3: 7b2c30f98f24cc290bc671ab525d7a30a2afbc73
 
-PODFILE CHECKSUM: b89b98a85dba2841be87d1148dbe094a35fa45e1
+PODFILE CHECKSUM: bec8518c535c82dcfd6e29f12a742961935d7712
 
 COCOAPODS: 1.13.0

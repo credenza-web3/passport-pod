@@ -18,30 +18,30 @@ import PassKit
 import Foundation
 
 class ViewController: UIViewController, PassportDelegate {
-    
-    //    @IBOutlet weak var tagID: UILabel!
-    @IBOutlet weak var webView: WKWebView!
-    //    @IBOutlet weak var viewForEmbeddingWebView: UIView!
-    @IBOutlet weak var emailID: UITextField!
-    //    @IBOutlet weak var qrCodeImageView: UIImageView!
-    
+        
     var pUtility: PassportUtility?
-    
+    @IBOutlet weak var buttons: UIStackView!
     //MARK: - UIView life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         pUtility = PassportUtility(delegate: self)
     }
     
+
+    
     //MARK: - Action methods
     @IBAction func scanQRCode(_ sender: UIButton) {
         debugPrint("Opening scanner...")
+        DispatchQueue.main.async { [weak self] in
+            self?.buttons.isHidden = true
+        }
+        
         pUtility?.scanQR(self)
     }
     
     @IBAction func login(_ sender: Any) {
         Task { @MainActor in
-            pUtility!.handleSignIn(emailID.text!)
+            pUtility!.handleSignIn()
         }
     }
     
@@ -86,22 +86,36 @@ class ViewController: UIViewController, PassportDelegate {
     
     func nfcScanComplete(address: String) {
         print(address)
+        
     }
     
     func qrScannerSuccess(result: String) {
         print("scanner :",result)
+        DispatchQueue.main.asyncAfter(deadline: .now()+0.5) { [weak self] in
+            self?.buttons.isHidden = false
+        }
+        
     }
     
     func qrScannerDidFail(error: Error) {
         print(error.localizedDescription)
+        DispatchQueue.main.asyncAfter(deadline: .now()+0.5) { [weak self] in
+            self?.buttons.isHidden = false
+        }
     }
     
     func qrScannerDidCancel() {
         print("QRCodeScanner did cancel")
+        DispatchQueue.main.async { [weak self] in
+            self?.buttons.isHidden = false
+        }
     }
     
     func passScanComplete(response: String) {
         print("passScanComplete: \(response)")
+        DispatchQueue.main.asyncAfter(deadline: .now()+0.5) { [weak self] in
+            self?.buttons.isHidden = false
+        }
     }
     
 }
@@ -132,6 +146,9 @@ extension ViewController {
     
     func activePassScan(){
         // calling of activatePassScan
+        DispatchQueue.main.async { [weak self] in
+            self?.buttons.isHidden = true
+        }
         try? pUtility?.activatePassScan(self)
     }
     
