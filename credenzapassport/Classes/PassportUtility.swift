@@ -1528,7 +1528,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
       
         // Call presentWebView(withURL:) passing the URL
         Task{
-            try webViewLogin(withURL: url)
+             webViewLogin(withURL: url)
         }
         
         completion(request)
@@ -1539,30 +1539,30 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
          Presents a web view with the provided URL.
          - Parameter url: The URL to be loaded in the web view.
          */
-    private func webViewLogin(withURL url: URL) throws {
+    private func webViewLogin(withURL url: URL) {
         // Create a WKWebView instance
-        let webView = WKWebView(frame: UIScreen.main.bounds)
-        webView.navigationDelegate = self
-
-        // Load the provided URL
-        let request = URLRequest(url: url)
-        webView.load(request)
-
-        // Present the web view controller from the top-most view controller
-        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let topViewController = scene.windows.first?.rootViewController {
-            showLoginWebPage(on: topViewController)
-        }else if let window = UIApplication.shared.delegate?.window,
-                 let topViewController = window?.rootViewController {
-            showLoginWebPage(on: topViewController)
-        }else {
-            throw Errors.FailedToPresentViewController
-        }
-        
-        func showLoginWebPage(on vc: UIViewController){
-            let webViewController = UIViewController()
-            webViewController.view = webView
-            vc.present(webViewController, animated: true, completion: nil)
+        DispatchQueue.main.async {
+            let webView = WKWebView(frame: UIScreen.main.bounds)
+            webView.navigationDelegate = self
+            // Load the provided URL
+            let request = URLRequest(url: url)
+            webView.load(request)
+            // Present the web view controller from the top-most view controller
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               
+               let window = windowScene.windows.first,
+               let topViewController = window.rootViewController {
+                showLoginWebPage(on: topViewController)
+            } else if let window = UIApplication.shared.delegate?.window,
+                      let topViewController = window?.rootViewController {
+                showLoginWebPage(on: topViewController)
+            }
+            
+            func showLoginWebPage(on vc: UIViewController){
+                let webViewController = UIViewController()
+                webViewController.view = webView
+                vc.present(webViewController, animated: true, completion: nil)
+            }
         }
     }
 

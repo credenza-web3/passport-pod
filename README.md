@@ -11,7 +11,6 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 
 ## Requirements & Setup
 
-    - CLIENTSECRET : Setup your private key in info.plist file replace 'INSERT_CLIENTSECRET' with your original key in plist file.
     - RPCURL : Setup your private key in info.plist file replace 'INSERT_RPCURL' with your original key in plist file.
     - CLIENTID : Setup your private key in info.plist file replace 'INSERT_CLIENTID' with your original key in plist file.
     - CLIENTSECRET : Setup your private key in info.plist file replace 'INSERT_CLIENTSECRET' with your original key in plist file.
