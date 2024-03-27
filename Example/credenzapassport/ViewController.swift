@@ -11,10 +11,6 @@ import credenzapassport
 import WebKit
 import NFCReaderWriter
 import PassKit
-
-/*import NFCReaderWriter
- import MagicSDK
- import MagicSDK_Web3*/
 import Foundation
 
 class ViewController: UIViewController, PassportDelegate {
@@ -167,16 +163,9 @@ extension ViewController {
         }
     }
     
-    func readNFCAddress(){
-        pUtility?.readNFCAddress { address in
-            print("NFC Address: \(address)")
-            // Do something with the address
-        }
-    }
-    
     func readNFCPass() {
         Task{
-            await pUtility?.readNFCPass()
+           try! await pUtility?.readNFCPass()
         }
     }
     

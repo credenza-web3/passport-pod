@@ -34,6 +34,10 @@ final class AppSettings: NSObject {
         return (Bundle.main.infoDictionary?["RPCURL"] as? String) ?? ""
     }
     
+    class var connectedPackagingContract: String {
+        return (Bundle.main.infoDictionary?["ConnectedPackagingContract"] as? String) ?? ""
+    }
+    
     class var kryPTKey: String {
         return (Bundle.main.infoDictionary?["KRYPTKEY"] as? String) ?? ""
     }

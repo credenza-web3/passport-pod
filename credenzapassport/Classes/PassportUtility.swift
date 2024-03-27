@@ -79,6 +79,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         case nullAddress
         case emptyAccessToken
         case FailedToPresentViewController
+        case ConnectedPackagingContractIsEmpty
     }
     
     private enum ScanType: String {
@@ -124,20 +125,26 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     // MARK: - Actions
     
     ///Initiates a new NFC reader/writer session for reading from the passport-enabled tag.
-    public func readNFCAddress(completion: @escaping (String) -> Void) {
+    private func readNFCAddress(completion: @escaping (String) -> Void) {
         readerWriter.newWriterSession(with: self, isLegacy: false, invalidateAfterFirstRead: true, alertMessage: "Scan Your Passport-Enabled Tag")
         readerWriter.begin()
         self.NFCAddressCompletionHandler = completion
     }
     
     ///Initiates a new NFC reader/writer session for reading from the passport-enabled tag and then calling passScanProtocolRouter.
-    public func readNFCPass() async {
+    public func readNFCPass() async throws {
+        
+        guard !AppSettings.connectedPackagingContract.isEmpty else {
+                throw Errors.ConnectedPackagingContractIsEmpty
+            }
+        
         let address = await withCheckedContinuation { continuation in
             readNFCAddress { address in
                 continuation.resume(returning: address)
             }
         }
-        try! await self.passScanProtocolRouter(address)
+        let result = await self.connectedPackageQueryPass(serialNumber: address, AppSettings.connectedPackagingContract)
+        try! await self.passScanProtocolRouter(result)
     }
     
     /**
@@ -159,7 +166,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     }
     
     /**
-     Handles sign-in for a given email address                   using Magic.link SDK.
+     Handles sign-in for a given email address using OAuth code.
      - Parameters:
      - emailAddress: An email address for which to perform sign-in.
      - Note: Stores the login token in UserDefaults after successful authentication.
@@ -186,7 +193,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     }
     
     /**
-     Gets the user's Ethereum public address using the Magic.link SDK and passes it to the `delegation` instance.
+     Gets the user's Ethereum public address using the OAuth code and passes it to the `delegation` instance.
      - Note: Calls `loginComplete(address:)` of the `delegation` instance to pass the Ethereum public address to it.
      */
     public func getAccount()  {
@@ -427,7 +434,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         let contractABI = await getContractABI(contractType);
         
         do {
-            // Create a Web3 object using the Magic RPC provider
+            // Create a Web3 object using the RPC provider
             let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
             
             // Create a contract object using the contract address and ABI
@@ -1282,9 +1289,9 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         }
     }
     
-    // Function to sign the timestamp using MagicSDK_Web3
+    // Function to sign the timestamp using OAuth code
     /**
-     Signs the timestamp using MagicSDK_Web3.
+     Signs the timestamp using OAuth code Web3.
      - Returns: A string representing the signature.
      */
     private func signTimestamp(Timestamp: String) -> String {
@@ -1392,7 +1399,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     
     // MARK: - getAddressforlogincode method
     /**
-     Gets the user's Ethereum public address using the Magic.link SDK and passes it to the `delegation` instance.
+     Gets the user's Ethereum public address using the OAuth code and passes it to the `delegation` instance.
      - Note: Calls `loginComplete(address:)` of the `delegation` instance to pass the Ethereum public address to it.
      */
     private func getAddressforlogincode() async -> String {
@@ -1847,4 +1854,3 @@ extension PassportUtility: WKNavigationDelegate {
         }
     }
 }
-   
