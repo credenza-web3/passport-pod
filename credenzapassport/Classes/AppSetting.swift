@@ -9,11 +9,26 @@ import Foundation
 
 final class AppSettings: NSObject {
     
-    class var authToken: String {
-        get { UserDefaults.standard.string(forKey: "Token") ?? "" }
+    class var authToken: String? {
+        get { UserDefaults.standard.string(forKey: "Token") }
         set { UserDefaults.standard.set(newValue, forKey: "Token") }
     }
     
+    class var loginCode: String? {
+        get { UserDefaults.standard.string(forKey: "LOGINCODE") }
+        set { UserDefaults.standard.set(newValue, forKey: "LOGINCODE") }
+    }
+    
+    class var ethAddress: String? {
+        get { UserDefaults.standard.string(forKey: "ETHEREAUMADDRESS") }
+        set { UserDefaults.standard.set(newValue, forKey: "ETHEREAUMADDRESS") }
+    }
+    
+    class var signature: String? {
+        get { UserDefaults.standard.string(forKey: "SIGNEDSIGNATURE") }
+        set { UserDefaults.standard.set(newValue, forKey: "SIGNEDSIGNATURE") }
+    }
+
     class var chainId: String {
         return (Bundle.main.infoDictionary?["CHAINID"] as? String) ?? ""
     }

@@ -15,15 +15,32 @@ import Foundation
 
 class ViewController: UIViewController, PassportDelegate {
         
-    var pUtility: PassportUtility?
+    var pUtility: PassportUtility!
     @IBOutlet weak var buttons: UIStackView!
+    @IBOutlet weak var logoutButton: UIButton!
+    
+    enum LoginState {
+        case loggedIn
+        case loggedOut
+    }
+    
+    private var loginState: LoginState = .loggedOut {
+        didSet{
+            switch loginState {
+            case .loggedIn:
+                logoutButton.setTitle("Logout", for: .normal)
+            case .loggedOut:
+                logoutButton.setTitle("Login", for: .normal)
+            }
+        }
+    }
+    
     //MARK: - UIView life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         pUtility = PassportUtility(delegate: self)
+        loginState = pUtility.isUserLoggedIn() ? .loggedIn : .loggedOut
     }
-    
-
     
     //MARK: - Action methods
     @IBAction func scanQRCode(_ sender: UIButton) {
@@ -36,15 +53,25 @@ class ViewController: UIViewController, PassportDelegate {
     }
     
     @IBAction func login(_ sender: Any) {
-        Task { @MainActor in
-            pUtility!.handleSignIn()
+        if loginState == .loggedOut {
+            Task { @MainActor in
+                pUtility.handleSignIn()
+            }
+        }else{
+            pUtility.logout()
+            loginState = .loggedOut
+        }
+    }
+    
+    @IBAction func scanNFC(_ sender: Any)  {
+        do {
+            try pUtility.readNFCPass()
+        } catch {
+            debugPrint(error)
         }
     }
     
     @IBAction func readTagIDButtonTapped(_ sender: Any)  {
-        /*readerWriter.newWriterSession(with: self, isLegacy: false, invalidateAfterFirstRead: true, alertMessage: "Nearby NFC card for read tag identifier")
-         readerWriter.begin()
-         readerWriter.detectedMessage = "detected Tag info"*/
         Task {
             let b = await pUtility!
                 .loyaltyCheck("INSERT_CONTRACT_ADDRESS","INSERT_USER_ADDRESS","INSERT_CONTRACT_TYPE");
@@ -78,6 +105,11 @@ class ViewController: UIViewController, PassportDelegate {
     func loginComplete(address: String) {
         print(address)
         print("check",address)
+        loginState = .loggedIn
+    }
+    
+    func loginFailed(error: String) {
+        loginState = .loggedOut
     }
     
     func nfcScanComplete(address: String) {
@@ -165,7 +197,7 @@ extension ViewController {
     
     func readNFCPass() {
         Task{
-           try! await pUtility?.readNFCPass()
+           try! pUtility?.readNFCPass()
         }
     }
     

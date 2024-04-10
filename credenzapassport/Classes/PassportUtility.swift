@@ -17,6 +17,7 @@ import CommonCrypto
 
 public protocol PassportDelegate {
     func loginComplete(address: String)
+    func loginFailed(error: String)
     func nfcScanComplete(address: String)
     func qrScannerSuccess(result: String)
     func qrScannerDidFail(error: Error)
@@ -32,7 +33,6 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     
     // MARK: Local Variables
     fileprivate var address: String = ""
-    fileprivate var token: String = ""
     fileprivate var signature: String = ""
     fileprivate var loginCode: String = ""
     fileprivate var accessToken: String = ""
@@ -42,10 +42,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     fileprivate var refreshToken: String = ""
     fileprivate let codeVerifier = UUID().uuidString
     fileprivate var codeChallenge: String = ""
-    
-    /// CompletionHandler to return address on readNFCAddress method
-    private var NFCAddressCompletionHandler: ((String) -> Void)?
-    
+        
     /// The address of the NFT smart contract.
     fileprivate var nftContractAddressC = AppSettings.nftContractAddressC
     
@@ -63,6 +60,13 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     
     fileprivate var shouldMakeStringCheck = false
     
+    
+    private enum DeviceScanType: Error {
+        case nfc
+        case qr
+    }
+    
+    private var deviceScanType: DeviceScanType = .nfc
     
     private enum Errors: Error {
         case notLoggedIn
@@ -93,16 +97,21 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      */
     public init(delegate: PassportDelegate) {
         delegation = delegate
+        accessToken = AppSettings.authToken ?? ""
+        loginCode = AppSettings.loginCode ?? ""
+        signature = AppSettings.signature ?? ""
+        address = AppSettings.ethAddress ?? ""
+        super.init()
     }
-    
+        
     // MARK: - Helper methods
-    
     /**
      Scans a QR code using the device's camera and presents the scanner view controller.
      - Parameters:
      - viewController: The view controller from which to present the scanner.
      */
     public func scanQR(_ viewController: UIViewController) {
+        deviceScanType = .qr
         let scanner = QRCodeScannerController()
         scanner.delegate = self
         viewController.present(scanner, animated: true, completion: nil)
@@ -125,26 +134,18 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     // MARK: - Actions
     
     ///Initiates a new NFC reader/writer session for reading from the passport-enabled tag.
-    private func readNFCAddress(completion: @escaping (String) -> Void) {
+    private func readNFCAddress() {
         readerWriter.newWriterSession(with: self, isLegacy: false, invalidateAfterFirstRead: true, alertMessage: "Scan Your Passport-Enabled Tag")
         readerWriter.begin()
-        self.NFCAddressCompletionHandler = completion
     }
     
     ///Initiates a new NFC reader/writer session for reading from the passport-enabled tag and then calling passScanProtocolRouter.
-    public func readNFCPass() async throws {
-        
+    public func readNFCPass() throws {
         guard !AppSettings.connectedPackagingContract.isEmpty else {
-                throw Errors.ConnectedPackagingContractIsEmpty
-            }
-        
-        let address = await withCheckedContinuation { continuation in
-            readNFCAddress { address in
-                continuation.resume(returning: address)
-            }
+            throw Errors.ConnectedPackagingContractIsEmpty
         }
-        let result = await self.connectedPackageQueryPass(serialNumber: address, AppSettings.connectedPackagingContract)
-        try! await self.passScanProtocolRouter(result)
+        deviceScanType = .nfc
+        readNFCAddress()
     }
     
     /**
@@ -174,36 +175,22 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     
     public func handleSignIn() {
         oauth2Login(clientID: AppSettings.clientID, clientSecret: AppSettings.clientSecret) { urlRequest in
-            guard let request = urlRequest else {
-                print("Failed to create URLRequest")
-                return
-            }
-            URLSession.shared.dataTask(with: request) { data, response, error in
-            }.resume()
         }
+    }
+    
+    public func isUserLoggedIn() -> Bool{
+        if AppSettings.authToken != nil && AppSettings.loginCode != nil  && AppSettings.signature != nil  && AppSettings.ethAddress != nil  {
+            return true
+        }
+        return false
+    }
         
-        // Your remaining code for handleSignIn
-        guard !accessToken.isEmpty else {
-            print("address is empty")
-            return
-        }
-        AppSettings.authToken = accessToken
-        self.token = accessToken
-        self.getAccount()
+    public func logout() {
+        AppSettings.authToken = nil
+        AppSettings.loginCode = nil
+        AppSettings.signature = nil
+        AppSettings.ethAddress = nil
     }
-    
-    /**
-     Gets the user's Ethereum public address using the OAuth code and passes it to the `delegation` instance.
-     - Note: Calls `loginComplete(address:)` of the `delegation` instance to pass the Ethereum public address to it.
-     */
-    public func getAccount()  {
-        guard !accessToken.isEmpty else {
-               print("address is empty")
-            return
-           }
-        self.delegation.loginComplete(address: address)
-    }
-    
     /**
      Checks the balance of NFT (Non-Fungible Token) of a user for a given contract address.
      - Parameters:
@@ -711,10 +698,10 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      - Returns: The Ethereum address of the connected packaging.
      */
     public func connectedPackageQueryPass(serialNumber: String,_ contractType: String) async -> String {
-        
+
         // Get the ABI and contract address.
-        let contractABI = await getContractABI(contractType);
-        let contractAddress = connectedContractAddressC;
+        let contractABI = await getContractABI(contractType)
+        let contractAddress = connectedContractAddressC
         
         do {
             let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
@@ -725,20 +712,23 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             // Call the "retrieveConnection" function.
             return await withCheckedContinuation { continuation in
                 contract["retrieveNFCPass"]?(serialNumber).call() { response, error in
-                    if let response = response {
-                        let eth = response[""] as? String
-                        continuation.resume(returning: eth ?? "")
-                        //return response;
+                    if let error = error {
+                        print("Error:", error.localizedDescription)
+                        continuation.resume(returning: "ERROR")
+                    } else if let response = response, let eth = response[""] as? String {
+                        continuation.resume(returning: eth)
                     } else {
                         print(error?.localizedDescription ?? "Failed to get response")
+                        print("Failed to get response")
+                        continuation.resume(returning: "ERROR")
                     }
                 }
             }
         } catch {
             // Return an error message if there was an issue.
-            print(error.localizedDescription)
+            print("Error:", error.localizedDescription)
+            return "ERROR"
         }
-        return "ERROR"
     }
     
     /**
@@ -992,9 +982,6 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     /// --------------------------------
     
     public func reader(_ session: NFCReader, didDetect tag: __NFCTag, didDetectNDEF message: NFCNDEFMessage) {
-        //let thisTagId = readerWriter.tagIdentifier(with: tag)
-        //let content = contentsForMessages([message])
-        
         let tagInfos = getTagInfos(tag)
         var tagInfosDetail = ""
         var serialID = ""
@@ -1004,14 +991,16 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
                 serialID = ((item.value) as? String) ?? ""
             }
         }
-        DispatchQueue.main.async {
-            self.delegation.nfcScanComplete(address: serialID)
-            //self.loadContent(firstCheck);
-            self.NFCAddressCompletionHandler?(serialID)
-            self.NFCAddressCompletionHandler = nil
-        }
-        //self.readerWriter. = "NFC Tag Info detected"
         self.readerWriter.end()
+        scanCompleted(serialID: serialID)
+
+    }
+    
+    private func scanCompleted(serialID: String) {
+        Task {
+            let result = await self.connectedPackageQueryPass(serialNumber: serialID, AppSettings.connectedPackagingContract)
+            try! await self.passScanProtocolRouter(result)
+        }
     }
     
     public func reader(_ session: NFCReader, didDetect tags: [NFCNDEFTag]) {
@@ -1086,7 +1075,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      Processes the JSON string and performs actions based on the specified scan type.
      - Parameter jsonString: The JSON string to be processed.
      */
-    public func passScanProtocolRouter(_ jsonString: String) async throws {
+    private func passScanProtocolRouter(_ jsonString: String) async throws {
         
         guard let jsonData = jsonString.data(using: .utf8) else {
             print("Invalid JSON string")
@@ -1154,7 +1143,12 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             guard let responseString = String(data: data, encoding: .utf8) else {
                 return
             }
-            self.delegation.passScanComplete(response: responseString)
+            if deviceScanType == .nfc {
+                self.delegation.nfcScanComplete(address: responseString)
+            }else{
+                self.delegation.passScanComplete(response: responseString)
+            }
+
         } catch {
             print("Error encoding request body: \(error)")
             throw Errors.apiCalling(error)
@@ -1190,7 +1184,11 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             guard let responseString = String(data: data, encoding: .utf8) else {
                 return
             }
-            self.delegation.passScanComplete(response: responseString)
+            if deviceScanType == .nfc {
+                self.delegation.nfcScanComplete(address: responseString)
+            }else{
+                self.delegation.passScanComplete(response: responseString)
+            }
         } catch {
             print("Error checking login status: \(error)")
             throw Errors.apiCalling(error)
@@ -1444,6 +1442,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
                     // Try to parse the data as JSON
                     if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
                        let loginCode = json["loginCode"] as? String {
+                        AppSettings.loginCode = loginCode
                         self.loginCode = loginCode
                         // self.showPassportIDQRCode()
                         print("loginc:",loginCode)
@@ -1537,7 +1536,6 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         Task{
              webViewLogin(withURL: url)
         }
-        
         completion(request)
     }
 
@@ -1636,27 +1634,28 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             if let data = data {
                 do {
                     if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                        
                         if let accessToken = json["access_token"] as? String {
                             print("Access Token: \(accessToken)")
                             // Save access token to a variable or UserDefaults here
-                            UserDefaults.standard.set(accessToken, forKey: "accessToken")
+                            AppSettings.authToken = accessToken
                             self.accessToken = accessToken
                             Task{
-                                 await self.getloginCode(address: accessToken);
-                                   await self.getAccountAddress()
+                                 await self.getloginCode(address: accessToken)
+                                 await self.getAccountAddress()
                             }
                         }else{
                             print("Access Token is null")
                         }
+                        
                         if let idToken = json["id_token"] as? String {
                             print("ID Token: \(idToken)")
-                            // Save id token to a variable or UserDefaults here
                             UserDefaults.standard.set(idToken, forKey: "idToken")
                             self.IdToken = idToken
-                        }
-                        else{
+                        }else{
                             print("ID Token is null")
                         }
+                        
                         if let refreshToken = json["refresh_token"] as? String {
                             print("Refresh Token: \(refreshToken)")
                             // Save refresh token to a variable or UserDefaults here
@@ -1706,6 +1705,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
                     do {
                         let jsonResponse = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
                         if let address = jsonResponse?["address"] as? String {
+                            AppSettings.ethAddress = address
                             self.address = address
                             Task {
                                 await getSignature(address: address)
@@ -1776,6 +1776,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
                     print("Response JSON: \(jsonResponse)")
                     if let signature = jsonResponse["signature"] as? String {
                         print("Signature: \(signature)")
+                        AppSettings.signature = signature
                         self.signature = signature
                     }
                 } else {
@@ -1790,7 +1791,6 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
 extension PassportUtility: QRScannerCodeDelegate {
     /// It gets call when scanner did complete scanning QRCode.
     public func qrScanner(_ controller: UIViewController, scanDidComplete result: String) {
-        print("Scanned QR code: \(result)")
         if shouldMakeStringCheck {
             Task {
                 try await passScanProtocolRouter(result)
@@ -1842,7 +1842,9 @@ extension PassportUtility: WKNavigationDelegate {
                         UserDefaults.standard.set(code, forKey: "savedCode")
                         Task {
                             await getToken(from: code)
+                            debugPrint("LoginCOMPLETED")
                         }
+                        self.delegation.loginComplete(address: address)
                         if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                                                let topViewController = scene.windows.first?.rootViewController {
                                                 topViewController.dismiss(animated: true, completion: nil)
