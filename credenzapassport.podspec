@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
 
   s.homepage         = 'https://github.com/credenza-web3/'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'Sandy' => 'sandy@macrodemic.com' }
+  s.author           = { 'Credenza' => 'developer@credenza3.com' }
   s.source           = { :git => 'https://github.com/credenza-web3/passport-pod.git', :tag => s.version.to_s }
 
   s.ios.deployment_target = '15.0'

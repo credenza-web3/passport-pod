@@ -50,7 +50,7 @@ final class AppSettings: NSObject {
     }
     
     class var connectedPackagingContract: String {
-        return (Bundle.main.infoDictionary?["ConnectedPackagingContract"] as? String) ?? ""
+        return (Bundle.main.infoDictionary?["CONNECTEDCONTRACTADDRESSC"] as? String) ?? ""
     }
     
     class var kryPTKey: String {

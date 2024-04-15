@@ -140,9 +140,9 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     }
     
     ///Initiates a new NFC reader/writer session for reading from the passport-enabled tag and then calling passScanProtocolRouter.
-    public func readNFCPass() throws {
+    public func readNFCPass() {
         guard !AppSettings.connectedPackagingContract.isEmpty else {
-            throw Errors.ConnectedPackagingContractIsEmpty
+            fatalError(Errors.ConnectedPackagingContractIsEmpty.localizedDescription)
         }
         deviceScanType = .nfc
         readNFCAddress()
@@ -152,17 +152,11 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      Retrieves a version number from a specific smart contract.
      - Returns: An asynchronous task that returns the version number as a String.
      */
-    public func getVersion(_ contractAddress: String, _ contractType: String) async throws -> String {
+    public func getVersion(_ contractAddress: String, _ contractType: String) async -> String {
         do {
-            let versionNumber = try await checkVersion(contractAddress, contractType)
+            let versionNumber = await checkVersion(contractAddress, contractType)
             debugPrint("Version Number: \(versionNumber)")
             return versionNumber
-        } catch Errors.invalidVersion {
-            debugPrint("Invalid version encountered")
-            throw Errors.invalidVersion
-        } catch {
-            debugPrint("Error getting version: \(error.localizedDescription)")
-            throw error
         }
     }
     
@@ -204,7 +198,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         let contractABI = await getContractABI(contractType);
         
         do {
-            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)")
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             guard let add2 = try? EthereumAddress(hex: userAddress,eip55: false) else { return BigUInt() }
             
@@ -237,10 +231,10 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      - contractType: The type of the contract for which to check the version.
      - Returns: A string containing the contract version or "NONE" if there was an error.
      */
-    public func checkVersion(_ contractAddress: String, _ contractType: String) async throws -> String {
+    public func checkVersion(_ contractAddress: String, _ contractType: String) async -> String {
         do {
             let contractABI = await getContractABI(contractType)
-            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)")
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             print(contract)
             return try await withCheckedThrowingContinuation { continuation in
@@ -249,17 +243,17 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
                         if let version = response["version"] as? String {
                             continuation.resume(returning: version)
                         } else {
-                            continuation.resume(throwing: Errors.invalidResponse)
+                            fatalError(Errors.invalidVersion.localizedDescription)
                         }
                     } else if let error = error {
-                        continuation.resume(throwing: error)
+                        fatalError(error.localizedDescription)
                     } else {
-                        continuation.resume(throwing: Errors.unknownError)
+                        fatalError(Errors.unknownError.localizedDescription)
                     }
                 }
             }
         } catch {
-            throw error
+            fatalError(error.localizedDescription)
         }
     }
     /**
@@ -278,7 +272,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         let contractABI = await getContractABI(contractType);
         
         do {
-            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)")
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             guard let add2 = try? EthereumAddress(hex: userAddress,eip55: false) else { return }
             let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: AppSettings.kryPTKey)
@@ -312,7 +306,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         let contractABI = await getContractABI(contractType);
         
         do {
-            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)")
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             
             // Convert user address to EthereumAddress object
@@ -354,7 +348,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         let contractABI = await getContractABI(contractType);
         
         do {
-            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)")
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             
             // Convert owner and user addresses to EthereumAddress objects
@@ -384,7 +378,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         let contractABI = await getContractABI(contractType);
         
         do {
-            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)")
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             
             // Convert owner and user addresses to EthereumAddress objects
@@ -422,7 +416,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         
         do {
             // Create a Web3 object using the RPC provider
-            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)")
             
             // Create a contract object using the contract address and ABI
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
@@ -462,7 +456,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         let contractABI = await getContractABI(contractType);
         
         do {
-            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)")
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             guard let add2 = try? EthereumAddress(hex: userAddress,eip55: false) else { return }
             let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: AppSettings.kryPTKey)
@@ -497,7 +491,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         let contractABI = await getContractABI(contractType);
         
         do {
-            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)")
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             guard let add2 = try? EthereumAddress(hex: recipientAddress,eip55: false) else { return }
             let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: AppSettings.kryPTKey)
@@ -531,7 +525,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         let contractABI = await getContractABI(contractType);
         
         do {
-            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)")
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             guard let add2 = try? EthereumAddress(hex: recipientAddress,eip55: false) else { return }
             let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: AppSettings.kryPTKey)
@@ -566,7 +560,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         let contractABI = await getContractABI(contractType);
         
         do {
-            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)")
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             guard let add2 = try? EthereumAddress(hex: recipientAddress,eip55: false) else { return }
             let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: AppSettings.kryPTKey)
@@ -601,7 +595,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         let contractABI = await getContractABI(contractType);
         
         do {
-            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)")
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             guard let add2 = try? EthereumAddress(hex: userAddress,eip55: false) else { return BigUInt() }
             
@@ -633,7 +627,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         let contractAddress = storedValueContractAddressC;
         
         do {
-            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)")
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             guard let add2 = try? EthereumAddress(hex: userAddress,eip55: false) else { return BigUInt() }
             
@@ -659,14 +653,14 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      - serialNumber: The serial number of the connected packaging.
      - Returns: The Ethereum address of the connected packaging.
      */
-    public func connectedPackageQueryID(serialNumber: String,_ contractType: String) async -> String {
+    public func connectedPackageQueryID(serialNumber: String) async -> String {
         
         // Get the ABI and contract address.
-        let contractABI = await getContractABI(contractType);
+        let contractABI = await getContractABI(AppSettings.connectedPackagingContract);
         let contractAddress = connectedContractAddressC;
         
         do {
-            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)")
             
             // Instantiate the contract.
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
@@ -704,7 +698,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         let contractAddress = connectedContractAddressC
         
         do {
-            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)")
             
             // Instantiate the contract.
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
@@ -744,7 +738,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         let contractAddress = connectedContractAddressC;
         
         do {
-            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)")
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             
             // Convert the user address to an Ethereum address.
@@ -783,7 +777,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         let contractAddress = connectedContractAddressC;
         
         do {
-            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)/\(AppSettings.chainId)")
+            let web3 = Web3(rpcURL: "\(AppSettings.rpcUrl)")
             let contract = try web3.eth.Contract(json: contractABI, abiKey: nil, address: EthereumAddress(ethereumValue: contractAddress))
             let myPrivateKey = try EthereumPrivateKey(hexPrivateKey: AppSettings.kryPTKey)
             let chainId = EthereumQuantity(quantity: BigUInt(Int(AppSettings.chainId) ?? 0))
@@ -999,12 +993,12 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     private func scanCompleted(serialID: String) {
         Task {
             let result = await self.connectedPackageQueryPass(serialNumber: serialID, AppSettings.connectedPackagingContract)
-            try! await self.passScanProtocolRouter(result)
+             await self.passScanProtocolRouter(result)
         }
     }
     
     public func reader(_ session: NFCReader, didDetect tags: [NFCNDEFTag]) {
-        print("BOBOBO")
+        print("Tag Detected")
     }
     
     // MARK: - NFCTagReaderSessionDelegate
@@ -1054,19 +1048,16 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      Activates the passport scan functionality.
      - Parameter viewController: The view controller where the QRCodeScannerController will be presented.
      */
-    public func activatePassScan(_ viewController: UIViewController) throws{
+    public func activatePassScan(_ viewController: UIViewController) {
         do {
             guard !accessToken.isEmpty else {
                    print("Access token is empty login first")
-                   // Handle the case when accessToken is empty, such as throwing an error
-                   throw Errors.emptyAccessToken
+                fatalError(Errors.emptyAccessToken.localizedDescription)
                }
             let scanner = QRCodeScannerController()
             scanner.delegate = self
             viewController.present(scanner, animated: true, completion: nil)
             self.shouldMakeStringCheck = true
-        }catch{
-            print("user is not loged in")
         }
     }
     
@@ -1075,11 +1066,11 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      Processes the JSON string and performs actions based on the specified scan type.
      - Parameter jsonString: The JSON string to be processed.
      */
-    private func passScanProtocolRouter(_ jsonString: String) async throws {
+    private func passScanProtocolRouter(_ jsonString: String) async {
         
         guard let jsonData = jsonString.data(using: .utf8) else {
             print("Invalid JSON string")
-            throw Errors.invalidResponse
+            fatalError(Errors.invalidResponse.localizedDescription)
         }
         
         do {
@@ -1088,18 +1079,18 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             guard let scanTypeString = jsonObject?["scanType"] as? String,
                   let scanType = ScanType(rawValue: scanTypeString) else {
                 print("Invalid or missing ScanType in JSON")
-                throw Errors.invalidScanType
+                fatalError(Errors.invalidScanType.localizedDescription)
             }
             
             switch scanType {
             case .AirDrop:
-                try await handleAirDrop(json: jsonObject)
+                 await handleAirDrop(json: jsonObject)
             case .RequestLoyaltyPoints:
-                try await handleRequestLoyaltyPoints(json: jsonObject)
+                 await handleRequestLoyaltyPoints(json: jsonObject)
             }
         } catch {
             print("Error parsing JSON: \(error)")
-            throw Errors.jsonParsing(error)
+            fatalError(error.localizedDescription)
         }
         self.shouldMakeStringCheck = false
     }
@@ -1109,19 +1100,19 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      Handles the AirDrop functionality based on the provided JSON parameters.
      - Parameter json: The JSON dictionary containing parameters for the AirDrop.
      */
-    private func handleAirDrop(json: [String: Any]?) async throws {
+    private func handleAirDrop(json: [String: Any]?) async {
         guard let contractAddress = json?["contractAddress"] as? String,
               let tokenId = json?["tokenId"],
               let amount = json?["amount"] as? Int,
               let chainId = json?["chainId"] as? String else {
             print("Missing required parameters for AIR_DROP")
-            throw Errors.missingParameters
+            fatalError(Errors.missingParameters.localizedDescription)
         }
         do {
             let targetAddress = await getAddressforlogincode()
             let accesstoken = await authenticateAndGetToken()
             guard let urls = URL(string: "\(AppSettings.passCodeBaseUrl)/chains/\(chainId)/\(contractAddress)/tokens/airDrop") else {
-                throw Errors.invalidResponse
+                fatalError(Errors.invalidResponse.localizedDescription)
             }
             let url = urls
             var request = URLRequest(url: url)
@@ -1151,7 +1142,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
 
         } catch {
             print("Error encoding request body: \(error)")
-            throw Errors.apiCalling(error)
+            fatalError(error.localizedDescription)
         }
     }
     
@@ -1160,18 +1151,18 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      Handles the request for loyalty points based on the provided JSON parameters.
      - Parameter json: The JSON dictionary containing parameters for the loyalty points request.
      */
-    private func handleRequestLoyaltyPoints(json: [String: Any]?) async throws {
+    private func handleRequestLoyaltyPoints(json: [String: Any]?) async {
         guard let eventId = json?["eventId"] as? String,
               let chainId = json?["chainId"] as? String,
               let contractAddress = json?["contractAddress"] as? String else {
             print("Missing required parameters for REQUEST_LOYALTY_POINTS")
-            throw Errors.missingParameters
+            fatalError(Errors.missingParameters.localizedDescription)
         }
         
         do {
             let accesstoken = await authenticateAndGetToken()
             guard let urls = URL(string: "\(AppSettings.passCodeBaseUrl)/chains/\(chainId)/requestLoyaltyPoints?eventId=\(eventId)&contractAddress=\(contractAddress)") else {
-                throw Errors.invalidResponse
+                fatalError(Errors.invalidResponse.localizedDescription)
             }
             let url = urls
             var request = URLRequest(url: url)
@@ -1191,7 +1182,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             }
         } catch {
             print("Error checking login status: \(error)")
-            throw Errors.apiCalling(error)
+            fatalError(error.localizedDescription)
         }
     }
     
@@ -1255,7 +1246,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      Shows the QR code for the passport ID.
      This method checks if the user is logged in and then generates and displays the QR code.
      */
-    public func showPassportIDQRCode() async throws -> UIImage {
+    public func showPassportIDQRCode() async -> UIImage {
         return await withCheckedContinuation { continuation in
            
                 guard !accessToken.isEmpty else {
@@ -1350,12 +1341,11 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
      Retrieves the wallet pass for the logged-in user.
      This method first checks if the user is logged in, then calls the appropriate API to get the wallet pass.
      */
-    public func getWalletPass() async throws -> PKPass? {
+    public func getWalletPass() async -> PKPass? {
         
         guard !accessToken.isEmpty else {
                print("Access token is empty login first")
-               // Handle the case when accessToken is empty, such as throwing an error
-               throw Errors.emptyAccessToken
+            fatalError(Errors.emptyAccessToken.localizedDescription)
            }
         do {
             let address = await getAddressforlogincode()
@@ -1376,7 +1366,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             let (data, response) = try await URLSession.shared.data(for: request)
             
             guard let httpResponse = response as? HTTPURLResponse else {
-                throw Errors.networkRequestFailed
+                fatalError(Errors.networkRequestFailed.localizedDescription)
             }
             
             if httpResponse.statusCode == 200 {
@@ -1391,7 +1381,7 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
             
         }catch {
             print("Error checking login status: \(error)")
-            throw error
+            fatalError(error.localizedDescription)
         }
     }
     
@@ -1793,7 +1783,7 @@ extension PassportUtility: QRScannerCodeDelegate {
     public func qrScanner(_ controller: UIViewController, scanDidComplete result: String) {
         if shouldMakeStringCheck {
             Task {
-                try await passScanProtocolRouter(result)
+                 await passScanProtocolRouter(result)
             }
         } else {
             self.delegation.qrScannerSuccess(result: result)
