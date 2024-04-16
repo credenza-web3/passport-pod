@@ -1539,13 +1539,16 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
         DispatchQueue.main.async {
             let webView = WKWebView(frame: UIScreen.main.bounds)
             webView.navigationDelegate = self
+            
+            let userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1"
+            webView.customUserAgent = userAgent
             // Load the provided URL
             let request = URLRequest(url: url)
             webView.load(request)
             // Present the web view controller from the top-most view controller
             if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                
-               let window = windowScene.windows.first,
+                let window = windowScene.windows.first,
                let topViewController = window.rootViewController {
                 showLoginWebPage(on: topViewController)
             } else if let window = UIApplication.shared.delegate?.window,
