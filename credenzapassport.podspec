@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '15.0'
 
   s.source_files = 'credenzapassport/Classes/**/*'
-  
+  s.pod_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
   s.dependency 'NFCReaderWriter'
   s.dependency 'QRCodeSwiftScanner'
   s.dependency 'Web3', '~> 0.4'
