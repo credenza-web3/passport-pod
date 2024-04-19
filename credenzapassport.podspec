@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'credenzapassport'
-  s.version          = '1.2.1'
+  s.version          = '1.2.2'
   s.summary          = 'The PassportUtility class is used to handle NFC tag reading and writing for a passport-enabled tag.'
 
   s.description      = <<-DESC
