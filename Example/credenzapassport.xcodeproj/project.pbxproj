@@ -96,12 +96,12 @@
 			isa = PBXGroup;
 			children = (
 				265ECA0E29090ABF008F5A48 /* credenzapassport_Example.entitlements */,
-				607FACF51AFB993E008FA782 /* Podspec Metadata */,
 				607FACD21AFB9204008FA782 /* Example for credenzapassport */,
-				607FACE81AFB9204008FA782 /* Tests */,
-				607FACD11AFB9204008FA782 /* Products */,
-				39B0613A5D2DEB26CEDA2008 /* Pods */,
 				431BD2F0B78A030D7FEB6C20 /* Frameworks */,
+				39B0613A5D2DEB26CEDA2008 /* Pods */,
+				607FACF51AFB993E008FA782 /* Podspec Metadata */,
+				607FACD11AFB9204008FA782 /* Products */,
+				607FACE81AFB9204008FA782 /* Tests */,
 			);
 			sourceTree = "<group>";
 		};
