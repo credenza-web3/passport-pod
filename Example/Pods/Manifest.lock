@@ -1,6 +1,6 @@
 PODS:
   - BigInt (4.0.0)
-  - credenzapassport (1.2.1):
+  - credenzapassport (1.2.2):
     - NFCReaderWriter
     - QRCodeSwiftScanner
     - Web3 (~> 0.4)
@@ -45,7 +45,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   BigInt: 2aad1a9942dc932ec8b84290d2c564a3d76f97ab
-  credenzapassport: 303cf3b5d54ede14dd3334e691123b41d0d33ec3
+  credenzapassport: cbf6b47ba81a5d3696d8e6dd3d66d504743a7b90
   CryptoSwift: c63a805d8bb5e5538e88af4e44bb537776af11ea
   NFCReaderWriter: b21965d1b3b8c53f7648f58f597b77a13f6ecdc5
   PromiseKit: 49d70c53d5d20e346beaea4b276b5dd2ab446bb4

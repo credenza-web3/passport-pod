@@ -9,6 +9,8 @@ import Foundation
 
 final class AppSettings: NSObject {
     
+    let contractType = "ConnectedPackagingContract"
+    
     class var authToken: String? {
         get { UserDefaults.standard.string(forKey: "Token") }
         set { UserDefaults.standard.set(newValue, forKey: "Token") }

@@ -656,7 +656,8 @@ open class PassportUtility: NSObject, NFCReaderDelegate {
     public func connectedPackageQueryID(serialNumber: String) async -> String {
         
         // Get the ABI and contract address.
-        let contractABI = await getContractABI(AppSettings.connectedPackagingContract);
+        let appSettings = AppSettings()
+        let contractABI = await getContractABI(appSettings.contractType);
         let contractAddress = connectedContractAddressC;
         
         do {
