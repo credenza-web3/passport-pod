@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'credenzapassport'
-  s.version          = '1.2.2'
+  s.version          = '1.2.3'
   s.summary          = 'The PassportUtility class is used to handle NFC tag reading and writing for a passport-enabled tag.'
 
   s.description      = <<-DESC
@@ -17,9 +17,9 @@ Pod::Spec.new do |s|
   s.source_files = 'credenzapassport/Classes/**/*'
   s.dependency 'NFCReaderWriter'
   s.dependency 'QRCodeSwiftScanner'
-  s.dependency 'Web3', '~> 0.4'
-  s.dependency 'Web3/ContractABI'
-  s.dependency 'Web3/PromiseKit'
+  s.dependency 'CWeb3', '~> 1.0.0'
+  s.dependency 'CWeb3/ContractABI'
+  s.dependency 'CWeb3/PromiseKit'
   s.swift_version = "5.0.0"
   
   s.xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }

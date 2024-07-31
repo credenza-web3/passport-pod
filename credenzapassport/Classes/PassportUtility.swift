@@ -6,7 +6,7 @@
 //
 
 import NFCReaderWriter
-import Web3
+import CWeb3
 import Foundation
 import QRCodeSwiftScanner
 import PassKit

@@ -1,30 +1,30 @@
 PODS:
   - BigInt (4.0.0)
-  - credenzapassport (1.2.2):
+  - credenzapassport (1.2.3):
+    - CWeb3 (~> 1.0.0)
+    - CWeb3/ContractABI
+    - CWeb3/PromiseKit
     - NFCReaderWriter
     - QRCodeSwiftScanner
-    - Web3 (~> 0.4)
-    - Web3/ContractABI
-    - Web3/PromiseKit
   - CryptoSwift (1.8.2)
+  - CWeb3 (1.0.0):
+    - CWeb3/Core (= 1.0.0)
+    - CWeb3/HTTPExtension (= 1.0.0)
+  - CWeb3/ContractABI (1.0.0):
+    - CWeb3/Core
+  - CWeb3/Core (1.0.0):
+    - BigInt (~> 4.0)
+    - CryptoSwift (~> 1.0)
+    - secp256k1.swift (~> 0.1)
+  - CWeb3/HTTPExtension (1.0.0):
+    - CWeb3/Core
+  - CWeb3/PromiseKit (1.0.0):
+    - CWeb3/Core
+    - PromiseKit/CorePromise (~> 6.0)
   - NFCReaderWriter (1.1.4)
   - PromiseKit/CorePromise (6.18.1)
   - QRCodeSwiftScanner (0.1.2)
   - secp256k1.swift (0.1.4)
-  - Web3 (0.4.2):
-    - Web3/Core (= 0.4.2)
-    - Web3/HTTPExtension (= 0.4.2)
-  - Web3/ContractABI (0.4.2):
-    - Web3/Core
-  - Web3/Core (0.4.2):
-    - BigInt (~> 4.0)
-    - CryptoSwift (~> 1.0)
-    - secp256k1.swift (~> 0.1)
-  - Web3/HTTPExtension (0.4.2):
-    - Web3/Core
-  - Web3/PromiseKit (0.4.2):
-    - PromiseKit/CorePromise (~> 6.0)
-    - Web3/Core
 
 DEPENDENCIES:
   - credenzapassport (from `../../passport-pod`)
@@ -33,11 +33,11 @@ SPEC REPOS:
   trunk:
     - BigInt
     - CryptoSwift
+    - CWeb3
     - NFCReaderWriter
     - PromiseKit
     - QRCodeSwiftScanner
     - secp256k1.swift
-    - Web3
 
 EXTERNAL SOURCES:
   credenzapassport:
@@ -45,13 +45,13 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   BigInt: 2aad1a9942dc932ec8b84290d2c564a3d76f97ab
-  credenzapassport: cbf6b47ba81a5d3696d8e6dd3d66d504743a7b90
+  credenzapassport: 6cb46b1767282896d735f19229e5ada22901889e
   CryptoSwift: c63a805d8bb5e5538e88af4e44bb537776af11ea
+  CWeb3: 0db81238130d02d7f760d8c3e160cdd4ad293538
   NFCReaderWriter: b21965d1b3b8c53f7648f58f597b77a13f6ecdc5
   PromiseKit: 49d70c53d5d20e346beaea4b276b5dd2ab446bb4
   QRCodeSwiftScanner: db82a51c3cd794753a310990b97fb739fec6659a
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
-  Web3: 7b2c30f98f24cc290bc671ab525d7a30a2afbc73
 
 PODFILE CHECKSUM: bec8518c535c82dcfd6e29f12a742961935d7712
 
